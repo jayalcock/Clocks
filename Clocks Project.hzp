@@ -78,7 +78,7 @@
       arm_target_loader_parameter="12000000"
       c_only_additional_options="-fms-extensions"
       c_preprocessor_definitions="USE_PROCESS_STACK;__$(LPC1000_Series)_SERIES;__TARGET_PROCESSOR=LPC1114;OSCILLATOR_CLOCK_FREQUENCY=12000000"
-      c_user_include_directories="$(ProjectDir)/LPC1000/include/CMSIS;$(ProjectDir)/CMSIS_3/CMSIS/Include;$(ProjectDir)/LPC1000/include"
+      c_user_include_directories="$(ProjectDir)/LPC1000/include/CMSIS;$(ProjectDir)/CMSIS_3/CMSIS/Include;$(ProjectDir)/LPC1000/include;$(ProjectDir)/Headers"
       link_include_startup_code="No"
       linker_additional_files="$(TargetsDir)/LPC1000/lib/liblpc1000$(LibExt)$(LIB)"
       linker_memory_map_file="$(ProjectDir)/LPC1114_MemoryMap.xml"
@@ -114,15 +114,16 @@
       <file file_name="targets/LPC1000/include/CMSIS/system_LPC11xx.h" />
       <file file_name="targets/LPC1000/include/CMSIS/system_LPC11xx.c" />
     </folder>
-    <folder
-      Name="Sources"
-      exclude=""
-      filter=""
-      path="../../Clocks/Clocks 1114/Sources"
-      recurse="No" />
+    <folder Name="Sources">
+      <file file_name="../../Clocks/Clocks 1114/Sources/main.c" />
+      <file file_name="Sources/Functions.c" />
+    </folder>
     <configuration
       Name="Release"
       c_preprocessor_definitions="STARTUP_FROM_RESET" />
+    <folder Name="Headers">
+      <file file_name="Headers/Functions.h" />
+    </folder>
   </project>
   <project Name="Clocks 1768 CTL">
     <configuration
