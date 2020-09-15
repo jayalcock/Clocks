@@ -1,7 +1,8 @@
 Clocks 1114/Clocks 1114 ARM Flash Debug/
 Clocks 1114/Clocks 1114 ARM RAM Debug/
-Clocks 1114/Clocks 1768 CTL ARM Flash Debug/
-Clocks 1114/Clocks 1768 CTL ARM RAM Debug/
+Clocks 1768/Clocks 1768 CTL ARM Flash Debug/
+Clocks 1768/Clocks 1768 CTL ARM RAM Debug/
+Clocks 1768/Clocks 1768 CTL ARM Flash Release/
 
 # General
 .DS_Store

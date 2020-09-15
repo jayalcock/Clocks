@@ -12,7 +12,13 @@ void delay(int t)
 
 void main(void)
 {
+  SystemInit();
 
+  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<1);  /* enable clock for ROM */
+  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<2);  /* enable clock for RAM */
+  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<3);  /* enable clock for RAM */
+  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<4);  /* enable clock for RAM */
+  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<6);   /* enable clock for GPIO  */
   LPC_SYSCON->SYSAHBCLKCTRL |= (1<<16);  /* enable clock for IOCON */
   LPC_SYSCON->SYSAHBCLKCTRL |= (1<<6);   /* enable clock for GPIO  */
 
@@ -37,7 +43,7 @@ void main(void)
 
 
 
-  LPC_IOCON->PIO0_8 &= ~(0x10);; //Configure P0.8 as GPIO
+  //LPC_IOCON->PIO0_8 = 0x10; //Configure P0.8 as GPIO
 
 
   
