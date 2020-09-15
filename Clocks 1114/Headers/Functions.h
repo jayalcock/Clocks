@@ -11,6 +11,7 @@
 #include <LPC11xx.h>
 
 #define LED (1<<9) //LED on DIP pin 18/P1.9
+#define PULSEPERDEG 12 //12 pulses per degree rotated
 
 void delay(int t);
 void ledFlash(void);

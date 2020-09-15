@@ -1,6 +1,7 @@
 #include "Functions.h"
 
 //1us delay function
+//inputs: t - int - number of us to delay
 void delay(int t)
 {
   while(t>0)
@@ -22,8 +23,13 @@ void ledFlash(void)
     delay(3000000);
 }
 
-void motorCw(int deg, int spd)
+void motorCwAngle(int deg, int spd)
 {
+  int pulses;
+
+  //assuming 12 pulses/deg
+  pulses = deg*PULSEPERDEG;
+
   deg = spd;
 
 }
