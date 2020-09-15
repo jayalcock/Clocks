@@ -77,7 +77,7 @@
       arm_target_interface_type="SWD"
       arm_target_loader_parameter="12000000"
       c_only_additional_options="-fms-extensions"
-      c_preprocessor_definitions="USE_PROCESS_STACK;__$(LPC1000_Series)_SERIES;__TARGET_PROCESSOR=LPC1114;OSCILLATOR_CLOCK_FREQUENCY=12000000;STARTUP_FROM_RESET"
+      c_preprocessor_definitions="USE_PROCESS_STACK;__$(LPC1000_Series)_SERIES;__TARGET_PROCESSOR=LPC1114;OSCILLATOR_CLOCK_FREQUENCY=12000000"
       c_user_include_directories="$(ProjectDir)/LPC1000/include/CMSIS;$(ProjectDir)/CMSIS_3/CMSIS/Include;$(ProjectDir)/LPC1000/include"
       link_include_startup_code="No"
       linker_additional_files="$(TargetsDir)/LPC1000/lib/liblpc1000$(LibExt)$(LIB)"
@@ -120,6 +120,9 @@
       filter=""
       path="../../Clocks/Clocks 1114/Sources"
       recurse="No" />
+    <configuration
+      Name="Release"
+      c_preprocessor_definitions="STARTUP_FROM_RESET" />
   </project>
   <project Name="Clocks 1768 CTL">
     <configuration

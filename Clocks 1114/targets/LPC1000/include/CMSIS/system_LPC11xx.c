@@ -125,12 +125,12 @@
 #define SYSOSCCTRL_Val        0x00000000
 #define WDTOSC_SETUP          0
 #define WDTOSCCTRL_Val        0x000000A0
-#define SYSPLLCLKSEL_Val      0x00000001
+#define SYSPLLCLKSEL_Val      0x00000000
 #define SYSPLL_SETUP          1
 #define SYSPLLCTRL_Val        0x00000023
 #define MAINCLKSEL_Val        0x00000003
 #define SYSAHBCLKDIV_Val      0x00000001
-#define AHBCLKCTRL_Val        0x0001005F
+#define AHBCLKCTRL_Val        0x0001007F
 #define SSP0CLKDIV_Val        0x00000001
 #define UARTCLKDIV_Val        0x00000001
 #define SSP1CLKDIV_Val        0x00000001
