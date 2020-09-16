@@ -125,12 +125,12 @@
 #define SYSOSCCTRL_Val        0x00000000  
 #define WDTOSC_SETUP          0           //No watchdog oscillator 
 #define WDTOSCCTRL_Val        0x000000A0
-#define SYSPLLCLKSEL_Val      0x00000000  //PLL from internal osc
+#define SYSPLLCLKSEL_Val      0x00000000  //PLL from internal osc. When using the C_CAN controller with baudrates above 100 kbit/s, the system oscillator must be selected
 #define SYSPLL_SETUP          1           //Use PLL
-#define SYSPLLCTRL_Val        0x00000032  //msel = 2, psel = 8 (12mhz clcok / 2 * 8 = 48MHz PLL)
-#define MAINCLKSEL_Val        0x00000003
-#define SYSAHBCLKDIV_Val      0x00000001
-#define AHBCLKCTRL_Val        0x0001007F
+#define SYSPLLCTRL_Val        0x00000032  //msel = 2, psel = 8 (12MHz clcok / 2 * 8 = 48MHz PLL)
+#define MAINCLKSEL_Val        0x00000003  //Use system PLL clock output
+#define SYSAHBCLKDIV_Val      0x00000004  //Divide PLL by 1 for AHB clock (48/1 = 48MHz)
+#define AHBCLKCTRL_Val        0x0001007F  //Peripheral control 
 #define SSP0CLKDIV_Val        0x00000001
 #define UARTCLKDIV_Val        0x00000001
 #define SSP1CLKDIV_Val        0x00000001
