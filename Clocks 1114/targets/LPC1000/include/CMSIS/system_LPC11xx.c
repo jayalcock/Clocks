@@ -121,13 +121,13 @@
 */
 #define CLOCK_SETUP           1
 #define SYSCLK_SETUP          1
-#define SYSOSC_SETUP          1
-#define SYSOSCCTRL_Val        0x00000000
-#define WDTOSC_SETUP          0
+#define SYSOSC_SETUP          0           //No system (external) oscillator
+#define SYSOSCCTRL_Val        0x00000000  
+#define WDTOSC_SETUP          0           //No watchdog oscillator 
 #define WDTOSCCTRL_Val        0x000000A0
-#define SYSPLLCLKSEL_Val      0x00000000
-#define SYSPLL_SETUP          1
-#define SYSPLLCTRL_Val        0x00000023
+#define SYSPLLCLKSEL_Val      0x00000000  //PLL from internal osc
+#define SYSPLL_SETUP          1           //Use PLL
+#define SYSPLLCTRL_Val        0x00000032  //msel = 2, psel = 8 (12mhz clcok / 2 * 8 = 48MHz PLL)
 #define MAINCLKSEL_Val        0x00000003
 #define SYSAHBCLKDIV_Val      0x00000001
 #define AHBCLKCTRL_Val        0x0001007F

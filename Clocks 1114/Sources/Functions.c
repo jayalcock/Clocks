@@ -30,6 +30,7 @@ void motorCwAngle(int deg, int spd)
   //assuming 12 pulses/deg
   pulses = deg*PULSEPERDEG;
 
+  
   deg = spd;
 
 }
