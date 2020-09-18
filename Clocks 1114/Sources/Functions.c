@@ -23,6 +23,14 @@ void ledFlash(void)
     delay(3000000);
 }
 
+void ledToggle(void)
+{
+  if(LPC_GPIO1->DATA & LED)
+   LPC_GPIO1->DATA &= ~LED; //Set pin low
+  else
+   LPC_GPIO1->DATA |= LED; //Set pin high
+}
+
 void motorCwAngle(int deg, int spd)
 {
   int pulses;
