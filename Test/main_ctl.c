@@ -1,6 +1,5 @@
 #include <string.h>
 #include <ctl_api.h>
-#include "LPC17xx.h"
 
 CTL_TASK_t main_task, new_task;
 
@@ -8,28 +7,19 @@ CTL_TASK_t main_task, new_task;
 #define STACKSIZE 64          
 unsigned new_task_stack[1+STACKSIZE+1];
 
-#define PIN00 (1<<0)
-
-void new_task_code(void *p)
+void 
+new_task_code(void *p)
 {  
   unsigned int v=0;
-
-  LPC_PINCON->PINSEL0 = 0x000000;
-
-  LPC_GPIO0->FIODIR |= PIN00; //Set pin 0.0 as output
-
   while (1)
     {      
       // task logic goes here      
-      LPC_GPIO0->FIOSET |= PIN00; //Set pin 0.0 high
-      ctl_timeout_wait(ctl_get_current_time()+100); //Wait 100ms
-      LPC_GPIO0->FIOCLR |= PIN00; //Set pin 0.0 low
-      ctl_timeout_wait(ctl_get_current_time()+100); //Wait 100ms
       v++;
     }  
 }
 
-void ctl_handle_error(CTL_ERROR_CODE_t e)
+void
+ctl_handle_error(CTL_ERROR_CODE_t e)
 {
   while (1);
 }
@@ -37,8 +27,6 @@ void ctl_handle_error(CTL_ERROR_CODE_t e)
 int main(void)
 {
   unsigned int v=0;
-  unsigned int w=0;
-
   ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
   ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
   memset(new_task_stack, 0xcd, sizeof(new_task_stack));  // write known values into the stack

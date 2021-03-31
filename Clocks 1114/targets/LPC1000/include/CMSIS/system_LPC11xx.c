@@ -128,8 +128,8 @@
 #define SYSPLLCLKSEL_Val      0x00000000  //PLL from internal osc. When using the C_CAN controller with baudrates above 100 kbit/s, the system oscillator must be selected
 #define SYSPLL_SETUP          1           //Use PLL
 #define SYSPLLCTRL_Val        0x00000007  //msel = 7, psel = 0 (12MHz clcok / 1 * 7 = 84MHz PLL)
-#define MAINCLKSEL_Val        0x00000003  //Use system PLL clock output
-#define SYSAHBCLKDIV_Val      0x00000001  //Divide PLL by 1 for AHB clock (84/1 = 48MHz)
+#define MAINCLKSEL_Val        0x00000003  //Use PLL clock output
+#define SYSAHBCLKDIV_Val      0x00000001  //Divide PLL by 1 for system clock (84/1 = 84MHz)
 #define AHBCLKCTRL_Val        0x0001007F  //Peripheral control 
 #define SSP0CLKDIV_Val        0x00000001
 #define UARTCLKDIV_Val        0x00000001

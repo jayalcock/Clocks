@@ -31,12 +31,27 @@ void ledToggle(void)
    LPC_GPIO1->DATA |= LED; //Set pin high
 }
 
+//TO BE TESTED
+
+//Clockwise rotation to specific angle 
 void motorCwAngle(int deg, int spd)
 {
   int pulses;
 
   //assuming 12 pulses/deg
   pulses = deg*PULSEPERDEG;
+
+  
+  deg = spd;
+
+}
+//Counter clock wise rotation to specific angle
+void motorCcwAngle(int deg, int spd)
+{
+  int pulses;
+
+  //assuming 12 pulses/deg
+  pulses = -deg*PULSEPERDEG;
 
   
   deg = spd;
