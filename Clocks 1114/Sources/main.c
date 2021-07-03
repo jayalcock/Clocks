@@ -1,6 +1,7 @@
 #include <__cross_studio_io.h>
 #include "LPC11xx.h"
-#include "Functions.h"
+#include "Functions_LL.h"
+
 
 BOOL tick = FALSE;
 
@@ -15,7 +16,7 @@ void main(void)
 {
   int i = 0;
   int j = 1;
-
+ 
 
   LPC_IOCON->SWDIO_PIO1_3 = 0x0;
   LPC_IOCON->SWCLK_PIO0_10 = 0x0;
