@@ -29,8 +29,6 @@ void ctl_handle_error(CTL_ERROR_CODE_t e)
 
 int main(void)
 {
-
-    //CTL_EVENT_SET_t start_seq_event;
     
     unsigned int v=0;
     
@@ -63,12 +61,12 @@ int main(void)
     //ctl_task_set_priority(&main_task, 0); // drop to lowest priority to start created tasks running.
 
 
-    while (1)
-    {    
-      // power down can go here if supported      
-      v++;
+    //while (1)
+    //{    
+    //  // power down can go here if supported      
+    //  v++;
 
-    }
+    //}
    
 
     return 0;

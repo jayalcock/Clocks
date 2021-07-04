@@ -42,6 +42,6 @@ void ESP_WIFI_Disconnect(uint16_t delay);
 //Globals
 extern ARM_DRIVER_USART Driver_USART0;
 extern ARM_DRIVER_USART Driver_USART1;
-//extern CTL_EVENT_SET_t comms_event;
+extern CTL_EVENT_SET_t comms_event;
 
 #endif /*COMMS_H*/

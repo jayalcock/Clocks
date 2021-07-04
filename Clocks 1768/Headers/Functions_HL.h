@@ -10,6 +10,7 @@ void time_thread(void *p);
 void getNTPtime(uint8_t *hour, uint8_t *min, uint8_t *sec);
 char * calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec);
 
-void rtc_start();
+void rtc_start(void);
+void update_rtc(void);
 
 #endif /* _FUCNTIONS_HL_ */

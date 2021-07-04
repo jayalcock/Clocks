@@ -1,9 +1,10 @@
 #include "Comms.h"
 
 #define NEW_WIFI_CONNECTION 0
-#define HOME_WIFI 1
+#define HOME_WIFI 0
 #define PHONE_WIFI 0
 #define LYNDSEY_WIFI 0
+#define OTHER_WIFI 1 
 
 //WIFI Constants 
 const char* INIT = "AT\r\n";
@@ -16,6 +17,8 @@ const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
 const char* SSIDPWD = "AT+CWJAP=\"Jay's iPhone\",\"shannon1\"\r\n";
 #elif LYNDSEY_WIFI
 const char* SSIDPWD = "AT+CWJAP=\"L-Gav Pad\",\"hgbbs123\"\r\n";
+#elif OTHER_WIFI
+const char* SSIDPWD = "AT+CWJAP=\"Gavins\",\"LakeHouse9307\"\r\n";
 #endif
 
 
@@ -39,19 +42,12 @@ ARM_DRIVER_USART * USARTdrv1 = &Driver_USART1;
 static uint8_t writeIndex = 0;
 
 
-    
 void commsThread(void *p)
 {
     uint32_t status;
     uint8_t tempChar; 
-    
-    //ctl_mutex_init(&rx_lock);
-    ctl_events_init(&comms_event, 0);
-    CTL_EVENT_SET_t start_seq_event;
-    CTL_TASK_t time_task;
-    
-    //comms_evt_ptr = (CTL_EVENT_SET_t*) &p;
 
+    ctl_events_init(&comms_event, 0);
     
     //Initialse UART's
     UARTinit(USARTdrv0, 115200, UART0_callback);
@@ -61,32 +57,30 @@ void commsThread(void *p)
     status = USARTdrv0->Send("\nStartup\n", 9);
     ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
     
-    //Ensure connection to ESP
+    ////Ensure connection to ESP
     ESP_command(INIT, 200U, 0);
        
     //Skip if already connected to WIFI
     #if NEW_WIFI_CONNECTION
     
-    //Reset ESP
-    ESP_command(RESET, 5000U);
+        //Reset ESP
+        ESP_command(RESET, 5000U, 0);
     
-    //Disconnect WIFI
-    ESP_command(DISCONNECT, 1000U);
+        //Disconnect WIFI
+        ESP_command(DISCONNECT, 1000U, 0);
     
-    //Select WIFI mode
-    ESP_command(MODE, 1000U);
+        //Select WIFI mode
+        ESP_command(MODE, 1000U, 0);
     
-    //Connect to WIFI
-    ESP_command(SSIDPWD, 6000U);
+        //Connect to WIFI
+        ESP_command(SSIDPWD, 6000U, 0);
    
     #endif
   
    
     status = USARTdrv0->Send("\n\nReady\n", 8);
     ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
-    
-    ctl_events_set_clear(p, 1<<11 , 0);
-    //ctl_task_run(&time_task, 40, time_thread, 0, "time_task", COMMS_STACKSIZE, time_task_stack+1, 0); 
+     
    
     while(1) //Loop that receives data from computer and sends to UART1, then loops back UART1 data to computer. 
     {   
@@ -106,26 +100,26 @@ void rx_thread(void *p)
     char rxChar; 
     ctl_mutex_init(&uart0_tx_mutex);
     
-    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_EVENT, CTL_TIMEOUT_NONE, 0);
+    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_EVENT, CTL_TIMEOUT_NONE, 0);
     
-    //while(1) //Keep receiving chars and loop through to UART0 until end of string
-    //{   
-    //    USARTdrv1->Receive(&rxChar, 1);
-    //    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_RX_DONE, CTL_TIMEOUT_NONE, 0);
+    while(1) //Keep receiving chars and loop through to UART0 until end of string
+    {   
+        USARTdrv1->Receive(&rxChar, 1);
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_RX_DONE, CTL_TIMEOUT_NONE, 0);
         
-    //    ctl_mutex_lock(&uart0_tx_mutex, CTL_TIMEOUT_NONE, 0);
-    //    USARTdrv0->Send(&rxChar, 1); 
-    //    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
-    //    ctl_mutex_unlock(&uart0_tx_mutex);
+        ctl_mutex_lock(&uart0_tx_mutex, CTL_TIMEOUT_NONE, 0);
+        USARTdrv0->Send(&rxChar, 1); 
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+        ctl_mutex_unlock(&uart0_tx_mutex);
         
-    //    writeBuffer(&rxChar); //Write to ring buffer
+        writeBuffer(&rxChar); //Write to ring buffer
         
-    //    if(rxChar == 0x0a) //End of string 
-    //    {
-    //        ctl_events_set_clear(&comms_event, UART1_RX_END_OF_STRING, 0); 
+        if(rxChar == 0x0a) //End of string 
+        {
+            ctl_events_set_clear(&comms_event, UART1_RX_END_OF_STRING, 0); 
     
-    //    }
-    //}
+        }
+    }
 }
 
 

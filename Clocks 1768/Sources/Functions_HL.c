@@ -9,25 +9,18 @@ const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n";
 const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 
 uint8_t ntpPacketBuffer[NTP_PACKET_SIZE] = {0};
-CTL_EVENT_SET_t * comms_evt_ptr; 
 
 void time_thread(void *p)
 {
-    uint8_t hour; 
-    uint8_t min;
-    uint8_t sec;
-    
-    comms_evt_ptr = (CTL_EVENT_SET_t*) &p;
-    
+    //Wait for other threads to complete on startup
+    ctl_timeout_wait(ctl_current_time + 2000);
+         
     rtc_start();
     
-    getNTPtime(&hour, &min, &sec);
+    update_rtc();
     
-    HOUR = hour;
-    MIN = min;
-    SEC = sec;    
-    
-    while(1)
+ 
+    for(;;)
     {
         //Loop
     }
@@ -50,21 +43,21 @@ void getNTPtime(uint8_t *hour, uint8_t *min, uint8_t *sec)
     //ESP_command(NTP_PACKET, 1000);
     ESP_command(NTP_PACKET, 1000, 48);
     USARTdrv0->Send("\n\n", 2);
-    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, comms_evt_ptr, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
     
     ////Read NTP Packet from UART rx buffer
     readBuffer(ntpPacketBuffer, 48);
 
     //Calculate and print time
     char* tim = calculateTime(ntpPacketBuffer, hour, min, sec);
-    //USARTdrv0->Send("The current time is: ", 21);
-    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    USARTdrv0->Send("The current time is: ", 21);
+    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
     
-    //USARTdrv0->Send(tim, 8);
-    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    USARTdrv0->Send(tim, 8);
+    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
     
-    //USARTdrv0->Send("\n\n", 2);
-    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    USARTdrv0->Send("\n\n", 2);
+    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
     
     //Disconnect from NTP
     ESP_command(DISCONNECT_FROM_IP, 1000, 0);
@@ -128,14 +121,23 @@ char * calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *
 }
 
 
-void rtc_start()
+void rtc_start(void)
 {
-    
     //Enable RTC 
-    //CCR |= CCR_CLKEN | CCR_CTCRST | CCR_CCALEN;
     CCR |= CCR_CLKEN | CCR_CCALEN;
+ 
+}
+
+void update_rtc(void)
+{
+    uint8_t hour; 
+    uint8_t min;
+    uint8_t sec;
     
-    //CCR &= ~(CCR_CTCRST | CCR_CCALEN);
-
-
+    getNTPtime(&hour, &min, &sec);
+    
+    HOUR = hour;
+    MIN = min;
+    SEC = sec;    
+    
 }
