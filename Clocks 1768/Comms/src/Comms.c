@@ -22,13 +22,11 @@ const char* SSIDPWD = "AT+CWJAP=\"Gavins\",\"LakeHouse9307\"\r\n";
 #endif
 
 
-
 uint8_t rxBuffer[128];
    
 
 CTL_MUTEX_t uart0_tx_mutex;
 CTL_EVENT_SET_t comms_event;
-
 
 
 //Pointers to UART Driver object

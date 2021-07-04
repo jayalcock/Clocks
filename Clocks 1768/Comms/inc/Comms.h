@@ -24,8 +24,6 @@ void UART1_callback(uint32_t event);
 void commsThread(void *p);
 void rx_thread(void *p);
 
-
-
 void UARTinit(ARM_DRIVER_USART* UART_driver_number, uint32_t baud, void(*callback)(uint32_t));
 void UART0init(uint32_t baud);
 void UART1init(uint32_t baud);

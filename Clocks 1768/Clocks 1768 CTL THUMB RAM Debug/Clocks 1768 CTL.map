@@ -3674,7 +3674,7 @@ LOAD linker stubs
  .comment       0x00000000000000b6       0x26 /Applications/CrossWorks for ARM 4.8/lib/libc_v7m_t_le_eabi.a(libvfprintf.o)
  .comment       0x00000000000000b6       0x26 /Applications/CrossWorks for ARM 4.8/lib/libm_v7m_t_le_eabi.a(libm2.o)
 
-.debug_line     0x0000000000000000     0x605e
+.debug_line     0x0000000000000000     0x605a
  .debug_line    0x0000000000000000      0x204 Clocks 1768 CTL THUMB RAM Debug/thumb_crt0.o
  .debug_line    0x0000000000000204       0xde Clocks 1768 CTL THUMB RAM Debug/LPC1700_Startup.o
  .debug_line    0x00000000000002e2      0x5bf Clocks 1768 CTL THUMB RAM Debug/ctl_lpc1700.o
@@ -3687,8 +3687,8 @@ LOAD linker stubs
  .debug_line    0x00000000000037a6      0x2aa Clocks 1768 CTL THUMB RAM Debug/PIN_LPC17xx.o
  .debug_line    0x0000000000003a50     0x1c74 Clocks 1768 CTL THUMB RAM Debug/UART_LPC17xx.o
  .debug_line    0x00000000000056c4      0x54b Clocks 1768 CTL THUMB RAM Debug/Comms.o
- .debug_line    0x0000000000005c0f      0x3b7 Clocks 1768 CTL THUMB RAM Debug/main_ctl.o
- .debug_line    0x0000000000005fc6       0x98 /Users/jayalcock/Library/Rowley Associates Limited/CrossWorks for ARM/v4/packages/targets/LPC1000/lib/liblpc1000_v7m_t_le_eabi.a(liblpc1000_lpc17xx_get_cclk.o)
+ .debug_line    0x0000000000005c0f      0x3b3 Clocks 1768 CTL THUMB RAM Debug/main_ctl.o
+ .debug_line    0x0000000000005fc2       0x98 /Users/jayalcock/Library/Rowley Associates Limited/CrossWorks for ARM/v4/packages/targets/LPC1000/lib/liblpc1000_v7m_t_le_eabi.a(liblpc1000_lpc17xx_get_cclk.o)
 
 .debug_info     0x0000000000000000     0x77fe
  .debug_info    0x0000000000000000       0x22 Clocks 1768 CTL THUMB RAM Debug/thumb_crt0.o

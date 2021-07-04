@@ -2,8 +2,8 @@
 
 #define NTP_PACKET_SIZE 48
 
-//const char* NTP = "AT+CIPSTART=\"UDP\",\"0.ca.pool.ntp.org\",123\r\n";
-const char* NTP = "AT+CIPSTART=\"UDP\",\"207.210.46.249\",123\r\n";
+const char* NTP = "AT+CIPSTART=\"UDP\",\"0.ca.pool.ntp.org\",123\r\n";
+//const char* NTP = "AT+CIPSTART=\"UDP\",\"207.210.46.249\",123\r\n";
 const char* SEND = "AT+CIPSEND=48\r\n";
 const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n";
 const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
@@ -17,8 +17,7 @@ void time_thread(void *p)
          
     rtc_start();
     
-    update_rtc();
-    
+    update_rtc();    
  
     for(;;)
     {

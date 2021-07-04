@@ -2,12 +2,6 @@
 
 CTL_TASK_t main_task, comms_task, rx_task, time_task;
 
-
-
-//CTL_EVENT_SET_t comms_event;
-
-//CTL_EVENT_SET_t start_seq_event;
-
 unsigned comms_task_stack[1+COMMS_STACKSIZE+1];
 unsigned rx_task_stack[1+STACKSIZE+1];
 unsigned time_task_stack[1+COMMS_STACKSIZE+1];
