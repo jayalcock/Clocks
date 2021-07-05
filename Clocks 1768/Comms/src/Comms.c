@@ -1,10 +1,10 @@
 #include "Comms.h"
 
 #define NEW_WIFI_CONNECTION 0
-#define HOME_WIFI 0
+#define HOME_WIFI 1
 #define PHONE_WIFI 0
 #define LYNDSEY_WIFI 0
-#define OTHER_WIFI 1 
+#define OTHER_WIFI 0 
 
 //WIFI Constants 
 const char* INIT = "AT\r\n";
@@ -21,7 +21,7 @@ const char* SSIDPWD = "AT+CWJAP=\"L-Gav Pad\",\"hgbbs123\"\r\n";
 const char* SSIDPWD = "AT+CWJAP=\"Gavins\",\"LakeHouse9307\"\r\n";
 #endif
 
-
+//UART receive buffer
 uint8_t rxBuffer[128];
    
 
@@ -33,7 +33,6 @@ CTL_EVENT_SET_t comms_event;
 ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
 ARM_DRIVER_USART * USARTdrv1 = &Driver_USART1;
 
-//CTL_EVENT_SET_t * comms_evt_ptr; 
 
 //Ring Buffer
 #define  SIZE_OF_BUFFER 50
@@ -42,19 +41,18 @@ static uint8_t writeIndex = 0;
 
 void commsThread(void *p)
 {
-    uint32_t status;
     uint8_t tempChar; 
-
+    
     ctl_events_init(&comms_event, 0);
     
     //Initialse UART's
-    UARTinit(USARTdrv0, 115200, UART0_callback);
-    UARTinit(USARTdrv1, 115200, UART1_callback);
+    UARTinit(USARTdrv0, BAUD, UART0_callback);
+    UARTinit(USARTdrv1, BAUD, UART1_callback);
     
 
-    status = USARTdrv0->Send("\nStartup\n", 9);
+    USARTdrv0->Send("\nStartup\n", 9);
     ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
-    
+        
     ////Ensure connection to ESP
     ESP_command(INIT, 200U, 0);
        
@@ -76,9 +74,10 @@ void commsThread(void *p)
     #endif
   
    
-    status = USARTdrv0->Send("\n\nReady\n", 8);
+    USARTdrv0->Send("\n\nReady\n", 8);
     ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
-     
+    
+    //ctl_events_set_clear(&time_event, 1<<0, 0);
    
     while(1) //Loop that receives data from computer and sends to UART1, then loops back UART1 data to computer. 
     {   
@@ -88,6 +87,9 @@ void commsThread(void *p)
         
         USARTdrv1->Send(&tempChar, 1); //Send to uart1
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_TX_DONE, CTL_TIMEOUT_NONE, 0);
+        
+        if(tempChar == 'a')
+            ctl_events_set_clear(&time_event, 1<<0, 0);
 
     }
     
@@ -264,7 +266,7 @@ void writeBuffer(const char *tempChar)
     }
 }
 
-//Read data from ring buffer
+//Read desired data from ring buffer
 void readBuffer(uint8_t *arr, uint8_t length)
 {
     uint8_t readIndex;
@@ -274,11 +276,12 @@ void readBuffer(uint8_t *arr, uint8_t length)
     if(length > writeIndex)
     {
         readIndex = SIZE_OF_BUFFER - length + writeIndex;
-        for(readIndex; readIndex < SIZE_OF_BUFFER; readIndex++)
+        while(readIndex < SIZE_OF_BUFFER)
         {
             arr[i] = rxBuffer[readIndex];
             i++;
             length--;
+            readIndex++;
         }
         readIndex = 0;
     }
@@ -287,15 +290,15 @@ void readBuffer(uint8_t *arr, uint8_t length)
         readIndex = writeIndex-length;
     }
     
-    for(readIndex; readIndex < length; readIndex++)
+    while(readIndex < length)
     {
- 
         arr[i] = rxBuffer[readIndex];
         i++;
         if(readIndex == SIZE_OF_BUFFER)
         {
             readIndex = 0;
         }
+        readIndex++;
     }
     
     
@@ -304,17 +307,29 @@ void readBuffer(uint8_t *arr, uint8_t length)
 //Send command to ESP8266
 void ESP_command(const void* command, const uint16_t delay, uint8_t size)
 {
-    uint8_t status;
-    status = sizeof(command)/sizeof(command[0]); 
+    
     if(size > 0)
     {
-        status = USARTdrv1->Send(command, size);
+        USARTdrv1->Send(command, size);
     }
     else
     {
-        status = USARTdrv1->Send(command, strlen(command));
+        USARTdrv1->Send(command, strlen(command));
     }
     ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_TX_DONE, CTL_TIMEOUT_NONE, 0);
     ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_RX_END_OF_STRING, CTL_TIMEOUT_NONE, 0);
     ctl_timeout_wait(ctl_current_time + delay);
+}
+
+void connect_wifi()
+{
+    //Connect to WIFI
+    ESP_command(SSIDPWD, 6000U, 0);
+}
+
+void disconnect_wifi()
+{
+    //Disconnect WIFI
+    ESP_command(DISCONNECT, 1000U, 0);
+    
 }

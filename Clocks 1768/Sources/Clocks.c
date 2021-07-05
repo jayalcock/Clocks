@@ -1,7 +1,11 @@
 #include "Clocks.h"
 
+//Declare tasking objects
 CTL_TASK_t main_task, comms_task, rx_task, time_task;
+CTL_MUTEX_t mutex;
 
+
+//Assign stack memory
 unsigned comms_task_stack[1+COMMS_STACKSIZE+1];
 unsigned rx_task_stack[1+STACKSIZE+1];
 unsigned time_task_stack[1+COMMS_STACKSIZE+1];
@@ -9,13 +13,11 @@ unsigned time_task_stack[1+COMMS_STACKSIZE+1];
 
 void clock_Engine()
 {
-    CTL_MUTEX_t mutex;
     
     SysTick_Config(SystemCoreClock / 1000);
     
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
-
 
     //Comms Thread
     memset(comms_task_stack, 0xcd, sizeof(comms_task_stack));  // write known values into the stack

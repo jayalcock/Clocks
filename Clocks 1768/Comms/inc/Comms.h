@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Driver_USART.h"
-#include "Functions_HL.h"
+#include "Time.h"
 
+#define BAUD 115200
 
 #define UART0_EVENT 1<<0
 #define UART0_RX_DONE 1<<1
@@ -15,7 +16,7 @@
 #define UART1_EVENT 1<<3
 #define UART1_RX_DONE 1<<4
 #define UART1_TX_DONE 1<<5
-#define UART1_RX_END_OF_STRING 1<<10
+#define UART1_RX_END_OF_STRING 1<<6
 
 
 void UART0_callback(uint32_t event);
@@ -36,6 +37,8 @@ void ESP_command(const void* command, const uint16_t delay, uint8_t size);
 void ESP_reset(uint16_t delay);
 void ESP_test(uint16_t delay);
 void ESP_WIFI_Disconnect(uint16_t delay);
+void connect_wifi();
+void disconnect_wifi();
 
 //Globals
 extern ARM_DRIVER_USART Driver_USART0;

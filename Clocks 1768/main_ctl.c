@@ -11,8 +11,6 @@ void ctl_handle_error(CTL_ERROR_CODE_t e)
 int main(void)
 {
     
-    unsigned int v=0;
-    
     clock_Engine();
 
     return 0;

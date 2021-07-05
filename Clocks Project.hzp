@@ -135,6 +135,7 @@
       CMSIS_CORE="No"
       Name="Common"
       Target="LPC1768"
+      analyze_after_compile="Yes"
       arm_architecture="v7M"
       arm_core_type="Cortex-M3"
       arm_gcc_target="arm-unknown-eabi"
