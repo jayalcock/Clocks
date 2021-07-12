@@ -21,7 +21,8 @@ typedef _Bool BOOL;
 #define FALSE 0;
 #define TRUE 1;
 
-#define LED (1<<9) //LED on DIP pin 18/P1.9
+//#define LED (1<<9) //LED on DIP pin 18/P1.9
+#define LED (1<<0) //LED on DIP pin 9/P1.0
 #define PULSEPERDEG 12 //12 pulses per degree rotated
 
 void delay(int t);

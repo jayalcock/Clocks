@@ -1,25 +1,5 @@
 #include "Comms.h"
 
-#define NEW_WIFI_CONNECTION 0
-#define HOME_WIFI 1
-#define PHONE_WIFI 0
-#define LYNDSEY_WIFI 0
-#define OTHER_WIFI 0 
-
-//WIFI Constants 
-const char* INIT = "AT\r\n";
-const char* RESET = "AT+RST\r\n";
-const char* DISCONNECT = "AT+CWQAP\r\n";
-const char* MODE = "AT+CWMODE=1\r\n";
-#if HOME_WIFI
-const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
-#elif PHONE_WIFI
-const char* SSIDPWD = "AT+CWJAP=\"Jay's iPhone\",\"shannon1\"\r\n";
-#elif LYNDSEY_WIFI
-const char* SSIDPWD = "AT+CWJAP=\"L-Gav Pad\",\"hgbbs123\"\r\n";
-#elif OTHER_WIFI
-const char* SSIDPWD = "AT+CWJAP=\"Gavins\",\"LakeHouse9307\"\r\n";
-#endif
 
 //UART receive buffer
 uint8_t rxBuffer[128];
@@ -28,11 +8,16 @@ uint8_t rxBuffer[128];
 CTL_MUTEX_t uart0_tx_mutex;
 CTL_EVENT_SET_t comms_event;
 
+//ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
 
-//Pointers to UART Driver object
-ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
-ARM_DRIVER_USART * USARTdrv1 = &Driver_USART1;
+//ARM_DRIVER_USART Driver_USART0;
+//ARM_DRIVER_USART Driver_USART1;
 
+ARM_DRIVER_USART *USARTdrv0 = &Driver_USART0;
+ARM_DRIVER_USART *USARTdrv1 = &Driver_USART1;
+
+//ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
+//ARM_DRIVER_USART * USARTdrv1 = &Driver_USART1;
 
 //Ring Buffer
 #define  SIZE_OF_BUFFER 50
@@ -45,6 +30,8 @@ void commsThread(void *p)
     
     ctl_events_init(&comms_event, 0);
     
+
+
     //Initialse UART's
     UARTinit(USARTdrv0, BAUD, UART0_callback);
     UARTinit(USARTdrv1, BAUD, UART1_callback);
@@ -88,8 +75,14 @@ void commsThread(void *p)
         USARTdrv1->Send(&tempChar, 1); //Send to uart1
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_TX_DONE, CTL_TIMEOUT_NONE, 0);
         
-        if(tempChar == 'a')
+        if(tempChar == 0x31) //User input 1 to update RTC from NTP
             ctl_events_set_clear(&time_event, 1<<0, 0);
+            
+        if(tempChar == 0x32) //User input 2 to print RTC value
+        {
+        }
+        
+       
 
     }
     
@@ -251,8 +244,19 @@ void UART1_callback(uint32_t event)
     }
 } 
 
- 
-
+void UART_send(const char * data, uint8_t length, uint8_t uartNumber)
+{
+    if(uartNumber == 0)
+    {
+        USARTdrv0->Send(&data, length);
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    }
+    if(uartNumber == 1)
+    {
+        USARTdrv1->Send(&data, length);
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    }
+}
 
 //Write data to ring buffer
 void writeBuffer(const char *tempChar)
