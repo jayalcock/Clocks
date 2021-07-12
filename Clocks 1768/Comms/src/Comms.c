@@ -10,8 +10,8 @@ CTL_EVENT_SET_t comms_event;
 
 //ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
 
-//ARM_DRIVER_USART Driver_USART0;
-//ARM_DRIVER_USART Driver_USART1;
+ARM_DRIVER_USART Driver_USART0;
+ARM_DRIVER_USART Driver_USART1;
 
 ARM_DRIVER_USART *USARTdrv0 = &Driver_USART0;
 ARM_DRIVER_USART *USARTdrv1 = &Driver_USART1;
@@ -27,6 +27,8 @@ static uint8_t writeIndex = 0;
 void commsThread(void *p)
 {
     uint8_t tempChar; 
+    
+
     
     ctl_events_init(&comms_event, 0);
     
