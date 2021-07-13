@@ -1,5 +1,5 @@
-#ifndef _COMMS_H_
-#define _COMMS_H_
+#ifndef COMMS_H
+#define COMMS_H
 
 #include <ctl.h>
 #include <string.h>
@@ -10,11 +10,11 @@
 
 
 #define NEW_WIFI_CONNECTION 0
-#define HOME_WIFI 0
+#define HOME_WIFI 1
 #define PHONE_WIFI 0
 #define LYNDSEY_WIFI 0
 #define LAKE_WIFI 0 
-#define OTHER_WIFI 1
+#define OTHER_WIFI 0
 
 #define BAUD 115200
 
@@ -49,32 +49,22 @@ void UART1_callback(uint32_t event);
 void commsThread(void *p);
 void rx_thread(void *p);
 
-void UARTinit(ARM_DRIVER_USART* UART_driver_number, uint32_t baud, void(*callback)(uint32_t));
+void UARTinit(const ARM_DRIVER_USART* UART_driver_number, const uint32_t baud,  void(*callback)(uint32_t));
 void UART0init(uint32_t baud);
 void UART1init(uint32_t baud);
-void UART_send(const char * data, uint8_t length, uint8_t uartNumber);
+void UART_send(const char * data, const uint8_t length, const uint8_t uartNumber);
 
 void writeBuffer(const char *tempChar);
 void readBuffer(uint8_t *arr, uint8_t length);
 
 void ESP_command(const void* command, const uint16_t delay, uint8_t size);
-
-void ESP_reset(uint16_t delay);
-void ESP_test(uint16_t delay);
-void ESP_WIFI_Disconnect(uint16_t delay);
 void connect_wifi();
 void disconnect_wifi();
 
-
-//extern ARM_DRIVER_USART *USARTdrv0;
-//extern ARM_DRIVER_USART *USARTdrv1;
-
-
-//extern USARTdrv0 = &Driver_USART0;
-//USARTdrv1 = &Driver_USART1;
-
 //Globals
-
+extern ARM_DRIVER_USART Driver_USART0;
+extern ARM_DRIVER_USART Driver_USART1;
 extern CTL_EVENT_SET_t comms_event;
+extern CTL_MUTEX_t uart0_tx_mutex;
 
-#endif /*COMMS_H*/
+#endif /*_COMMS_H*/

@@ -6,18 +6,13 @@ uint8_t rxBuffer[128];
    
 
 CTL_MUTEX_t uart0_tx_mutex;
+CTL_MUTEX_t uart1_tx_mutex;
 CTL_EVENT_SET_t comms_event;
 
-//ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
 
-ARM_DRIVER_USART Driver_USART0;
-ARM_DRIVER_USART Driver_USART1;
+ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
+ARM_DRIVER_USART * USARTdrv1 = &Driver_USART1;
 
-ARM_DRIVER_USART *USARTdrv0 = &Driver_USART0;
-ARM_DRIVER_USART *USARTdrv1 = &Driver_USART1;
-
-//ARM_DRIVER_USART * USARTdrv0 = &Driver_USART0;
-//ARM_DRIVER_USART * USARTdrv1 = &Driver_USART1;
 
 //Ring Buffer
 #define  SIZE_OF_BUFFER 50
@@ -26,21 +21,16 @@ static uint8_t writeIndex = 0;
 
 void commsThread(void *p)
 {
-    uint8_t tempChar; 
-    
-
-    
+    char tempChar; 
+       
     ctl_events_init(&comms_event, 0);
     
-
-
     //Initialse UART's
     UARTinit(USARTdrv0, BAUD, UART0_callback);
     UARTinit(USARTdrv1, BAUD, UART1_callback);
     
 
-    USARTdrv0->Send("\nStartup\n", 9);
-    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    UART_send("\nStartup\n", 9, 0);
         
     ////Ensure connection to ESP
     ESP_command(INIT, 200U, 0);
@@ -62,11 +52,7 @@ void commsThread(void *p)
    
     #endif
   
-   
-    USARTdrv0->Send("\n\nReady\n", 8);
-    ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
-    
-    //ctl_events_set_clear(&time_event, 1<<0, 0);
+    UART_send("\nReady\n", 8, 0);
    
     while(1) //Loop that receives data from computer and sends to UART1, then loops back UART1 data to computer. 
     {   
@@ -74,17 +60,19 @@ void commsThread(void *p)
         USARTdrv0->Receive(&tempChar, 1);
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_RX_DONE, CTL_TIMEOUT_NONE, 0);
         
-        USARTdrv1->Send(&tempChar, 1); //Send to uart1
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_TX_DONE, CTL_TIMEOUT_NONE, 0);
-        
         if(tempChar == 0x31) //User input 1 to update RTC from NTP
-            ctl_events_set_clear(&time_event, 1<<0, 0);
-            
-        if(tempChar == 0x32) //User input 2 to print RTC value
         {
+            ctl_events_set_clear(&time_event, 1<<0, 0);
         }
         
-       
+        else if(tempChar == 0x32) //User input 2 to print RTC value
+        {
+            print_rtc();
+        }
+        else
+        {
+            UART_send(&tempChar, 1, 1);
+        }
 
     }
     
@@ -112,13 +100,12 @@ void rx_thread(void *p)
         if(rxChar == 0x0a) //End of string 
         {
             ctl_events_set_clear(&comms_event, UART1_RX_END_OF_STRING, 0); 
-    
         }
     }
 }
 
 
-void UARTinit(ARM_DRIVER_USART* UART_driver_number, uint32_t baud, void(*callback)(uint32_t))
+void UARTinit(const ARM_DRIVER_USART* UART_driver_number, const uint32_t baud, void(*callback)(uint32_t))
 {
     /*Initialize the USART driver */
     UART_driver_number->Initialize(callback);
@@ -246,17 +233,22 @@ void UART1_callback(uint32_t event)
     }
 } 
 
-void UART_send(const char * data, uint8_t length, uint8_t uartNumber)
+//Send data to specified UART
+void UART_send(const char * data, const uint8_t length, const uint8_t uartNumber)
 {
     if(uartNumber == 0)
     {
-        USARTdrv0->Send(&data, length);
+        ctl_mutex_lock(&uart0_tx_mutex, CTL_TIMEOUT_NONE, 0);
+        USARTdrv0->Send(data, length);
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART0_TX_DONE, CTL_TIMEOUT_NONE, 0);
+        ctl_mutex_unlock(&uart0_tx_mutex);
     }
     if(uartNumber == 1)
     {
-        USARTdrv1->Send(&data, length);
+        ctl_mutex_lock(&uart1_tx_mutex, CTL_TIMEOUT_NONE, 0);
+        USARTdrv1->Send(data, length);
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &comms_event, UART1_TX_DONE, CTL_TIMEOUT_NONE, 0);
+        ctl_mutex_unlock(&uart1_tx_mutex);
     }
 }
 
@@ -327,12 +319,14 @@ void ESP_command(const void* command, const uint16_t delay, uint8_t size)
     ctl_timeout_wait(ctl_current_time + delay);
 }
 
+//Connect ESP to WIFI
 void connect_wifi()
 {
     //Connect to WIFI
     ESP_command(SSIDPWD, 6000U, 0);
 }
 
+//Disconnect ESP from WIFI
 void disconnect_wifi()
 {
     //Disconnect WIFI
