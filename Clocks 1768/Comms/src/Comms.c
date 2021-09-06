@@ -24,7 +24,7 @@ void commsThread(void *p)
     char tempChar; 
        
     ctl_events_init(&comms_event, 0);
-    
+   
     //Initialse UART's
     UARTinit(USARTdrv0, BAUD, UART0_callback);
     UARTinit(USARTdrv1, BAUD, UART1_callback);

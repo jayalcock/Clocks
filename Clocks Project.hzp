@@ -427,12 +427,12 @@
       </folder>
     </folder>
   </project>
-  <project Name="1114 Test">
+  <project Name="1114 C24 Test">
     <configuration
       CMSIS_CORE="Yes"
       Name="Common"
       Placement="Flash"
-      Target="LPC1114FDH28/102"
+      Target="LPC11C24FBD48/301"
       arm_architecture="v6M"
       arm_core_type="Cortex-M0"
       arm_endian="Little"
@@ -442,7 +442,7 @@
       arm_linker_process_stack_size="0"
       arm_linker_stack_size="256"
       arm_simulator_memory_simulation_filename="$(TargetsDir)/LPC1100/Simulator/LPC1100SimulatorMemory_$(HostOS)_$(HostArch)$(HostDLLExt)"
-      arm_simulator_memory_simulation_parameter="LPC1100,LPC1100XL;FLASH,0x00000000,0x00008000,ROM;RAM,0x10000000,0x00001000,RAM"
+      arm_simulator_memory_simulation_parameter="LPC1100,LPC11C00;FLASH,0x00000000,0x00008000,ROM;RAM,0x10000000,0x00002000,RAM"
       arm_target_debug_interface_type="ADIv5"
       arm_target_loader_applicable_loaders="Flash"
       arm_target_loader_default_loader="Flash"
@@ -452,7 +452,7 @@
       linker_memory_map_file="$(DeviceMemoryMapFile)"
       linker_patch_build_command="&quot;$(StudioDir)/bin/crossscript&quot; -load &quot;$(TargetsDir)/LPC1100/Scripts/LPC1100_Target.js&quot; &quot;LinkPatch(\&quot;$(TargetPath)\&quot;);&quot;"
       linker_section_placement_file="$(StudioDir)/targets/Cortex_M/flash_placement.xml"
-      macros="DeviceIncludePath=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx;DeviceHeaderFile=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx/LPC11xx.h;DeviceLoaderFile=$(TargetsDir)/LPC1100/Loader/LPC1100XL_Loader.elf;DeviceMemoryMapFile=$(TargetsDir)/LPC1100/XML/LPC1114FDH28_102_MemoryMap.xml;DeviceRegisterDefinitionFile=$(TargetsDir)/LPC1100/XML/LPC111x_Registers.xml;DeviceSystemFile=$(TargetsDir)/LPC1100/CMSIS/Device/Source/system_LPC11xx.c;DeviceVectorsFile=$(TargetsDir)/LPC1100/Source/LPC111x_Vectors.s;DeviceFamily=LPC1100;DeviceSubFamily=LPC1100XL"
+      macros="DeviceIncludePath=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx;DeviceHeaderFile=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx/LPC11xx.h;DeviceLoaderFile=$(TargetsDir)/LPC1100/Loader/LPC11C00_Loader.elf;DeviceMemoryMapFile=$(TargetsDir)/LPC1100/XML/LPC11C24FBD48_301_MemoryMap.xml;DeviceRegisterDefinitionFile=$(TargetsDir)/LPC1100/XML/LPC11Cxx_Registers.xml;DeviceSystemFile=$(TargetsDir)/LPC1100/CMSIS/Device/Source/system_LPC11xx.c;DeviceVectorsFile=$(TargetsDir)/LPC1100/Source/LPC11Cxx_Vectors.s;DeviceFamily=LPC1100;DeviceSubFamily=LPC11C00"
       package_dependencies="LPC1100"
       project_directory="1114Test"
       project_type="Executable"

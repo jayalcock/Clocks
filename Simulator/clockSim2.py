@@ -1,6 +1,7 @@
 import pygame, sys
 import math
 import time
+import random
 import numpy as np
 from pygame.locals import *
 
@@ -15,7 +16,6 @@ BLACK=(0,0,0)
 
 #screen class to set up window and background
 class Screen:
-
     def __init__ (self, screen_title):
         self.screen_title = screen_title
         self.height = 0
@@ -52,24 +52,10 @@ class Screen:
         self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
-
-
-#Initiate clock class
-class Clock:
-
-    #Clock class init
-    def __init__(self, centre, hour, minute, diameter):
-        self.centre = centre
-        self.hour = hour
-        self.minute = minute
-        self.diameter = diameter
-        self.hourArmLength = (diameter / 2) - 10
-        self.minuteArmLength = (diameter / 2) - 1
-        self.colour = BLACK
-
 #draw clock arms
 class clockArm:
-    def __init__(self, centre, length, angle, diameter):
+    def __init__(self, centre = (0, 0), length = 0, angle = 0, diameter = 0):
+    # def __init__(self, centre, length, diameter):   
         self.centre = centre
         self.length = length
         self.angle = angle
@@ -80,8 +66,6 @@ class clockArm:
         self.surface = self.surface.convert_alpha()
         self.surface.fill((0,0,0,0))
         self.rect = self.surface.get_rect()
-        self.diameter = diameter
-
         self.endPtCalc()
 
     #calculates arm end point given angle and length, from centre of rect object
@@ -96,6 +80,18 @@ class clockArm:
         self.rect.centery = self.centre[1]
         display.screen.blit(self.surface, self.rect)
 
+#Initiate clock class
+class Clock:
+    def __init__(self, centre, minuteArm, diameter):
+        self.centre = centre
+        # self.hourAngle = hour
+        # self.minutAngle = minute
+        self.hourArmLength = (diameter / 2) - 10
+        self.minuteArmLength = (diameter / 2) - 1
+        self.diameter = diameter
+        self.minuteArm = clockArm(self.centre, self.minuteArmLength, self.diameter)
+        self.colour = BLACK
+
 
 #clock matrix to setup and control clock classes
 class Clock_Matrix:
@@ -105,7 +101,7 @@ class Clock_Matrix:
         self.height = screen.height
         self.width = screen.width
         self.diameter = 1
-        self.clockMtx = np.empty([self.columns, self.rows], dtype= Clock) #populates with empty matrix
+        self.clockMtx = np.empty([self.columns, self.rows], dtype= Clock) #populates matrix with empty objects
         self.minArmMtx = np.empty([self.columns, self.rows], dtype= clockArm)
         self.hourArmMtx = np.empty([self.columns, self.rows], dtype= clockArm)
 
@@ -114,7 +110,6 @@ class Clock_Matrix:
 
     #calculates correct clock face diameter to fit on screen whether limited by width or height
     def calculateDiameter(self):
-        #calculate clock diameter and make matrix fit into screen
         if(self.height/self.rows > self.width/self.columns):
             self.diameter = (self.width/self.columns)
         else:
@@ -126,42 +121,54 @@ class Clock_Matrix:
             for i in range(self.columns):
                 centre_x = self.diameter * i + self.diameter/2
                 centre_y = self.diameter * j + self.diameter/2
-                self.clockMtx[i,j] = Clock((centre_x, centre_y), 0, 0, self.diameter)
+                self.clockMtx[i,j] = Clock((centre_x, centre_y), 0, self.diameter)
 
     #updates and draws minute arm
-    def updateMin(self, angle, delay):
+    def updateMin(self, angle):
         for j in range (rows):
             for i in range(columns):
-                self.minArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2, angle * (i + 40) * delay, self.diameter)
-                # self.minArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2, angle, self.diameter)
-
+                self.minArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2, patternEngine.minAngleMtx[i,j], self.diameter)
                 self.minArmMtx[i,j].surface.fill(WHITE)
                 self.minArmMtx[i,j].draw()
 
     #updates and draws hour arm
-    def updateHour(self, angle, delay):
+    def updateHour(self, angle):
         for j in range (rows):
             for i in range(columns):
-                self.hourArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2-20, angle * (i + 40) * delay, self.diameter)
+                self.hourArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2-20, patternEngine.hourAngleMtx[i,j], self.diameter)
                 self.hourArmMtx[i,j].draw()
 
     #draws clock frames on surface
-    def draw(self, display, angle1, angle2, delay):
-        self.updateMin(angle1, delay)
-        self.updateHour(angle2, delay)
+    def draw(self, display, angle1, angle2):
+        self.updateMin(angle1)
+        self.updateHour(angle2)
         for j in range (self.rows):
             for i in range(self.columns):
                 pygame.draw.circle(display.screen, self.clockMtx[i,j].colour, self.clockMtx[i,j].centre, self.diameter/2, 2)
 
 
 #engine to drive clock arms
-class patternEngine:
-    def __init__(self, min = 0, hour = 0):
+class pattern_Engine:
+    def __init__(self, minute = 0, hour = 0, minRate = 10, hourRate = 10):
         self.pattern = 0
-        self.minRate = 0
-        self.hourRate = 90
-        self.minAngle = min
+        self.minRate = minRate
+        self.hourRate = hourRate
+        self.minAngle = minute
         self.hourAngle = hour
+        self.minAngleMtx = np.empty([columns, rows], dtype= float) #matrix for storing calcualted angles
+        self.hourAngleMtx = np.empty([columns, rows], dtype= float) #matrix for storing calcualted angles
+
+        self.initialiseMatrix()
+
+
+    def initialiseMatrix(self):
+        for j in range (rows):
+            for i in range(columns):
+                self.minAngleMtx[i,j] = self.minAngle   #initialise minute angle matrix
+
+        for j in range (rows):
+            for i in range(columns):
+                self.hourAngleMtx[i,j] = self.hourAngle   #initialise hour angle matrix
 
     def rotateAtRate(self, arm, rate, direction):
 
@@ -183,9 +190,30 @@ class patternEngine:
         else:
             self.hourAngle = angle
 
-    # def randomRate(self):
+    def randomRate(self):
+        # for j in range (rows):
+        #     for i in range(columns):
+        #         self.angleMtx[i,j] = random.randint(1,10)
+        self.minRate = random.randint(-10,10)
+        self.hourRate = random.randint(-10,10)
 
+    def test(self):
+        for j in range (rows):
+            for i in range(columns):
+                self.minAngleMtx[i,j] += self.minRate
 
+        for j in range (rows):
+            for i in range(columns):
+                self.hourAngleMtx[i,j] += self.hourRate
+
+    def cascade(self):
+        for j in range (rows):
+            for i in range(columns):
+                self.minAngleMtx[i,j] += self.minRate * ((j + 10) / 100)
+
+        for j in range (rows):
+            for i in range(columns):
+                self.hourAngleMtx[i,j] += self.hourRate * ((j + 5) / 100)
 
 pygame.init()  #initiate pygame
 sysClock = pygame.time.Clock()     #set up system clock
@@ -197,41 +225,42 @@ display = Screen("Clock Sim")
 #Clock class matrix initialisation
 clockMatrix = Clock_Matrix(columns, rows, display)
 
-clockDriver = patternEngine(90, 90)
+patternEngine = pattern_Engine(0, 180, 10, 10)
 
 running = True
 
-clockDriver.minRate = 10
-clockDriver.hourRate = 10/12
-
-tempDel = 0.001
-# clockDriver.rotateToAngle("min", 0)
-# clockDriver.rotateToAngle("hour", 90)
-
 #draw clocks to display
-# clockMatrix.draw(display, clockDriver.minAngle, clockDriver.hourAngle, 0)
-pygame.display.update() #update display
+# clockMatrix.draw(display, patternEngine.minAngle, patternEngine.hourAngle, 0)
+# pygame.display.update() #update display
 
 time.sleep(1)
 
 while running:
-    for event in pygame.event.get(): #quite pygame
+    for event in pygame.event.get(): #quit pygame
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                patternEngine.minRate = random.randint(-10,10)
+                patternEngine.hourRate = random.randint(-10,10)
+
+            if event.key == pygame.K_r:
+                patternEngine.randomRate()
+
         if event.type==QUIT: 
             pygame.quit()
             sys.exit()
             running = False
 
 
-    clockDriver.rotateAtRate("min", clockDriver.minRate, "cw")
-    clockDriver.rotateAtRate("hour", clockDriver.hourRate, "cw")
+    # patternEngine.rotateAtRate("min", patternEngine.minRate, "cw")
+    # patternEngine.rotateAtRate("hour", patternEngine.hourRate, "cw")
+    
+
+    patternEngine.cascade()
   
-    print(clockMatrix.minArmMtx[0,0].angle)
-
-    tempDel = 0.001
-
+    # print(clockMatrix.minArmMtx[0,0].angle)
 
     #draw clocks to display
-    clockMatrix.draw(display, clockDriver.minAngle, clockDriver.hourAngle, tempDel)
+    clockMatrix.draw(display, patternEngine.minAngle, patternEngine.hourAngle)
     pygame.display.update() #update display
 
  
