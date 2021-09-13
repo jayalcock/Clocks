@@ -21,13 +21,9 @@ class Screen:
         self.height = 0
         self.width = 0
         self.screen = 0
-        self.background = 0
-        self.backgroundColour = WHITE
 
         self.getDisplayInfo()
         self.setupScreen()
-        self.setupBackground()
-        self.draw()
 
     #gets video info (resolution) from current active display 
     def getDisplayInfo(self):
@@ -41,6 +37,16 @@ class Screen:
         pygame.display.set_caption(self.screen_title)
         pygame.mouse.set_visible(1)    
 
+#Background class to draw blank background
+class Background:
+    def __init__(self, display):
+        self.background = 0
+        self.width = display.width
+        self.height = display.height
+        self.backgroundColour = WHITE
+
+        self.setupBackground()
+
     #sets up background to be printed on
     def setupBackground(self):
         self.background = pygame.Surface([self.width, self.height]) 
@@ -48,9 +54,8 @@ class Screen:
         self.background.fill(self.backgroundColour)
 
     #draws background to screen
-    def draw(self):
-        self.screen.blit(self.background, (0, 0))
-        pygame.display.flip()
+    def draw(self, display):
+        display.screen.blit(self.background, (0, 0))
 
 #draw clock arms
 class clockArm:
@@ -77,7 +82,7 @@ class clockArm:
     def draw(self):
         pygame.draw.line(self.surface, self.colour, self.rect.center, self.endPoint) #from centre point of surface
         self.rect.centerx = self.centre[0]
-        self.rect.centery = self.centre[1]
+        self.rect.centery = self.centre[1]  
         display.screen.blit(self.surface, self.rect)
 
 #Initiate clock class
@@ -221,6 +226,10 @@ sysClock.tick(60)   #set framerate
 
 #setup screen
 display = Screen("Clock Sim")
+
+#setup and display background
+background = Background(display)
+background.draw(display)
 
 #Clock class matrix initialisation
 clockMatrix = Clock_Matrix(columns, rows, display)
