@@ -74,8 +74,6 @@ class clockArm:
 
         self.rect = self.surface.get_rect()
         self.rect.center = centre
-        # self.rect2 = 0
-        # self.endPtCalc()
 
     #calculates arm end point given angle and length, from centre of rect object
     def endPtCalc(self):
@@ -84,38 +82,18 @@ class clockArm:
 
     #draws arm objects on surface and centres rect object on centre of clock face object
     def draw(self, display):
-
-
-        # self.rect.center = self.centre
         self.endPtCalc()
-        
-        # pygame.draw.line(self.surface, self.colour, self.rect.center, self.endPoint, self.width) #from centre point of surface
         pygame.draw.line(display.screen, self.colour, self.centre, self.endPoint, self.width) #from centre point of surface
-        # self.rect = pygame.draw.line(self.surface, self.colour, self.centre, self.endPoint, self.width) #from centre point of surface
-
-        # self.rect.center = self.centre
-
-        # print(self.rect)
-
-        # print(f"{self.centre}, {self.endPoint}\n")
-       
-        # self.rect.centerx = self.centre[0]
-        # self.rect.centery = self.centre[1]  
-        # print(f"{self.rect.center}, {self.endPoint}\n")
-        # self.surface.set_colorkey(WHITE)
-        # display.screen.blit(self.surface, self.rect)
-        # pygame.display.update() #update display
 
 #Initiate clock class
 class Clock:
     def __init__(self, centre, diameter):
         self.centre = centre
-        # self.hourAngle = hour
-        # self.minutAngle = minute
         self.hourArmLength = (diameter / 2) - 10
         self.minuteArmLength = (diameter / 2) - 1
         self.diameter = diameter
         self.minuteArm = clockArm(self.centre, self.minuteArmLength, 0, self.diameter)
+        self.hourArm = clockArm(self.centre, self.hourArmLength, 0, self.diameter)
         self.colour = BLACK
 
 
@@ -153,11 +131,7 @@ class Clock_Matrix:
     def updateMin(self, angle, display):
         for j in range (rows):
             for i in range(columns):
-                # self.minArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2, angle.minAngleMtx[i,j], self.diameter)
-                # self.minArmMtx[i,j].surface.fill(WHITE)
-                # self.minArmMtx[i,j].draw(display)
                 self.clockMtx[i,j].minuteArm.angle = angle.minAngleMtx[i,j]
-                # self.clockMtx[i,j].minuteArm.surface.fill(WHITE)
                 self.clockMtx[i,j].minuteArm.draw(display)
 
 
@@ -165,8 +139,8 @@ class Clock_Matrix:
     def updateHour(self, angle, display):
         for j in range (rows):
             for i in range(columns):
-                self.hourArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2-20, angle.hourAngleMtx[i,j], self.diameter)
-                # self.hourArmMtx[i,j].draw(display)
+                self.clockMtx[i,j].hourArm.angle = angle.hourAngleMtx[i,j]
+                self.clockMtx[i,j].hourArm.draw(display)
 
     #draws clock frames on surface
     def draw(self, display, angleMtx):
