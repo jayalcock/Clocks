@@ -59,19 +59,23 @@ class Background:
 
 #draw clock arms
 class clockArm:
-    def __init__(self, centre = (0, 0), length = 0, angle = 0, diameter = 0):
+    def __init__(self, centre, length, angle, diameter):
     # def __init__(self, centre, length, diameter):   
         self.centre = centre
         self.length = length
         self.angle = angle
         self.colour = BLACK
+        self.width = 1
         self.endPoint = [0, 0]
         self.surfSize  = (width, height) = (int(diameter), int(diameter))
         self.surface = pygame.Surface(self.surfSize)
         self.surface = self.surface.convert_alpha()
         self.surface.fill((0,0,0,0))
+
         self.rect = self.surface.get_rect()
-        self.endPtCalc()
+        self.rect.center = centre
+        # self.rect2 = 0
+        # self.endPtCalc()
 
     #calculates arm end point given angle and length, from centre of rect object
     def endPtCalc(self):
@@ -79,22 +83,39 @@ class clockArm:
         self.endPoint = [(math.sin(ang) * self.length) + self.rect.centerx, (math.cos(ang) * self.length) + self.rect.centery]
 
     #draws arm objects on surface and centres rect object on centre of clock face object
-    def draw(self):
-        pygame.draw.line(self.surface, self.colour, self.rect.center, self.endPoint) #from centre point of surface
-        self.rect.centerx = self.centre[0]
-        self.rect.centery = self.centre[1]  
-        display.screen.blit(self.surface, self.rect)
+    def draw(self, display):
+
+
+        # self.rect.center = self.centre
+        self.endPtCalc()
+        
+        # pygame.draw.line(self.surface, self.colour, self.rect.center, self.endPoint, self.width) #from centre point of surface
+        pygame.draw.line(display.screen, self.colour, self.centre, self.endPoint, self.width) #from centre point of surface
+        # self.rect = pygame.draw.line(self.surface, self.colour, self.centre, self.endPoint, self.width) #from centre point of surface
+
+        # self.rect.center = self.centre
+
+        # print(self.rect)
+
+        # print(f"{self.centre}, {self.endPoint}\n")
+       
+        # self.rect.centerx = self.centre[0]
+        # self.rect.centery = self.centre[1]  
+        # print(f"{self.rect.center}, {self.endPoint}\n")
+        # self.surface.set_colorkey(WHITE)
+        # display.screen.blit(self.surface, self.rect)
+        # pygame.display.update() #update display
 
 #Initiate clock class
 class Clock:
-    def __init__(self, centre, minuteArm, diameter):
+    def __init__(self, centre, diameter):
         self.centre = centre
         # self.hourAngle = hour
         # self.minutAngle = minute
         self.hourArmLength = (diameter / 2) - 10
         self.minuteArmLength = (diameter / 2) - 1
         self.diameter = diameter
-        self.minuteArm = clockArm(self.centre, self.minuteArmLength, self.diameter)
+        self.minuteArm = clockArm(self.centre, self.minuteArmLength, 0, self.diameter)
         self.colour = BLACK
 
 
@@ -126,27 +147,31 @@ class Clock_Matrix:
             for i in range(self.columns):
                 centre_x = self.diameter * i + self.diameter/2
                 centre_y = self.diameter * j + self.diameter/2
-                self.clockMtx[i,j] = Clock((centre_x, centre_y), 0, self.diameter)
+                self.clockMtx[i,j] = Clock((centre_x, centre_y), self.diameter)
 
     #updates and draws minute arm
-    def updateMin(self, angle):
+    def updateMin(self, angle, display):
         for j in range (rows):
             for i in range(columns):
-                self.minArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2, patternEngine.minAngleMtx[i,j], self.diameter)
-                self.minArmMtx[i,j].surface.fill(WHITE)
-                self.minArmMtx[i,j].draw()
+                # self.minArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2, angle.minAngleMtx[i,j], self.diameter)
+                # self.minArmMtx[i,j].surface.fill(WHITE)
+                # self.minArmMtx[i,j].draw(display)
+                self.clockMtx[i,j].minuteArm.angle = angle.minAngleMtx[i,j]
+                # self.clockMtx[i,j].minuteArm.surface.fill(WHITE)
+                self.clockMtx[i,j].minuteArm.draw(display)
+
 
     #updates and draws hour arm
-    def updateHour(self, angle):
+    def updateHour(self, angle, display):
         for j in range (rows):
             for i in range(columns):
-                self.hourArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2-20, patternEngine.hourAngleMtx[i,j], self.diameter)
-                self.hourArmMtx[i,j].draw()
+                self.hourArmMtx[i,j] = clockArm((self.clockMtx[i,j].centre[0], self.clockMtx[i,j].centre[1]), self.diameter/2-20, angle.hourAngleMtx[i,j], self.diameter)
+                # self.hourArmMtx[i,j].draw(display)
 
     #draws clock frames on surface
-    def draw(self, display, angle1, angle2):
-        self.updateMin(angle1)
-        self.updateHour(angle2)
+    def draw(self, display, angleMtx):
+        self.updateMin(angleMtx, display)
+        self.updateHour(angleMtx, display)
         for j in range (self.rows):
             for i in range(self.columns):
                 pygame.draw.circle(display.screen, self.clockMtx[i,j].colour, self.clockMtx[i,j].centre, self.diameter/2, 2)
@@ -238,9 +263,6 @@ patternEngine = pattern_Engine(0, 180, 10, 10)
 
 running = True
 
-#draw clocks to display
-# clockMatrix.draw(display, patternEngine.minAngle, patternEngine.hourAngle, 0)
-# pygame.display.update() #update display
 
 time.sleep(1)
 
@@ -259,17 +281,14 @@ while running:
             sys.exit()
             running = False
 
-
-    # patternEngine.rotateAtRate("min", patternEngine.minRate, "cw")
-    # patternEngine.rotateAtRate("hour", patternEngine.hourRate, "cw")
     
 
     patternEngine.cascade()
   
-    # print(clockMatrix.minArmMtx[0,0].angle)
 
     #draw clocks to display
-    clockMatrix.draw(display, patternEngine.minAngle, patternEngine.hourAngle)
+    background.draw(display)
+    clockMatrix.draw(display, patternEngine)
     pygame.display.update() #update display
 
  
