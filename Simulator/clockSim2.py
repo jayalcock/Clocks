@@ -43,7 +43,7 @@ class Background:
         self.background = 0
         self.width = display.width
         self.height = display.height
-        self.backgroundColour = BLUE
+        self.backgroundColour = WHITE
 
         self.setupBackground()
 
