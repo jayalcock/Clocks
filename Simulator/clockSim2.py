@@ -8,7 +8,6 @@ from pygame.locals import *
 columns = 15    #number of clock columns
 rows =  8     #number of clock rows
 
-
 #define colours
 WHITE=(255,255,255) 
 BLUE=(0,0,255)
@@ -58,7 +57,7 @@ class Background:
         display.screen.blit(self.background, (0, 0))
 
 #draw clock arms
-class clockArm:
+class clock_Arm:
     def __init__(self, centre, length, angle):
         self.centre = centre
         self.length = length
@@ -84,8 +83,8 @@ class Clock:
         self.hourArmLength = (diameter / 2) - 10
         self.minuteArmLength = (diameter / 2) - 1
         self.diameter = diameter
-        self.minuteArm = clockArm(self.centre, self.minuteArmLength, 0)
-        self.hourArm = clockArm(self.centre, self.hourArmLength, 0)
+        self.minuteArm = clock_Arm(self.centre, self.minuteArmLength, 0)
+        self.hourArm = clock_Arm(self.centre, self.hourArmLength, 0)
         self.colour = BLACK
         self.lineWidth = 2
 
@@ -200,7 +199,7 @@ class pattern_Engine:
 
         for j in range (rows):
             for i in range(columns):
-                self.hourAngleMtx[i,j] += self.hourRate * ((j + 5) / 100)
+                self.hourAngleMtx[i,j] += self.hourRate * ((j + 10) / 100)
 
 pygame.init()  #initiate pygame
 sysClock = pygame.time.Clock()     #set up system clock
@@ -217,18 +216,18 @@ background.draw(display)
 clockMatrix = Clock_Matrix(columns, rows, display)
 
 #initialised pattern engine with initial arm angles and rotation rates
-patternEngine = pattern_Engine(0, 180, 10, 10)
+patternEngine = pattern_Engine(0, 180, 5, 5)
 
 running = True
 
 time.sleep(1)
 
 while running:
+
+    start_time = time.time()
+
     for event in pygame.event.get(): #quit pygame
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                patternEngine.minRate = random.randint(-10,10)
-                patternEngine.hourRate = random.randint(-10,10)
 
             if event.key == pygame.K_r:
                 patternEngine.randomRate()
@@ -252,6 +251,5 @@ while running:
     #update display
     pygame.display.update()
 
- 
 
 pygame.quit()
