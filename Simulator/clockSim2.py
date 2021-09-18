@@ -120,7 +120,7 @@ class Clock_Matrix:
     # Calculates correct clock face diameter to fit on screen
     # whether limited by width or height
     def calculateDiameter(self):
-        if(self.height / self.rows > self.widt / self.columns):
+        if(self.height / self.rows > self.width / self.columns):
             self.clockDiameter = (self.width / self.columns)
         else:
             self.clockDiameter = (self.heigh / self.rows) - 10
@@ -139,7 +139,8 @@ class Clock_Matrix:
         for j in range(self.rows):
             for i in range(self.columns):
                 # update minute arm and draw
-                self.clockMtx[i, j].minuteArm.angle = angleMtx.minAngleMtx[i, j]
+                self.clockMtx[i, j].minuteArm.angle =\
+                    angleMtx.minAngleMtx[i, j]
                 self.clockMtx[i, j].minuteArm.draw(display)
 
                 # update hour arm and draw
@@ -199,15 +200,6 @@ class pattern_Engine:
     def randomRate(self):
         self.minRate = random.randint(-10, 10)
         self.hourRate = random.randint(-10, 10)
-
-    def test(self):
-        for j in range(rows):
-            for i in range(columns):
-                self.minAngleMtx[i, j] += self.minRate
-
-        for j in range(rows):
-            for i in range(columns):
-                self.hourAngleMtx[i, j] += self.hourRate
 
     def cascade(self):
         for j in range(rows):
