@@ -210,6 +210,11 @@ class pattern_Engine:
             for i in range(columns):
                 self.hourAngleMtx[i, j] += self.hourRate * ((j + 10) / 100)
 
+    def border(self):
+        for j in range(columns):
+            self.minAngleMtx[0, j] == 270
+            self.hourAngleMtx[0, j] == 90
+
 
 pygame.init()  # initiate pygame
 sysClock = pygame.time.Clock()     # set up system clock
@@ -255,6 +260,7 @@ while running:
 
     # draw clocks to display
     clockMatrix.draw(display, patternEngine)
+    # patternEngine.border()
 
     # update display
     pygame.display.update()
