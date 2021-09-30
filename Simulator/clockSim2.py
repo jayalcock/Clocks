@@ -14,6 +14,10 @@ WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 
+# clock number dictionary
+timeAngle = {'12': 0, '1': 30, '2': 60, '3': 90, '4': 120, '5': 150,
+             '6': 180, '7': 210, '8': 240, '9': 270, '10': 300, '11': 330}
+
 # screen class to set up window and background
 class Screen:
 
@@ -66,6 +70,8 @@ class clock_Arm:
         self.centre = centre
         self.length = length
         self.angle = angle
+        # self.desiredAngle = None
+        self.desiredAngle = 10
         self.colour = BLACK
         self.lineWidth = 1
         self.endPoint = [0, 0]
@@ -201,13 +207,21 @@ class pattern_Engine:
         self.minRate = random.randint(-10, 10)
         self.hourRate = random.randint(-10, 10)
 
-    def cascade(self):
+    def cascade(self, clockMatrix):
         for j in range(rows):
             for i in range(columns):
+                if(clockMatrix.clockMtx[i, j].minuteArm.angle
+                   == clockMatrix.clockMtx[i, j].minuteArm.desiredAngle):
+                    continue
+            else:
                 self.minAngleMtx[i, j] += self.minRate * ((j + 10) / 100)
 
         for j in range(rows):
             for i in range(columns):
+                if(clockMatrix.clockMtx[i, j].hourArm.angle
+                   == clockMatrix.clockMtx[i, j].hourArm.desiredAngle):
+                    continue
+            else:
                 self.hourAngleMtx[i, j] += self.hourRate * ((j + 10) / 100)
 
     # draws border on outermost clocks
@@ -233,6 +247,10 @@ class pattern_Engine:
         self.hourAngleMtx[0, rows - 1] = 90
         self.minAngleMtx[columns - 1, rows - 1] = 270
         self.hourAngleMtx[columns - 1, rows - 1] = 0
+
+    # determine difference in angle between current and desired
+    def degreesTo(self, current, desired):
+        return desired - current
 
 
 pygame.init()  # initiate pygame
@@ -272,7 +290,7 @@ while running:
             running = False
 
     # run select pattern engine functions
-    patternEngine.cascade()
+    patternEngine.cascade(clockMatrix)
 
     # border test
     patternEngine.border()
