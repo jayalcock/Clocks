@@ -427,7 +427,7 @@
       </folder>
     </folder>
   </project>
-  <project Name="1114 C24 Test">
+  <project Name="1114 C24">
     <configuration
       CMSIS_CORE="Yes"
       Name="Common"

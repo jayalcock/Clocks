@@ -210,10 +210,29 @@ class pattern_Engine:
             for i in range(columns):
                 self.hourAngleMtx[i, j] += self.hourRate * ((j + 10) / 100)
 
+    # draws border on outermost clocks
     def border(self):
-        for j in range(columns):
-            self.minAngleMtx[0, j] == 270
-            self.hourAngleMtx[0, j] == 90
+        for i in range(columns):
+            self.minAngleMtx[i, 0] = 270
+            self.hourAngleMtx[i, 0] = 90
+            self.minAngleMtx[i, rows - 1] = 270
+            self.hourAngleMtx[i, rows - 1] = 90
+
+        for j in range(rows):
+            self.minAngleMtx[0, j] = 0
+            self.hourAngleMtx[0, j] = 180
+            self.minAngleMtx[columns - 1, j] = 0
+            self.hourAngleMtx[columns - 1, j] = 180
+
+        # coners
+        self.minAngleMtx[0, 0] = 180
+        self.hourAngleMtx[0, 0] = 90
+        self.minAngleMtx[columns - 1, 0] = 270
+        self.hourAngleMtx[columns - 1, 0] = 180
+        self.minAngleMtx[0, rows - 1] = 0
+        self.hourAngleMtx[0, rows - 1] = 90
+        self.minAngleMtx[columns - 1, rows - 1] = 270
+        self.hourAngleMtx[columns - 1, rows - 1] = 0
 
 
 pygame.init()  # initiate pygame
@@ -255,12 +274,14 @@ while running:
     # run select pattern engine functions
     patternEngine.cascade()
 
+    # border test
+    patternEngine.border()
+
     # prints background to screen
     background.draw(display)
 
     # draw clocks to display
     clockMatrix.draw(display, patternEngine)
-    # patternEngine.border()
 
     # update display
     pygame.display.update()

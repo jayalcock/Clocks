@@ -55,11 +55,8 @@
  </Memory4>
  <Project>
   <ProjectSessionItem path="Clocks"/>
-  <ProjectSessionItem path="Clocks;1114 C24 Test"/>
-  <ProjectSessionItem path="Clocks;1114 C24 Test;Source Files"/>
-  <ProjectSessionItem path="Clocks;Clocks 1114"/>
-  <ProjectSessionItem path="Clocks;Clocks 1114;Sources"/>
-  <ProjectSessionItem path="Clocks;Clocks 1768 CTL"/>
+  <ProjectSessionItem path="Clocks;1114 C24"/>
+  <ProjectSessionItem path="Clocks;1114 C24;Source Files"/>
   <SourceCodeControlLogin password="F9BB6682F5D56822" user="Jay Alcock &lt;jay.alcock@me.com>"/>
  </Project>
  <Register1>
@@ -133,7 +130,12 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="21" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1114Test/main.cpp" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="9" y="34" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1114Test/main.cpp" selected="1" top="22" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1114/Sources/main.c" selected="0" top="47" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/main_ctl.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/Headers/Clocks.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="32" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/Sources/Clocks.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="39" y="27" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/Sources/Time.c" selected="0" top="0" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="1114 C24 Test" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="Generic FT2232 Device" buildConfiguration="THUMB Flash Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/jayalcock/Documents/Crossworks Projects/Clocks/Clocks 1768" debugSearchPath="" autoConnectCapabilities="388479"/>
+ <ARMCrossStudioWindow activeProject="1114 C24" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="Olimex ARM-USB-TINY" buildConfiguration="THUMB Flash Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/jayalcock/Documents/Crossworks Projects/Clocks/Clocks 1768" debugSearchPath="" autoConnectCapabilities="388479"/>
 </session>
