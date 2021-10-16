@@ -296,68 +296,74 @@ class pattern_Engine:
         clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = free
 
 
-pygame.init()  # initiate pygame
-sysClock = pygame.time.Clock()     # set up system clock
-sysClock.tick(60)   # set framerate
+def main():
 
-# setup screen
-display = Screen("Clock Sim")
+    pygame.init()  # initiate pygame
+    sysClock = pygame.time.Clock()     # set up system clock
+    sysClock.tick(60)   # set framerate
 
-# setup and display background
-background = Background(display)
-background.draw(display)
+    # setup screen
+    display = Screen("Clock Sim")
 
-# Clock class matrix initialisation
-clockMatrix = Clock_Matrix(display)
-
-# initialised pattern engine with initial arm angles and rotation rates
-patternEngine = pattern_Engine(0, 180, 5, 5)
-
-running = True
-border = False
-borderTrigger = False
-
-time.sleep(1)
-
-while running:
-
-    for event in pygame.event.get():  # quit pygame
-        if event.type == pygame.KEYDOWN:
-
-            # 'r' to randomise rotation rates
-            if event.key == pygame.K_r:
-                patternEngine.randomRate()
-
-            # 'b' to set border
-            if event.key == pygame.K_b:
-                borderTrigger = True
-
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-            running = False
-
-    # run select pattern engine functions
-    patternEngine.cascade(clockMatrix)
-
-    # border
-    while borderTrigger:
-        border = not border
-        if border:
-            patternEngine.border(clockMatrix)
-        else:
-            patternEngine.clearBorder(clockMatrix)
-
-        borderTrigger = False
-
-    # prints background to screen
+    # setup and display background
+    background = Background(display)
     background.draw(display)
 
-    # draw clocks to display
-    clockMatrix.draw(display, patternEngine)
+    # Clock class matrix initialisation
+    clockMatrix = Clock_Matrix(display)
 
-    # update display
-    pygame.display.update()
+    # initialised pattern engine with initial arm angles and rotation rates
+    patternEngine = pattern_Engine(0, 180, 5, 5)
+
+    running = True
+    border = False
+    borderTrigger = False
+
+    time.sleep(1)
+
+    while running:
+
+        for event in pygame.event.get():  # quit pygame
+            if event.type == pygame.KEYDOWN:
+
+                # 'r' to randomise rotation rates
+                if event.key == pygame.K_r:
+                    patternEngine.randomRate()
+
+                # 'b' to set border
+                if event.key == pygame.K_b:
+                    borderTrigger = True
+
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+                running = False
+
+        # run select pattern engine functions
+        patternEngine.cascade(clockMatrix)
+
+        # border
+        while borderTrigger:
+            border = not border
+            if border:
+                patternEngine.border(clockMatrix)
+            else:
+                patternEngine.clearBorder(clockMatrix)
+
+            borderTrigger = False
+
+        # prints background to screen
+        background.draw(display)
+
+        # draw clocks to display
+        clockMatrix.draw(display, patternEngine)
+
+        # update display
+        pygame.display.update()
+
+    pygame.quit()
 
 
-pygame.quit()
+if __name__ == "__main__":
+
+    main()
