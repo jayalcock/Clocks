@@ -70,8 +70,7 @@ class clock_Arm:
         self.centre = centre
         self.length = length
         self.angle = angle
-        # self.desiredAngle = None
-        self.desiredAngle = 10
+        self.targetAngle = 400.0
         self.colour = BLACK
         self.lineWidth = 1
         self.endPoint = [0, 0]
@@ -110,31 +109,28 @@ class Clock:
 # Clock matrix to setup and control clock classes
 class Clock_Matrix:
 
-    def __init__(self, columns, rows, screen):
-        self.columns = columns
-        self.rows = rows
+    def __init__(self, screen):
         self.height = screen.height
         self.width = screen.width
         self.clockDiameter = 0
 
         # populates matrix with empty objects
-        self.clockMtx = np.empty([self.columns, self.rows], dtype=Clock)
-
+        self.clockMtx = np.empty([columns, rows], dtype=Clock)
         self.calculateDiameter()
         self.populateMatrix()
 
     # Calculates correct clock face diameter to fit on screen
     # whether limited by width or height
     def calculateDiameter(self):
-        if(self.height / self.rows > self.width / self.columns):
-            self.clockDiameter = (self.width / self.columns)
+        if(self.height / rows > self.width / columns):
+            self.clockDiameter = (self.width / columns)
         else:
-            self.clockDiameter = (self.heigh / self.rows) - 10
+            self.clockDiameter = (self.height / rows) - 10
 
     # Populates clock matrix with clock objects on equally spaced centre points
     def populateMatrix(self):
-        for j in range(self.rows):
-            for i in range(self.columns):
+        for j in range(rows):
+            for i in range(columns):
                 centre_x = self.clockDiameter * i + self.clockDiameter / 2
                 centre_y = self.clockDiameter * j + self.clockDiameter / 2
                 self.clockMtx[i, j] = Clock((centre_x, centre_y),
@@ -142,8 +138,8 @@ class Clock_Matrix:
 
     # Draws clock frames on surface
     def draw(self, display, angleMtx):
-        for j in range(self.rows):
-            for i in range(self.columns):
+        for j in range(rows):
+            for i in range(columns):
                 # update minute arm and draw
                 self.clockMtx[i, j].minuteArm.angle =\
                     angleMtx.minAngleMtx[i, j]
@@ -207,50 +203,97 @@ class pattern_Engine:
         self.minRate = random.randint(-10, 10)
         self.hourRate = random.randint(-10, 10)
 
+    # determine difference in angle between current and target
+    def angleCheck(self, currentAngle, targetAngle):
+        if(abs(targetAngle - currentAngle) <= 1):
+            return True
+        else:
+            return False
+
+    # testing cascade pattern across matrix
     def cascade(self, clockMatrix):
         for j in range(rows):
             for i in range(columns):
-                if(clockMatrix.clockMtx[i, j].minuteArm.angle
-                   == clockMatrix.clockMtx[i, j].minuteArm.desiredAngle):
+                if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
+                                    clockMatrix.clockMtx[i, j].
+                                    minuteArm.targetAngle)):
+                    self.minAngleMtx[i, j] =\
+                        clockMatrix.clockMtx[i, j].minuteArm.targetAngle
                     continue
-            else:
-                self.minAngleMtx[i, j] += self.minRate * ((j + 10) / 100)
+                else:
+                    self.minAngleMtx[i, j] +=\
+                        self.minRate * ((j + 5.0) / 100.0)
+
+                    if self.minAngleMtx[i, j] > 360.0:
+                        self.minAngleMtx[i, j] -= 360.0
+                    elif self.minAngleMtx[i, j] < 0.0:
+                        self.minAngleMtx[i, j] += 360.0
 
         for j in range(rows):
             for i in range(columns):
-                if(clockMatrix.clockMtx[i, j].hourArm.angle
-                   == clockMatrix.clockMtx[i, j].hourArm.desiredAngle):
+                if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
+                   clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
+                    self.hourAngleMtx[i, j] =\
+                        clockMatrix.clockMtx[i, j].hourArm.targetAngle
                     continue
-            else:
-                self.hourAngleMtx[i, j] += self.hourRate * ((j + 10) / 100)
+                else:
+                    self.hourAngleMtx[i, j] +=\
+                        self.hourRate * ((j + 5.0) / 100.0)
+                    if self.hourAngleMtx[i, j] > 360.0:
+                        self.hourAngleMtx[i, j] -= 360.0
+                    elif self.hourAngleMtx[i, j] < 0.0:
+                        self.hourAngleMtx[i, j] += 360.0
 
     # draws border on outermost clocks
-    def border(self):
+    def border(self, clockMatrix):
+
         for i in range(columns):
-            self.minAngleMtx[i, 0] = 270
-            self.hourAngleMtx[i, 0] = 90
-            self.minAngleMtx[i, rows - 1] = 270
-            self.hourAngleMtx[i, rows - 1] = 90
+            clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = 270
+            clockMatrix.clockMtx[i, 0].hourArm.targetAngle = 90
+            clockMatrix.clockMtx[i, rows - 1].minuteArm.targetAngle = 270
+            clockMatrix.clockMtx[i, rows - 1].hourArm.targetAngle = 90
 
         for j in range(rows):
-            self.minAngleMtx[0, j] = 0
-            self.hourAngleMtx[0, j] = 180
-            self.minAngleMtx[columns - 1, j] = 0
-            self.hourAngleMtx[columns - 1, j] = 180
+            clockMatrix.clockMtx[0, j].minuteArm.targetAngle = 0
+            clockMatrix.clockMtx[0, j].hourArm.targetAngle = 180
+            clockMatrix.clockMtx[columns - 1, j].minuteArm.targetAngle = 0
+            clockMatrix.clockMtx[columns - 1, j].hourArm.targetAngle = 180
 
         # coners
-        self.minAngleMtx[0, 0] = 180
-        self.hourAngleMtx[0, 0] = 90
-        self.minAngleMtx[columns - 1, 0] = 270
-        self.hourAngleMtx[columns - 1, 0] = 180
-        self.minAngleMtx[0, rows - 1] = 0
-        self.hourAngleMtx[0, rows - 1] = 90
-        self.minAngleMtx[columns - 1, rows - 1] = 270
-        self.hourAngleMtx[columns - 1, rows - 1] = 0
+        clockMatrix.clockMtx[0, 0].minuteArm.targetAngle = 180
+        clockMatrix.clockMtx[0, 0].hourArm.targetAngle = 90
+        clockMatrix.clockMtx[columns - 1, 0].minuteArm.targetAngle = 270
+        clockMatrix.clockMtx[columns - 1, 0].hourArm.targetAngle = 180
+        clockMatrix.clockMtx[0, rows - 1].minuteArm.targetAngle = 0
+        clockMatrix.clockMtx[0, rows - 1].hourArm.targetAngle = 90
+        clockMatrix.clockMtx[columns - 1, rows - 1].minuteArm.targetAngle = 270
+        clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = 0
 
-    # determine difference in angle between current and desired
-    def degreesTo(self, current, desired):
-        return desired - current
+    # clears border from clocks
+    def clearBorder(self, clockMatrix):
+        free = 400
+        for i in range(columns):
+            clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = free
+            clockMatrix.clockMtx[i, 0].hourArm.targetAngle = free
+            clockMatrix.clockMtx[i, rows - 1].minuteArm.targetAngle = free
+            clockMatrix.clockMtx[i, rows - 1].hourArm.targetAngle = free
+
+        for j in range(rows):
+            clockMatrix.clockMtx[0, j].minuteArm.targetAngle = free
+            clockMatrix.clockMtx[0, j].hourArm.targetAngle = free
+            clockMatrix.clockMtx[columns - 1, j].minuteArm.targetAngle = free
+            clockMatrix.clockMtx[columns - 1, j].hourArm.targetAngle = free
+
+        # coners
+        clockMatrix.clockMtx[0, 0].minuteArm.targetAngle = free
+        clockMatrix.clockMtx[0, 0].hourArm.targetAngle = free
+        clockMatrix.clockMtx[columns - 1, 0].minuteArm.targetAngle = free
+        clockMatrix.clockMtx[columns - 1, 0].hourArm.targetAngle = free
+        clockMatrix.clockMtx[0, rows - 1].minuteArm.targetAngle = free
+        clockMatrix.clockMtx[0, rows - 1].hourArm.targetAngle = free
+        clockMatrix.clockMtx[columns - 1, rows - 1].minuteArm.targetAngle =\
+            free
+        clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = free
 
 
 pygame.init()  # initiate pygame
@@ -265,24 +308,29 @@ background = Background(display)
 background.draw(display)
 
 # Clock class matrix initialisation
-clockMatrix = Clock_Matrix(columns, rows, display)
+clockMatrix = Clock_Matrix(display)
 
 # initialised pattern engine with initial arm angles and rotation rates
 patternEngine = pattern_Engine(0, 180, 5, 5)
 
 running = True
+border = False
+borderTrigger = False
 
 time.sleep(1)
 
 while running:
 
-    start_time = time.time()
-
     for event in pygame.event.get():  # quit pygame
         if event.type == pygame.KEYDOWN:
 
+            # 'r' to randomise rotation rates
             if event.key == pygame.K_r:
                 patternEngine.randomRate()
+
+            # 'b' to set border
+            if event.key == pygame.K_b:
+                borderTrigger = True
 
         if event.type == QUIT:
             pygame.quit()
@@ -292,8 +340,15 @@ while running:
     # run select pattern engine functions
     patternEngine.cascade(clockMatrix)
 
-    # border test
-    patternEngine.border()
+    # border
+    while borderTrigger:
+        border = not border
+        if border:
+            patternEngine.border(clockMatrix)
+        else:
+            patternEngine.clearBorder(clockMatrix)
+
+        borderTrigger = False
 
     # prints background to screen
     background.draw(display)
