@@ -172,6 +172,7 @@
     <configuration
       Name="RAM"
       Placement="RAM"
+      gcc_optimization_level="Debug"
       linker_section_placement_file="$(TargetsDir)/LPC1000/ram_placement.xml"
       target_reset_script="SRAMReset()" />
     <folder Name="System Files">

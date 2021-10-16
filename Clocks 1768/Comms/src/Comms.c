@@ -29,10 +29,12 @@ void commsThread(void *p)
     UARTinit(USARTdrv0, BAUD, UART0_callback);
     UARTinit(USARTdrv1, BAUD, UART1_callback);
     
+    //Initialise CAN bus
+    CAN_init();
 
     UART_send("\nStartup\n", 9, 0);
         
-    ////Ensure connection to ESP
+    //Ensure connection to ESP
     ESP_command(INIT, 200U, 0);
        
     //Skip if already connected to WIFI
@@ -123,44 +125,44 @@ void UARTinit(const ARM_DRIVER_USART* UART_driver_number, const uint32_t baud, v
     UART_driver_number->Control (ARM_USART_CONTROL_RX, 1);
 }
 
-void UART0init(uint32_t baud)
-{
+//void UART0init(uint32_t baud)
+//{
         
-    /*Initialize the USART driver */
-    USARTdrv0->Initialize(UART0_callback);
-    /*Power up the USART peripheral */
-    USARTdrv0->PowerControl(ARM_POWER_FULL);
-    /*Configure the USART to 115200 Bits/sec */
-    USARTdrv0->Control(ARM_USART_MODE_ASYNCHRONOUS |
-                      ARM_USART_DATA_BITS_8 |
-                      ARM_USART_PARITY_NONE |
-                      ARM_USART_STOP_BITS_1 |
-                      ARM_USART_FLOW_CONTROL_NONE, baud);
+//    /*Initialize the USART driver */
+//    USARTdrv0->Initialize(UART0_callback);
+//    /*Power up the USART peripheral */
+//    USARTdrv0->PowerControl(ARM_POWER_FULL);
+//    /*Configure the USART to 115200 Bits/sec */
+//    USARTdrv0->Control(ARM_USART_MODE_ASYNCHRONOUS |
+//                      ARM_USART_DATA_BITS_8 |
+//                      ARM_USART_PARITY_NONE |
+//                      ARM_USART_STOP_BITS_1 |
+//                      ARM_USART_FLOW_CONTROL_NONE, baud);
      
-    /* Enable Receiver and Transmitter lines */
-    USARTdrv0->Control (ARM_USART_CONTROL_TX, 1);
-    USARTdrv0->Control (ARM_USART_CONTROL_RX, 1);
+//    /* Enable Receiver and Transmitter lines */
+//    USARTdrv0->Control (ARM_USART_CONTROL_TX, 1);
+//    USARTdrv0->Control (ARM_USART_CONTROL_RX, 1);
     
-}
+//}
     
-void UART1init(uint32_t baud)
-{    
-    /*Initialize the USART driver */
-    USARTdrv1->Initialize(UART1_callback);
-    /*Power up the USART peripheral */
-    USARTdrv1->PowerControl(ARM_POWER_FULL);
-    /*Configure the USART to 115200 Bits/sec */
-    USARTdrv1->Control(ARM_USART_MODE_ASYNCHRONOUS |
-                      ARM_USART_DATA_BITS_8 |
-                      ARM_USART_PARITY_NONE |
-                      ARM_USART_STOP_BITS_1 |
-                      ARM_USART_FLOW_CONTROL_NONE, baud);
+//void UART1init(uint32_t baud)
+//{    
+//    /*Initialize the USART driver */
+//    USARTdrv1->Initialize(UART1_callback);
+//    /*Power up the USART peripheral */
+//    USARTdrv1->PowerControl(ARM_POWER_FULL);
+//    /*Configure the USART to 115200 Bits/sec */
+//    USARTdrv1->Control(ARM_USART_MODE_ASYNCHRONOUS |
+//                      ARM_USART_DATA_BITS_8 |
+//                      ARM_USART_PARITY_NONE |
+//                      ARM_USART_STOP_BITS_1 |
+//                      ARM_USART_FLOW_CONTROL_NONE, baud);
     
-    /* Enable Receiver and Transmitter lines */
-    USARTdrv1->Control (ARM_USART_CONTROL_TX, 1);
-    USARTdrv1->Control (ARM_USART_CONTROL_RX, 1);
+//    /* Enable Receiver and Transmitter lines */
+//    USARTdrv1->Control (ARM_USART_CONTROL_TX, 1);
+//    USARTdrv1->Control (ARM_USART_CONTROL_RX, 1);
 
-}
+//}
 
 void UART0_callback(uint32_t event)
 {

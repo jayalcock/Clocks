@@ -9,6 +9,7 @@
 #include "Clocks.h"
 #include "Comms.h"
 #include "Time.h"
+#include "CAN_comms.h"
 
 
 #define STACKSIZE 64        

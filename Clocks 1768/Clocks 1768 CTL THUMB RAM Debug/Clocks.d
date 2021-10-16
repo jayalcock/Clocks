@@ -23,4 +23,8 @@ Clocks\ 1768\ CTL\ THUMB\ RAM\ Debug/Clocks.o: \
  /Applications/CrossWorks\ for\ ARM\ 4.8/include/stdbool.h \
  /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/Headers/Time.h \
  /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/Headers/LPC1768.h \
- /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/Headers/Time.h
+ /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/Comms/inc/CAN_comms.h \
+ /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/CMSIS\ Driver/Include/Driver_CAN.h \
+ /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/Headers/LPC1768.h \
+ /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/Headers/Time.h \
+ /Users/jayalcock/Documents/Crossworks\ Projects/Clocks/Clocks\ 1768/Comms/inc/CAN_comms.h

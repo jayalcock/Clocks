@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include "Driver_USART.h"
 #include "Time.h"
-
+#include "CAN_comms.h"
 
 #define NEW_WIFI_CONNECTION 0
 #define HOME_WIFI 1
