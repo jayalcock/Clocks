@@ -248,26 +248,26 @@ class pattern_Engine:
     def border(self, clockMatrix):
 
         for i in range(columns):
-            clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = 270
-            clockMatrix.clockMtx[i, 0].hourArm.targetAngle = 90
-            clockMatrix.clockMtx[i, rows - 1].minuteArm.targetAngle = 270
-            clockMatrix.clockMtx[i, rows - 1].hourArm.targetAngle = 90
+            clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = timeAngle['9']
+            clockMatrix.clockMtx[i, 0].hourArm.targetAngle = timeAngle['3']
+            clockMatrix.clockMtx[i, rows - 1].minuteArm.targetAngle = timeAngle['9']
+            clockMatrix.clockMtx[i, rows - 1].hourArm.targetAngle = timeAngle['3']
 
         for j in range(rows):
-            clockMatrix.clockMtx[0, j].minuteArm.targetAngle = 0
-            clockMatrix.clockMtx[0, j].hourArm.targetAngle = 180
-            clockMatrix.clockMtx[columns - 1, j].minuteArm.targetAngle = 0
-            clockMatrix.clockMtx[columns - 1, j].hourArm.targetAngle = 180
+            clockMatrix.clockMtx[0, j].minuteArm.targetAngle = timeAngle['12']
+            clockMatrix.clockMtx[0, j].hourArm.targetAngle = timeAngle['6']
+            clockMatrix.clockMtx[columns - 1, j].minuteArm.targetAngle = timeAngle['12']
+            clockMatrix.clockMtx[columns - 1, j].hourArm.targetAngle = timeAngle['6']
 
         # coners
-        clockMatrix.clockMtx[0, 0].minuteArm.targetAngle = 180
-        clockMatrix.clockMtx[0, 0].hourArm.targetAngle = 90
-        clockMatrix.clockMtx[columns - 1, 0].minuteArm.targetAngle = 270
-        clockMatrix.clockMtx[columns - 1, 0].hourArm.targetAngle = 180
-        clockMatrix.clockMtx[0, rows - 1].minuteArm.targetAngle = 0
-        clockMatrix.clockMtx[0, rows - 1].hourArm.targetAngle = 90
-        clockMatrix.clockMtx[columns - 1, rows - 1].minuteArm.targetAngle = 270
-        clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = 0
+        clockMatrix.clockMtx[0, 0].minuteArm.targetAngle = timeAngle['6']
+        clockMatrix.clockMtx[0, 0].hourArm.targetAngle = timeAngle['3']
+        clockMatrix.clockMtx[columns - 1, 0].minuteArm.targetAngle = timeAngle['9']
+        clockMatrix.clockMtx[columns - 1, 0].hourArm.targetAngle = timeAngle['6']
+        clockMatrix.clockMtx[0, rows - 1].minuteArm.targetAngle = timeAngle['12']
+        clockMatrix.clockMtx[0, rows - 1].hourArm.targetAngle = timeAngle['3']
+        clockMatrix.clockMtx[columns - 1, rows - 1].minuteArm.targetAngle = timeAngle['9']
+        clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = timeAngle['12']
 
     # clears border from clocks
     def clearBorder(self, clockMatrix):
@@ -295,7 +295,6 @@ class pattern_Engine:
             free
         clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = free
 
-
 def main():
 
     pygame.init()  # initiate pygame
@@ -318,8 +317,6 @@ def main():
     running = True
     border = False
     borderTrigger = False
-
-    time.sleep(1)
 
     while running:
 
