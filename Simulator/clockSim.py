@@ -306,6 +306,12 @@ class pattern_Engine:
         # offset for digital representation position number
         numberPosition = {1: 1, 2: 4, 3: 8, 4: 11}
 
+        currentTime = 0
+
+        def getTime():
+            t = time.localtime()
+            print(t)
+
         def border(clockMatrix):
             for i in range(columns):
                 clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = 45
@@ -901,6 +907,7 @@ class pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        getTime()
         zero(clockMatrix, numberPosition[1])
         one(clockMatrix, numberPosition[2])
         six(clockMatrix, numberPosition[3])
