@@ -298,19 +298,24 @@ class pattern_Engine:
             free
         clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = free
 
+    def relase(self, clockMatrix):
+        free = 400
+        for i in range(columns):
+            for j in range(rows):
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = free
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = free
+
     def showTime(self, clockMatrix):
 
-        # x_offset = 1
         y_offset = 1
 
         # offset for digital representation position number
         numberPosition = {1: 1, 2: 4, 3: 8, 4: 11}
 
-        currentTime = 0
-
         def getTime():
             t = time.localtime()
-            print(t)
+            currentTime = time.strftime("%H:%M", t)
+            return currentTime
 
         def border(clockMatrix):
             for i in range(columns):
@@ -907,13 +912,117 @@ class pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
-        getTime()
-        zero(clockMatrix, numberPosition[1])
-        one(clockMatrix, numberPosition[2])
-        six(clockMatrix, numberPosition[3])
-        nine(clockMatrix, numberPosition[4])
+        def setClocks(currentTime):
+            match currentTime[0]:
+                case '0':
+                    zero(clockMatrix, numberPosition[1])
+                case '1':
+                    one(clockMatrix, numberPosition[1])
+                case '2':
+                    two(clockMatrix, numberPosition[1])
+                case '3':
+                    three(clockMatrix, numberPosition[1])
+                case '4':
+                    four(clockMatrix, numberPosition[1])
+                case '5':
+                    five(clockMatrix, numberPosition[1])
+                case '6':
+                    six(clockMatrix, numberPosition[1])
+                case '7':
+                    seven(clockMatrix, numberPosition[1])
+                case '8':
+                    eight(clockMatrix, numberPosition[1])
+                case '9':
+                    nine(clockMatrix, numberPosition[1])
 
+            match currentTime[1]:
+                case '0':
+                    zero(clockMatrix, numberPosition[2])
+                case '1':
+                    one(clockMatrix, numberPosition[2])
+                case '2':
+                    two(clockMatrix, numberPosition[2])
+                case '3':
+                    three(clockMatrix, numberPosition[2])
+                case '4':
+                    four(clockMatrix, numberPosition[2])
+                case '5':
+                    five(clockMatrix, numberPosition[2])
+                case '6':
+                    six(clockMatrix, numberPosition[2])
+                case '7':
+                    seven(clockMatrix, numberPosition[2])
+                case '8':
+                    eight(clockMatrix, numberPosition[2])
+                case '9':
+                    nine(clockMatrix, numberPosition[2])
+
+            match currentTime[3]:
+                case '0':
+                    zero(clockMatrix, numberPosition[3])
+                case '1':
+                    one(clockMatrix, numberPosition[3])
+                case '2':
+                    two(clockMatrix, numberPosition[3])
+                case '3':
+                    three(clockMatrix, numberPosition[3])
+                case '4':
+                    four(clockMatrix, numberPosition[3])
+                case '5':
+                    five(clockMatrix, numberPosition[3])
+                case '6':
+                    six(clockMatrix, numberPosition[3])
+                case '7':
+                    seven(clockMatrix, numberPosition[3])
+                case '8':
+                    eight(clockMatrix, numberPosition[3])
+                case '9':
+                    nine(clockMatrix, numberPosition[3])
+
+            match currentTime[4]:
+                case '0':
+                    zero(clockMatrix, numberPosition[4])
+                case '1':
+                    one(clockMatrix, numberPosition[4])
+                case '2':
+                    two(clockMatrix, numberPosition[4])
+                case '3':
+                    three(clockMatrix, numberPosition[4])
+                case '4':
+                    four(clockMatrix, numberPosition[4])
+                case '5':
+                    five(clockMatrix, numberPosition[4])
+                case '6':
+                    six(clockMatrix, numberPosition[4])
+                case '7':
+                    seven(clockMatrix, numberPosition[4])
+                case '8':
+                    eight(clockMatrix, numberPosition[4])
+                case '9':
+                    nine(clockMatrix, numberPosition[4])
+
+        currentTime = getTime()
+        setClocks(currentTime)
         border(clockMatrix)
+
+    def squares(self, clockMatrix):
+        for j in range(0, rows, 2):
+            for i in range(0, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = timeAngle['3']
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = timeAngle['6']
+        for j in range(0, rows, 2):
+            for i in range(1, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = timeAngle['9']
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = timeAngle['6']
+
+        for j in range(1, rows, 2):
+            for i in range(0, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = timeAngle['12']
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = timeAngle['3']
+        for j in range(1, rows, 2):
+            for i in range(1, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = timeAngle['12']
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = timeAngle['9']
 
 def main():
 
@@ -935,8 +1044,15 @@ def main():
     patternEngine = pattern_Engine(0, 180, 5, 5)
 
     running = True
+
     border = False
     borderTrigger = False
+
+    showTime = False
+    clockTrigger = False
+
+    squares = False
+    squaresTrigger = False
 
     while running:
 
@@ -953,7 +1069,11 @@ def main():
 
                 # 't' to show time
                 if event.key == pygame.K_t:
-                    patternEngine.showTime(clockMatrix)
+                    clockTrigger = True
+
+                # 's' for squares
+                if event.key == pygame.K_s:
+                    squaresTrigger = True
 
             if event.type == QUIT:
                 pygame.quit()
@@ -972,6 +1092,26 @@ def main():
                 patternEngine.clearBorder(clockMatrix)
 
             borderTrigger = False
+
+        # show time
+        while clockTrigger:
+            showTime = not showTime
+            if showTime:
+                patternEngine.showTime(clockMatrix)
+            else:
+                patternEngine.relase(clockMatrix)
+
+            clockTrigger = False
+
+        # squares
+        while squaresTrigger:
+            squares = not squares
+            if squares:
+                patternEngine.squares(clockMatrix)
+            else:
+                patternEngine.relase(clockMatrix)
+
+            squaresTrigger = False
 
         # prints background to screen
         background.draw(display)
