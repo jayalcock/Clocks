@@ -159,7 +159,7 @@ class Clock_Matrix:
 # Engine to drive clock arms
 class pattern_Engine:
 
-    def __init__(self, minute=0, hour=0, minRate=10, hourRate=10):
+    def __init__(self, minute=0, hour=0, minRate=0.5, hourRate=0.5):
         self.pattern = 0
         self.minRate = minRate
         self.hourRate = hourRate
@@ -195,6 +195,34 @@ class pattern_Engine:
             else:
                 self.hourAngle += rate
 
+    def rotate(self, clockMatrix):
+        for j in range(rows):
+            for i in range(columns):
+                if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
+                                    clockMatrix.clockMtx[i, j].minuteArm.targetAngle)):
+                    self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
+                    continue
+                else:
+                    self.minAngleMtx[i, j] += self.minRate
+
+                    if self.minAngleMtx[i, j] > 360.0:
+                        self.minAngleMtx[i, j] -= 360.0
+                    elif self.minAngleMtx[i, j] < 0.0:
+                        self.minAngleMtx[i, j] += 360.0
+        for j in range(rows):
+            for i in range(columns):
+                if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
+                   clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
+                    self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
+                    continue
+                else:
+                    self.hourAngleMtx[i, j] += self.hourRate
+
+                    if self.hourAngleMtx[i, j] > 360.0:
+                        self.hourAngleMtx[i, j] -= 360.0
+                    elif self.hourAngleMtx[i, j] < 0.0:
+                        self.hourAngleMtx[i, j] += 360.0
+
     def rotateToAngle(self, arm, angle):
         if arm == "min":
             self.minAngle = angle
@@ -203,12 +231,12 @@ class pattern_Engine:
 
     # Randomises rotation rate - hour and minute independent
     def randomRate(self):
-        self.minRate = random.randint(-10, 10)
-        self.hourRate = random.randint(-10, 10)
+        self.minRate = random.randint(-10, 10) / 10.0
+        self.hourRate = random.randint(-10, 10) / 10.0
 
     # determine difference in angle between current and target
     def angleCheck(self, currentAngle, targetAngle):
-        if(abs(targetAngle - currentAngle) <= 1):
+        if(abs(targetAngle - currentAngle) <= 1.5):
             return True
         else:
             return False
@@ -220,12 +248,10 @@ class pattern_Engine:
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
                                     clockMatrix.clockMtx[i, j].
                                     minuteArm.targetAngle)):
-                    self.minAngleMtx[i, j] =\
-                        clockMatrix.clockMtx[i, j].minuteArm.targetAngle
+                    self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
                     continue
                 else:
-                    self.minAngleMtx[i, j] +=\
-                        self.minRate * ((j + 5.0) / 100.0)
+                    self.minAngleMtx[i, j] += self.minRate * ((j + 5.0) / 10)
 
                     if self.minAngleMtx[i, j] > 360.0:
                         self.minAngleMtx[i, j] -= 360.0
@@ -241,7 +267,8 @@ class pattern_Engine:
                     continue
                 else:
                     self.hourAngleMtx[i, j] +=\
-                        self.hourRate * ((j + 5.0) / 100.0)
+                        self.hourRate * ((j + 5.0) / 10)
+
                     if self.hourAngleMtx[i, j] > 360.0:
                         self.hourAngleMtx[i, j] -= 360.0
                     elif self.hourAngleMtx[i, j] < 0.0:
@@ -1041,7 +1068,7 @@ def main():
     clockMatrix = Clock_Matrix(display)
 
     # initialised pattern engine with initial arm angles and rotation rates
-    patternEngine = pattern_Engine(0, 180, 5, 5)
+    patternEngine = pattern_Engine(0, 180, 0.5, 0.5)
 
     running = True
 
@@ -1081,7 +1108,8 @@ def main():
                 running = False
 
         # run select pattern engine functions
-        patternEngine.cascade(clockMatrix)
+        # patternEngine.cascade(clockMatrix)
+        patternEngine.rotate(clockMatrix)
 
         # border
         while borderTrigger:
