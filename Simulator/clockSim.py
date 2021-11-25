@@ -75,7 +75,7 @@ class clock_Arm:
         self.angle = angle
         self.targetAngle = 400.0
         self.colour = BLACK
-        self.lineWidth = 2
+        self.lineWidth = 4
         self.endPoint = [0, 0]
 
     # calculates arm end point given angle and length
@@ -168,6 +168,7 @@ class pattern_Engine:
         # Matricies for storing calcualted angles
         self.minAngleMtx = np.empty([columns, rows], dtype=float)
         self.hourAngleMtx = np.empty([columns, rows], dtype=float)
+        self.delay = 0
 
         self.initialiseMatrix()
 
@@ -196,38 +197,89 @@ class pattern_Engine:
                 self.hourAngle += rate
 
     def rotate(self, clockMatrix):
+        complete = True
+
+        # delay = 0.02
+        # for j in range(rows):
+            # if (self.delay > 0):
+            #     for i in range(self.delay, 0, -1):
+            #         if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
+            #                             clockMatrix.clockMtx[i, j].minuteArm.targetAngle)):
+
+            #             self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
+            #             # continue
+            #         else:
+            #             if (self.delay > 0):
+            #                 self.minAngleMtx[i, j] += self.minRate
+            #             else:
+            #                 self.minAngleMtx[i, j] += self.minRate
+
+            #             self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
+
+            #             complete = False
+
+            #         if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
+            #            clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
+
+            #             self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
+            #             # continue
+            #         else:
+            #             if (self.delay > 0):
+            #                 self.hourAngleMtx[i, j] += self.hourRate
+            #             else:
+            #                 self.hourAngleMtx[i, j] += self.hourRate
+
+            #             self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
+
+            #             complete = False
+            # else:
         for j in range(rows):
             for i in range(columns):
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
                                     clockMatrix.clockMtx[i, j].minuteArm.targetAngle)):
-                    self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
-                    continue
-                else:
-                    self.minAngleMtx[i, j] += self.minRate
 
-                    if self.minAngleMtx[i, j] > 360.0:
-                        self.minAngleMtx[i, j] -= 360.0
-                    elif self.minAngleMtx[i, j] < 0.0:
-                        self.minAngleMtx[i, j] += 360.0
-        for j in range(rows):
-            for i in range(columns):
+                    self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
+                    # continue
+                else:
+                    if (self.delay > 0):
+                        self.minAngleMtx[i, j] += self.minRate
+                    else:
+                        self.minAngleMtx[i, j] += self.minRate
+
+                    self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
+
+                    complete = False
+
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
                    clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
-                    self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
-                    continue
-                else:
-                    self.hourAngleMtx[i, j] += self.hourRate
 
-                    if self.hourAngleMtx[i, j] > 360.0:
-                        self.hourAngleMtx[i, j] -= 360.0
-                    elif self.hourAngleMtx[i, j] < 0.0:
-                        self.hourAngleMtx[i, j] += 360.0
+                    self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
+                    # continue
+                else:
+                    if (self.delay > 0):
+                        self.hourAngleMtx[i, j] += self.hourRate
+                    else:
+                        self.hourAngleMtx[i, j] += self.hourRate
+
+                    self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
+
+                    complete = False
+
+        return complete
 
     def rotateToAngle(self, arm, angle):
         if arm == "min":
             self.minAngle = angle
         else:
             self.hourAngle = angle
+
+    def angleBoundCheck(self, angle):
+        if angle > 360.0:
+            angle -= 360.0
+        elif angle < 0.0:
+            angle += 360.0
+
+        return angle
 
     # Randomises rotation rate - hour and minute independent
     def randomRate(self):
@@ -242,7 +294,46 @@ class pattern_Engine:
             return False
 
     # testing cascade pattern across matrix
-    def cascade(self, clockMatrix):
+    def cascade(self, clockMatrix, isolatedColumns):
+        complete = True
+
+        # test = 10
+        # minute arm control
+        for i in range(isolatedColumns, columns):
+            for j in range(rows):
+                if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
+                                    clockMatrix.clockMtx[i, j].
+                                    minuteArm.targetAngle)):
+                    self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
+                    # continue
+                else:
+                    self.minAngleMtx[i, j] += self.minRate
+
+                    self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
+
+                    complete = False
+
+            # hour arm control
+        for i in range(isolatedColumns, columns):
+            for j in range(rows):
+                if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
+                   clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
+                    self.hourAngleMtx[i, j] =\
+                        clockMatrix.clockMtx[i, j].hourArm.targetAngle
+                    # continue
+                else:
+                    self.hourAngleMtx[i, j] += self.hourRate
+
+                    self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
+
+                    complete = False
+
+        return complete
+
+    # offset clock arms by a value
+    def offset(self, clockMatrix, angle):
+
+        # minute arm control
         for j in range(rows):
             for i in range(columns):
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
@@ -251,13 +342,15 @@ class pattern_Engine:
                     self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
                     continue
                 else:
-                    self.minAngleMtx[i, j] += self.minRate * ((j + 5.0) / 10)
+                    self.minAngleMtx[i, j] += self.minRate * (j * angle)
 
-                    if self.minAngleMtx[i, j] > 360.0:
-                        self.minAngleMtx[i, j] -= 360.0
-                    elif self.minAngleMtx[i, j] < 0.0:
-                        self.minAngleMtx[i, j] += 360.0
+                    self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
+                    # if self.minAngleMtx[i, j] > 360.0:
+                    #     self.minAngleMtx[i, j] -= 360.0
+                    # elif self.minAngleMtx[i, j] < 0.0:
+                    #     self.minAngleMtx[i, j] += 360.0
 
+        # hour arm control
         for j in range(rows):
             for i in range(columns):
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
@@ -266,13 +359,13 @@ class pattern_Engine:
                         clockMatrix.clockMtx[i, j].hourArm.targetAngle
                     continue
                 else:
-                    self.hourAngleMtx[i, j] +=\
-                        self.hourRate * ((j + 5.0) / 10)
+                    self.hourAngleMtx[i, j] += self.hourRate * (j * angle)
 
-                    if self.hourAngleMtx[i, j] > 360.0:
-                        self.hourAngleMtx[i, j] -= 360.0
-                    elif self.hourAngleMtx[i, j] < 0.0:
-                        self.hourAngleMtx[i, j] += 360.0
+                    self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
+                    # if self.hourAngleMtx[i, j] > 360.0:
+                    #     self.hourAngleMtx[i, j] -= 360.0
+                    # elif self.hourAngleMtx[i, j] < 0.0:
+                    #     self.hourAngleMtx[i, j] += 360.0
 
     # draws border on outermost clocks
     def border(self, clockMatrix):
@@ -1051,6 +1144,14 @@ class pattern_Engine:
                 clockMatrix.clockMtx[i, j].minuteArm.targetAngle = timeAngle['12']
                 clockMatrix.clockMtx[i, j].hourArm.targetAngle = timeAngle['9']
 
+    def reset(self, clockMatrix):
+        for i in range(columns):
+            for j in range(rows):
+                # clockMatrix.clockMtx[i, j].minuteArm.targetAngle = timeAngle['12']
+                # clockMatrix.clockMtx[i, j].hourArm.targetAngle = timeAngle['6']
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = 45
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = 225
+
 def main():
 
     pygame.init()  # initiate pygame
@@ -1071,6 +1172,7 @@ def main():
     patternEngine = pattern_Engine(0, 180, 0.5, 0.5)
 
     running = True
+    atAngle = False
 
     border = False
     borderTrigger = False
@@ -1080,6 +1182,15 @@ def main():
 
     squares = False
     squaresTrigger = False
+
+    reset = False
+    resetTrigger = False
+
+    temp = 0
+
+    colno = 15
+    delay = 0.1
+    # patternEngine.offset(clockMatrix, 15)
 
     while running:
 
@@ -1102,14 +1213,36 @@ def main():
                 if event.key == pygame.K_s:
                     squaresTrigger = True
 
+                # 'q' for reset
+                if event.key == pygame.K_q:
+                    resetTrigger = True
+
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
                 running = False
 
+        if (colno > 0):
+            delay -= 1
+            if (delay <= 0):
+                colno -= 1
+                delay = 0.35 * 60
+
+
         # run select pattern engine functions
-        # patternEngine.cascade(clockMatrix)
-        patternEngine.rotate(clockMatrix)
+        atAngle = patternEngine.cascade(clockMatrix, colno)
+        # atAngle = patternEngine.rotate(clockMatrix)
+
+        if(atAngle):
+            time.sleep(2)
+            if(reset):
+                resetTrigger = True
+            elif(showTime):
+                clockTrigger = True
+            elif(squares):
+                squaresTrigger = True
+            # patternEngine.randomRate()
+            # patternEngine.offset(clockMatrix, 20)
 
         # border
         while borderTrigger:
@@ -1127,6 +1260,7 @@ def main():
             if showTime:
                 patternEngine.showTime(clockMatrix)
             else:
+                resetTrigger = True
                 patternEngine.relase(clockMatrix)
 
             clockTrigger = False
@@ -1141,6 +1275,27 @@ def main():
 
             squaresTrigger = False
 
+        # reset
+        while resetTrigger:
+            reset = not reset
+            if reset:
+                patternEngine.reset(clockMatrix)
+            else:
+                colno = 15
+                delay = 0.1
+                patternEngine.relase(clockMatrix)
+
+            resetTrigger = False
+
+
+        # if patternEngine.delay > 0:
+        #     if temp > 0:
+        #         temp -= 1
+        #     elif temp == 0:
+        #         patternEngine.delay -= 1
+        #         print (patternEngine.delay)
+        #         temp = 60
+
         # prints background to screen
         background.draw(display)
 
@@ -1149,6 +1304,8 @@ def main():
 
         # update display
         pygame.display.update()
+
+        # atAngle = False
 
     pygame.quit()
 
