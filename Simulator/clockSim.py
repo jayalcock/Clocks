@@ -1222,12 +1222,12 @@ def main():
                 sys.exit()
                 running = False
 
+        # clean up this function
         if (colno > 0):
             delay -= 1
             if (delay <= 0):
                 colno -= 1
                 delay = 0.35 * 60
-
 
         # run select pattern engine functions
         atAngle = patternEngine.cascade(clockMatrix, colno)
@@ -1286,15 +1286,6 @@ def main():
                 patternEngine.relase(clockMatrix)
 
             resetTrigger = False
-
-
-        # if patternEngine.delay > 0:
-        #     if temp > 0:
-        #         temp -= 1
-        #     elif temp == 0:
-        #         patternEngine.delay -= 1
-        #         print (patternEngine.delay)
-        #         temp = 60
 
         # prints background to screen
         background.draw(display)
