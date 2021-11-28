@@ -72,11 +72,12 @@ class clock_Arm:
     def __init__(self, centre, length, angle):
         self.centre = centre
         self.length = length
-        self.angle = angle
-        self.targetAngle = 400.0
         self.colour = BLACK
         self.lineWidth = 4
         self.endPoint = [0, 0]
+        self.angle = angle
+        self.targetAngle = 400.0
+        self.rotationRate = 0.5
 
     # calculates arm end point given angle and length
     # from centre of rect object
@@ -159,16 +160,17 @@ class Clock_Matrix:
 # Engine to drive clock arms
 class pattern_Engine:
 
-    def __init__(self, minute=0, hour=0, minRate=0.5, hourRate=0.5):
+    def __init__(self, minute=0, hour=0, minRate=0.5, hourRate=0.5, defRates = 0.5):
         self.pattern = 0
-        self.minRate = minRate
-        self.hourRate = hourRate
+        # self.minRate = minRate
+        # self.hourRate = hourRate
         self.minAngle = minute
         self.hourAngle = hour
         # Matricies for storing calcualted angles
         self.minAngleMtx = np.empty([columns, rows], dtype=float)
         self.hourAngleMtx = np.empty([columns, rows], dtype=float)
         self.delay = 0
+        self.defaultRotRates = defRates
 
         self.initialiseMatrix()
 
@@ -181,6 +183,38 @@ class pattern_Engine:
         for j in range(rows):
             for i in range(columns):
                 self.hourAngleMtx[i, j] = self.hourAngle
+
+    def setRate(self, clockMatrix, min, hour):
+        for j in range(rows):
+            for i in range(columns):
+                clockMatrix.clockMtx[i, j].minuteArm.rotationRate = min
+                clockMatrix.clockMtx[i, j].hourArm.rotationRate = hour
+
+    def defaultRate(self, clockMatrix):
+        for j in range(rows):
+            for i in range(columns):
+                clockMatrix.clockMtx[i, j].minuteArm.rotationRate = self.defaultRotRates
+                clockMatrix.clockMtx[i, j].hourArm.rotationRate = self.defaultRotRates
+
+    #rotates hour and minute in opposite direction - used as a squares effect
+    def oppositeRate(self, clockMatrix, rate):
+        for j in range(0, rows, 2):
+            for i in range(0, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.rotationRate = rate
+                clockMatrix.clockMtx[i, j].hourArm.rotationRate = -rate
+        for j in range(0, rows, 2):
+            for i in range(1, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.rotationRate = -rate
+                clockMatrix.clockMtx[i, j].hourArm.rotationRate = rate
+
+        for j in range(1, rows, 2):
+            for i in range(0, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.rotationRate = rate
+                clockMatrix.clockMtx[i, j].hourArm.rotationRate = -rate
+        for j in range(1, rows, 2):
+            for i in range(1, columns, 2):
+                clockMatrix.clockMtx[i, j].minuteArm.rotationRate = -rate
+                clockMatrix.clockMtx[i, j].hourArm.rotationRate = rate
 
     def rotateAtRate(self, arm, rate, direction):
 
@@ -242,9 +276,11 @@ class pattern_Engine:
                     # continue
                 else:
                     if (self.delay > 0):
-                        self.minAngleMtx[i, j] += self.minRate
+                        # self.minAngleMtx[i, j] += self.minRate
+                        self.minAngleMtx[i, j] += clockMatrix.clockMtx[i, j].minuteArm.rotationRate
                     else:
-                        self.minAngleMtx[i, j] += self.minRate
+                        # self.minAngleMtx[i, j] += self.minRate
+                        self.minAngleMtx[i, j] += clockMatrix.clockMtx[i, j].minuteArm.rotationRate
 
                     self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
 
@@ -257,9 +293,11 @@ class pattern_Engine:
                     # continue
                 else:
                     if (self.delay > 0):
-                        self.hourAngleMtx[i, j] += self.hourRate
+                        # self.hourAngleMtx[i, j] += self.hourRate
+                        self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate
                     else:
                         self.hourAngleMtx[i, j] += self.hourRate
+                        self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate
 
                     self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
 
@@ -296,8 +334,7 @@ class pattern_Engine:
     # testing cascade pattern across matrix
     def cascade(self, clockMatrix, isolatedColumns):
         complete = True
-
-        # test = 10
+        
         # minute arm control
         for i in range(isolatedColumns, columns):
             for j in range(rows):
@@ -305,10 +342,11 @@ class pattern_Engine:
                                     clockMatrix.clockMtx[i, j].
                                     minuteArm.targetAngle)):
                     self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
-                    # continue
+                    # clockMatrix.clockMtx[i, j].minuteArm.angle = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
+                    continue
                 else:
-                    self.minAngleMtx[i, j] += self.minRate
-
+                    # self.minAngleMtx[i, j] += self.minRate
+                    self.minAngleMtx[i, j] += clockMatrix.clockMtx[i, j].minuteArm.rotationRate
                     self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
 
                     complete = False
@@ -318,12 +356,12 @@ class pattern_Engine:
             for j in range(rows):
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
                    clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
-                    self.hourAngleMtx[i, j] =\
-                        clockMatrix.clockMtx[i, j].hourArm.targetAngle
-                    # continue
+                    self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
+                    # clockMatrix.clockMtx[i, j].hourArm.angle = clockMatrix.clockMtx[i, j].hourArm.targetAngle
+                    continue
                 else:
-                    self.hourAngleMtx[i, j] += self.hourRate
-
+                    # self.hourAngleMtx[i, j] += self.hourRate
+                    self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate
                     self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
 
                     complete = False
@@ -1125,6 +1163,7 @@ class pattern_Engine:
         setClocks(currentTime)
         border(clockMatrix)
 
+    # square pattern across clock matrix
     def squares(self, clockMatrix):
         for j in range(0, rows, 2):
             for i in range(0, columns, 2):
@@ -1237,10 +1276,12 @@ def main():
             time.sleep(2)
             if(reset):
                 resetTrigger = True
+                patternEngine.defaultRate(clockMatrix)
             elif(showTime):
                 clockTrigger = True
             elif(squares):
                 squaresTrigger = True
+                patternEngine.oppositeRate(clockMatrix, 0.5)
             # patternEngine.randomRate()
             # patternEngine.offset(clockMatrix, 20)
 
