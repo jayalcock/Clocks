@@ -184,12 +184,14 @@ class pattern_Engine:
             for i in range(columns):
                 self.hourAngleMtx[i, j] = self.hourAngle
 
+    # Set rotation rate for all clocks
     def setRate(self, clockMatrix, min, hour):
         for j in range(rows):
             for i in range(columns):
                 clockMatrix.clockMtx[i, j].minuteArm.rotationRate = min
                 clockMatrix.clockMtx[i, j].hourArm.rotationRate = hour
 
+    # Set rotation rate to all clocks to default value
     def defaultRate(self, clockMatrix):
         for j in range(rows):
             for i in range(columns):
@@ -1231,7 +1233,15 @@ def main():
     delay = 0.1
     # patternEngine.offset(clockMatrix, 15)
 
+
     while running:
+
+        currentTime = time.localtime()
+
+        print(currentTime.tm_sec)
+
+        if(currentTime.tm_sec == 55):
+            clockTrigger = True
 
         for event in pygame.event.get():  # quit pygame
             if event.type == pygame.KEYDOWN:
@@ -1324,6 +1334,7 @@ def main():
             else:
                 colno = 15
                 delay = 0.1
+                patternEngine.defaultRate(clockMatrix)
                 patternEngine.relase(clockMatrix)
 
             resetTrigger = False
