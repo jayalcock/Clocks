@@ -432,39 +432,6 @@ class pattern_Engine:
         clockMatrix.clockMtx[columns - 1, rows - 1].minuteArm.targetAngle = timeAngle['9']
         clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = timeAngle['12']
 
-    # clears border from clocks
-    def clearBorder(self, clockMatrix):
-        free = 400
-        for i in range(columns):
-            clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = free
-            clockMatrix.clockMtx[i, 0].hourArm.targetAngle = free
-            clockMatrix.clockMtx[i, rows - 1].minuteArm.targetAngle = free
-            clockMatrix.clockMtx[i, rows - 1].hourArm.targetAngle = free
-
-        for j in range(rows):
-            clockMatrix.clockMtx[0, j].minuteArm.targetAngle = free
-            clockMatrix.clockMtx[0, j].hourArm.targetAngle = free
-            clockMatrix.clockMtx[columns - 1, j].minuteArm.targetAngle = free
-            clockMatrix.clockMtx[columns - 1, j].hourArm.targetAngle = free
-
-        # coners
-        clockMatrix.clockMtx[0, 0].minuteArm.targetAngle = free
-        clockMatrix.clockMtx[0, 0].hourArm.targetAngle = free
-        clockMatrix.clockMtx[columns - 1, 0].minuteArm.targetAngle = free
-        clockMatrix.clockMtx[columns - 1, 0].hourArm.targetAngle = free
-        clockMatrix.clockMtx[0, rows - 1].minuteArm.targetAngle = free
-        clockMatrix.clockMtx[0, rows - 1].hourArm.targetAngle = free
-        clockMatrix.clockMtx[columns - 1, rows - 1].minuteArm.targetAngle =\
-            free
-        clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = free
-
-    def relase(self, clockMatrix):
-        free = 400
-        for i in range(columns):
-            for j in range(rows):
-                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = free
-                clockMatrix.clockMtx[i, j].hourArm.targetAngle = free
-
     def showTime(self, clockMatrix):
 
         y_offset = 1
