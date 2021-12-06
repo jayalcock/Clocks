@@ -1,3 +1,4 @@
+from typing import Tuple
 import pygame
 import sys
 import math
@@ -67,7 +68,7 @@ class Background:
         display.screen.blit(self.background, (0, 0))
 
 # draw clock arms
-class clock_Arm:
+class Clock_Arm:
 
     def __init__(self, centre, length, angle):
         self.centre = centre
@@ -101,8 +102,8 @@ class Clock:
         self.hourArmLength = (diameter / 2) - 10
         self.minuteArmLength = (diameter / 2) - 1
         self.diameter = diameter
-        self.minuteArm = clock_Arm(self.centre, self.minuteArmLength, 0)
-        self.hourArm = clock_Arm(self.centre, self.hourArmLength, 0)
+        self.minuteArm = Clock_Arm(self.centre, self.minuteArmLength, 0)
+        self.hourArm = Clock_Arm(self.centre, self.hourArmLength, 0)
         self.colour = BLACK
         self.lineWidth = 1
 
@@ -158,7 +159,7 @@ class Clock_Matrix:
 
 
 # Engine to drive clock arms
-class pattern_Engine:
+class Pattern_Engine:
 
     def __init__(self, minute=0, hour=0, minRate=0.5, hourRate=0.5, defRates = 0.5):
         self.pattern = 0
@@ -325,6 +326,13 @@ class pattern_Engine:
     def randomRate(self):
         self.minRate = random.randint(-10, 10) / 10.0
         self.hourRate = random.randint(-10, 10) / 10.0
+
+    def relase(self, clockMatrix):
+        free = 400
+        for i in range(columns):
+            for j in range(rows):
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = free
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = free
 
     # determine difference in angle between current and target
     def angleCheck(self, currentAngle, targetAngle):
@@ -1160,6 +1168,31 @@ class pattern_Engine:
                 clockMatrix.clockMtx[i, j].minuteArm.targetAngle = 45
                 clockMatrix.clockMtx[i, j].hourArm.targetAngle = 225
 
+class edgeTrigger(object):
+    def __init__(self, callback):
+        self.value = None
+        self.callback = callback
+        self.atVal = None
+
+    def __call__(self, value):
+        if value != self.value:
+            self.atVal = self.callback(self.value, value)
+        self.value = value
+
+        return self.atVal
+
+def callBack(oldVal, newVal):
+    if(oldVal == 55 and newVal == 56):
+        return True
+    else:
+        return False    
+
+def squaresCallback(oldVal, newVal):
+    if(oldVal == 0 and newVal == 1):
+        return True
+    else:
+        return False    
+
 def main():
 
     pygame.init()  # initiate pygame
@@ -1177,7 +1210,7 @@ def main():
     clockMatrix = Clock_Matrix(display)
 
     # initialised pattern engine with initial arm angles and rotation rates
-    patternEngine = pattern_Engine(0, 180, 0.5, 0.5)
+    patternEngine = Pattern_Engine(0, 180, 0.5, 0.5)
 
     running = True
     atAngle = False
@@ -1194,21 +1227,40 @@ def main():
     reset = False
     resetTrigger = False
 
-    temp = 0
+    runOnce = False
 
     colno = 15
     delay = 0.1
+
+    patternNum = 0
+    showTimeTrigger = edgeTrigger(callBack)
+    squaresTriggerF = edgeTrigger(squaresCallback)
     # patternEngine.offset(clockMatrix, 15)
 
+    clock = pygame.time.Clock()
 
     while running:
 
+        # print FPS to terminal
+        # clock.tick()
+        # print(clock.get_fps())
+
         currentTime = time.localtime()
 
-        print(currentTime.tm_sec)
+        if(showTimeTrigger(currentTime.tm_sec)):
+            showTime = True
+            patternEngine.showTime(clockMatrix)
 
-        if(currentTime.tm_sec == 55):
-            clockTrigger = True
+        if squaresTriggerF(squares):
+            # squares = True
+            patternEngine.squares(clockMatrix)
+    
+
+        # if(currentTime.tm_sec == 55):
+        #     clockTrigger = True
+        #     showTime = True
+        # if(currentTime.tm_min % 2 != 0) and currentTime.tm_sec == 40:
+        #     squares = True
 
         for event in pygame.event.get():  # quit pygame
             if event.type == pygame.KEYDOWN:
@@ -1238,7 +1290,8 @@ def main():
                 sys.exit()
                 running = False
 
-        # clean up this function
+        # enables delay function
+        # to be cleaned up  
         if (colno > 0):
             delay -= 1
             if (delay <= 0):
@@ -1246,21 +1299,48 @@ def main():
                 delay = 0.35 * 60
 
         # run select pattern engine functions
-        atAngle = patternEngine.cascade(clockMatrix, colno)
-        # atAngle = patternEngine.rotate(clockMatrix)
+        if(patternNum == 0):
+            atAngle = patternEngine.cascade(clockMatrix, colno)
+        elif(patternNum == 1):
+            # atAngle = patternEngine.rotate(clockMatrix) <-- fix this up
+            atAngle = patternEngine.cascade(clockMatrix, colno) # <- temp placeholder
+        elif(patternNum == 2):
+            squares = True
+            patternNum = 0
+            # atAngle = patternEngine.rotate(clockMatrix) <-- fix this up
+            # atAngle = patternEngine.cascade(clockMatrix, colno) # <- temp placeholder
+            
 
         if(atAngle):
             time.sleep(2)
             if(reset):
-                resetTrigger = True
+                reset = False
+                patternEngine.relase(clockMatrix)
+                colno = 15
+                delay = 0.1
                 patternEngine.defaultRate(clockMatrix)
             elif(showTime):
-                clockTrigger = True
+                showTime = False
+                patternNum = random.randint(0, 2)
+                patternEngine.reset(clockMatrix)
+                reset = True
+                patternEngine.defaultRate(clockMatrix)
             elif(squares):
-                squaresTrigger = True
+                squares = False
+                patternEngine.relase(clockMatrix)
                 patternEngine.oppositeRate(clockMatrix, 0.5)
-            # patternEngine.randomRate()
-            # patternEngine.offset(clockMatrix, 20)
+
+
+
+
+            
+        #     elif(showTime):
+        #         clockTrigger = True
+        #     elif(squares):
+        #         squaresTrigger = True
+        #         patternEngine.oppositeRate(clockMatrix, 0.5)
+
+
 
         # border
         while borderTrigger:
@@ -1272,39 +1352,66 @@ def main():
 
             borderTrigger = False
 
-        # show time
-        while clockTrigger:
-            showTime = not showTime
-            if showTime:
-                patternEngine.showTime(clockMatrix)
-            else:
-                resetTrigger = True
-                patternEngine.relase(clockMatrix)
 
-            clockTrigger = False
+
+
+        # while clockTrigger or showTime:
+        #     if clockTrigger:
+        #         showTime = not showTime
+        #     elif showTime:
+        #         patternEngine.showTime(clockMatrix)
+        #         # showTime = True 
+        #     else:
+        #         patternEngine.relase(clockMatrix)
+
+        #     clockTrigger = False
+
+        # show time
+        # while clockTrigger:
+        # if(clockTrigger and not showTime): 
+        #     # showTime = not showTime
+        #     # if showTime:
+        #     patternEngine.showTime(clockMatrix)
+        #     showTime = True
+        # elif(clockTrigger and showTime):
+        #     resetTrigger = True
+        #     patternEngine.relase(clockMatrix)
+
+        #     clockTrigger = False
+
+        # if(showTime and not runOnce):
+        #     runOnce = True
+        #     patternEngine.showTime(clockMatrix)
+        # # elif(showTime and atAngle):
+        # #     patternEngine.relase(clockMatrix)
+
+        # if(atAngle):
+        #     time.sleep(2)
+        #     patternEngine.relase(clockMatrix)
+        #     runOnce = False
 
         # squares
-        while squaresTrigger:
-            squares = not squares
-            if squares:
-                patternEngine.squares(clockMatrix)
-            else:
-                patternEngine.relase(clockMatrix)
+        # while squaresTrigger:
+        #     squares = not squares
+        #     if squares:
+        #         patternEngine.squares(clockMatrix)
+        #     else:
+        #         patternEngine.relase(clockMatrix)
 
-            squaresTrigger = False
+        #     squaresTrigger = False
 
-        # reset
-        while resetTrigger:
-            reset = not reset
-            if reset:
-                patternEngine.reset(clockMatrix)
-            else:
-                colno = 15
-                delay = 0.1
-                patternEngine.defaultRate(clockMatrix)
-                patternEngine.relase(clockMatrix)
+        # # reset
+        # while resetTrigger:
+        #     reset = not reset
+        #     if reset:
+        #         patternEngine.reset(clockMatrix)
+        #     else:
+        #         colno = 15
+        #         delay = 0.1
+        #         patternEngine.defaultRate(clockMatrix)
+        #         patternEngine.relase(clockMatrix)
 
-            resetTrigger = False
+            # resetTrigger = False
 
         # prints background to screen
         background.draw(display)
