@@ -1182,7 +1182,7 @@ class edgeTrigger(object):
         return self.atVal
 
 def callBack(oldVal, newVal):
-    if(oldVal == 55 and newVal == 56):
+    if(oldVal == 0 and newVal == 1):
         return True
     else:
         return False    
@@ -1330,18 +1330,6 @@ def main():
                 patternEngine.relase(clockMatrix)
                 patternEngine.oppositeRate(clockMatrix, 0.5)
 
-
-
-
-            
-        #     elif(showTime):
-        #         clockTrigger = True
-        #     elif(squares):
-        #         squaresTrigger = True
-        #         patternEngine.oppositeRate(clockMatrix, 0.5)
-
-
-
         # border
         while borderTrigger:
             border = not border
@@ -1351,67 +1339,6 @@ def main():
                 patternEngine.clearBorder(clockMatrix)
 
             borderTrigger = False
-
-
-
-
-        # while clockTrigger or showTime:
-        #     if clockTrigger:
-        #         showTime = not showTime
-        #     elif showTime:
-        #         patternEngine.showTime(clockMatrix)
-        #         # showTime = True 
-        #     else:
-        #         patternEngine.relase(clockMatrix)
-
-        #     clockTrigger = False
-
-        # show time
-        # while clockTrigger:
-        # if(clockTrigger and not showTime): 
-        #     # showTime = not showTime
-        #     # if showTime:
-        #     patternEngine.showTime(clockMatrix)
-        #     showTime = True
-        # elif(clockTrigger and showTime):
-        #     resetTrigger = True
-        #     patternEngine.relase(clockMatrix)
-
-        #     clockTrigger = False
-
-        # if(showTime and not runOnce):
-        #     runOnce = True
-        #     patternEngine.showTime(clockMatrix)
-        # # elif(showTime and atAngle):
-        # #     patternEngine.relase(clockMatrix)
-
-        # if(atAngle):
-        #     time.sleep(2)
-        #     patternEngine.relase(clockMatrix)
-        #     runOnce = False
-
-        # squares
-        # while squaresTrigger:
-        #     squares = not squares
-        #     if squares:
-        #         patternEngine.squares(clockMatrix)
-        #     else:
-        #         patternEngine.relase(clockMatrix)
-
-        #     squaresTrigger = False
-
-        # # reset
-        # while resetTrigger:
-        #     reset = not reset
-        #     if reset:
-        #         patternEngine.reset(clockMatrix)
-        #     else:
-        #         colno = 15
-        #         delay = 0.1
-        #         patternEngine.defaultRate(clockMatrix)
-        #         patternEngine.relase(clockMatrix)
-
-            # resetTrigger = False
 
         # prints background to screen
         background.draw(display)
