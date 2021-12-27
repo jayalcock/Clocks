@@ -38,8 +38,8 @@ class Screen:
     def getDisplayInfo(self):
         vidinfo = pygame.display.Info()
         ratio = 16/9
-        self.height = vidinfo.current_h
-        self.width = vidinfo.current_h * 16/9
+        self.height = vidinfo.current_w / ratio
+        self.width = vidinfo.current_w# * ratio
         # self.height = 
         # self.width = self.height * ratio
 
@@ -163,7 +163,7 @@ class Clock_Matrix:
 # Engine to drive clock arms
 class Pattern_Engine:
 
-    def __init__(self, minute=0, hour=0, minRate=0.5, hourRate=0.5, defRates = 0.5):
+    def __init__(self, minute=0, hour=0, minRate=0.7, hourRate=0.7, defRates = 0.7):
         self.pattern = 0
         # self.minRate = minRate
         # self.hourRate = hourRate
@@ -172,8 +172,14 @@ class Pattern_Engine:
         # Matricies for storing calcualted angles
         self.minAngleMtx = np.empty([columns, rows], dtype=float)
         self.hourAngleMtx = np.empty([columns, rows], dtype=float)
-        self.delay = 0
         self.defaultRotRates = defRates
+        self.freeRotate = 400
+
+        self.frameRate = 60
+        self.isolatedColumns = 0
+        self.cascadeDelayCounter = 0
+        self.cascadeDelayDefault = self.frameRate * 0.3
+        
 
         self.initialiseMatrix()
 
@@ -266,15 +272,15 @@ class Pattern_Engine:
 
                     complete = False
 
-        if (complete):
-            print("\n")
-            print(self.hourAngleMtx[0, 1])
-            print (clockMatrix.clockMtx[0, 1].hourArm.angle)
-            print(clockMatrix.clockMtx[0, 1].hourArm.targetAngle)
-            print("\n")
-            print(self.minAngleMtx[0, 1])
-            print (clockMatrix.clockMtx[0, 1].minuteArm.angle)
-            print(clockMatrix.clockMtx[0, 1].minuteArm.targetAngle)
+        # if (complete):
+        #     print("\n")
+        #     print(self.hourAngleMtx[0, 1])
+        #     print (clockMatrix.clockMtx[0, 1].hourArm.angle)
+        #     print(clockMatrix.clockMtx[0, 1].hourArm.targetAngled)
+        #     print("\n")
+        #     print(self.minAngleMtx[0, 1])
+        #     print (clockMatrix.clockMtx[0, 1].minuteArm.angle)
+        #     print(clockMatrix.clockMtx[0, 1].minuteArm.targetAngle)
 
         return complete
 
@@ -306,11 +312,10 @@ class Pattern_Engine:
                     clockMatrix.clockMtx[i, j].hourArm.rotationRate = random.uniform(-0.7, 0.7) 
 
     def relase(self, clockMatrix):
-        free = 400
         for i in range(columns):
             for j in range(rows):
-                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = free
-                clockMatrix.clockMtx[i, j].hourArm.targetAngle = free
+                clockMatrix.clockMtx[i, j].minuteArm.targetAngle = self.freeRotate
+                clockMatrix.clockMtx[i, j].hourArm.targetAngle = self.freeRotate
 
     # determine difference in angle between current and target
     def angleCheck(self, currentAngle, targetAngle):
@@ -320,31 +325,30 @@ class Pattern_Engine:
             return False
 
     # cascade flow pattern across matrix
-    def cascade(self, clockMatrix, isolatedColumns):
+    # def cascade(self, clockMatrix, isolatedColumns):
+    def cascade(self, clockMatrix, firstCall):
         complete = True
-        
+
+        if(firstCall):
+            self.isolatedColumns = 14
+            self.cascadeDelayCounter = self.cascadeDelayDefault
+
         # minute arm control
-        for i in range(isolatedColumns, columns):
+        for i in range(self.isolatedColumns, columns):
             for j in range(rows):
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle, clockMatrix.clockMtx[i, j].minuteArm.targetAngle)):
                     self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
-                    # self.minAngleMtx[i, j] += clockMatrix.clockMtx[i, j].minuteArm.rotationRate / 20
-                    # continue
                 else:
                     self.minAngleMtx[i, j] += clockMatrix.clockMtx[i, j].minuteArm.rotationRate
                     self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
 
                     complete = False
 
-                    # continue
-
         # hour arm control
-        for i in range(isolatedColumns, columns):
+        for i in range(self.isolatedColumns, columns):
             for j in range(rows):
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle, clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
                     self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
-                    # self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate / 20
-                    # clockMatrix.clockMtx[i, j].hourArm.angle = clockMatrix.clockMtx[i, j].hourArm.targetAngle
             
                 else:
                     self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate
@@ -352,17 +356,21 @@ class Pattern_Engine:
 
                     complete = False
 
-                    # continue
-
-        if (complete):
-            print("\n")
-            print(self.hourAngleMtx[0, 1])
-            print (clockMatrix.clockMtx[0, 1].hourArm.angle)
-            print(clockMatrix.clockMtx[0, 1].hourArm.targetAngle)
-            print("\n")
-            print(self.minAngleMtx[0, 1])
-            print (clockMatrix.clockMtx[0, 1].minuteArm.angle)
-            print(clockMatrix.clockMtx[0, 1].minuteArm.targetAngle)
+        # if (complete):
+        #     print("\n")
+        #     print(self.hourAngleMtx[0, 1])
+        #     print (clockMatrix.clockMtx[0, 1].hourArm.angle)
+        #     print(clockMatrix.clockMtx[0, 1].hourArm.targetAngle)
+        #     print("\n")
+        #     print(self.minAngleMtx[0, 1])
+        #     print (clockMatrix.clockMtx[0, 1].minuteArm.angle)
+        #     print(clockMatrix.clockMtx[0, 1].minuteArm.targetAngle)
+        if(self.isolatedColumns > 0):
+            self.cascadeDelayCounter -= 1
+            if(self.cascadeDelayCounter == 0):
+                self.cascadeDelayCounter = self.cascadeDelayDefault
+                self.isolatedColumns -= 1
+    
         return complete
 
     # cascade flow pattern from centre of matrix
@@ -1237,9 +1245,10 @@ def binaryEdgeCallback(oldVal, newVal):
 
 def main():
 
+    frameRate = 60
+
     pygame.init()  # initiate pygame
     sysClock = pygame.time.Clock()     # set up system clock
-    sysClock.tick(60)   # set framerate
 
     # setup screen
     display = Screen("Clock Sim")
@@ -1252,7 +1261,8 @@ def main():
     clockMatrix = Clock_Matrix(display)
 
     # initialised pattern engine with initial arm angles and rotation rates
-    patternEngine = Pattern_Engine(0, 180, 0.5, 0.5)
+    patternEngine = Pattern_Engine(0, 180, 0.7, 0.7)
+    patternEngine.frameRate = frameRate
 
     running = True
     atAngle = False
@@ -1271,23 +1281,19 @@ def main():
 
     pointToCentre = False
 
-    colno = 15
-    delay = 0.1
-
     patternNum = 0
+    firstCall = True
     showTimeTrigger = edgeTrigger(callBack)
     squaresTriggerF = edgeTrigger(squaresCallback)
     pointToCentreTrigger = edgeTrigger(binaryEdgeCallback)
-    
-    clock = pygame.time.Clock()
+
 
     while running:
 
-        # print FPS to terminal
-        # clock.tick()
-        # print(clock.get_fps())
+        sysClock.tick(frameRate) # fix framerate 
+        # print(sysClock.get_fps()) # print framerate to terminal
 
-        currentTime = time.localtime()
+        currentTime = time.localtime() # get current time from  system
 
         if(showTimeTrigger(currentTime.tm_sec)):
             showTime = True
@@ -1323,6 +1329,7 @@ def main():
                 if event.key == pygame.K_q:
                     resetTrigger = True
 
+                # '1' for centre rotate
                 if event.key == pygame.K_1:
                     pointToCentre = True
 
@@ -1331,36 +1338,30 @@ def main():
                 sys.exit()
                 running = False
 
-        # enables delay function
-        # to be cleaned up  
-        if (colno > 0):
-            delay -= 1
-            if (delay <= 0):
-                colno -= 1
-                delay = 0.35 * 60
-
         # run select pattern engine functions
         if(patternNum == 0):
-            atAngle = patternEngine.cascade(clockMatrix, colno)
+            atAngle = patternEngine.cascade(clockMatrix, firstCall)
+            firstCall = False
+
         elif(patternNum == 1):
             atAngle = patternEngine.rotate(clockMatrix)
+
         elif(patternNum == 2):
             squares = True
             patternEngine.randomRate(clockMatrix)
             patternNum = 0
+
         elif(patternNum == 3):
             pointToCentre = True
-       
- 
+            patternEngine.centreCascade(clockMatrix)
 
         if(atAngle):
             time.sleep(2)
             if(reset):
                 reset = False
                 patternEngine.relase(clockMatrix)
-                colno = 15
-                delay = 0.1
                 patternEngine.defaultRate(clockMatrix)
+                firstCall = True
 
             elif(showTime):
                 showTime = False
