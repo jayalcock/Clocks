@@ -163,10 +163,8 @@ class Clock_Matrix:
 # Engine to drive clock arms
 class Pattern_Engine:
 
-    def __init__(self, minute=0, hour=0, minRate=0.7, hourRate=0.7, defRates = 0.7):
+    def __init__(self, minute=0, hour=0, minRate=0.5, hourRate=0.5, defRates = 0.5):
         self.pattern = 0
-        # self.minRate = minRate
-        # self.hourRate = hourRate
         self.minAngle = minute
         self.hourAngle = hour
         # Matricies for storing calcualted angles
@@ -1225,27 +1223,28 @@ class edgeTrigger(object):
 
         return self.atVal
 
-def callBack(oldVal, newVal):
-    if(oldVal == 0 and newVal == 1):
-        return True
-    else:
-        return False    
-
-def squaresCallback(oldVal, newVal):
-    if(oldVal == 0 and newVal == 1):
-        return True
-    else:
-        return False    
 
 def binaryEdgeCallback(oldVal, newVal):
     if(oldVal == 0 and newVal == 1):
         return True
     else:
         return False 
+        
+# def callBack(oldVal, newVal):
+#     if(oldVal == 0 and newVal == 1):
+#         return True
+#     else:
+#         return False    
+
+# def squaresCallback(oldVal, newVal):
+#     if(oldVal == 0 and newVal == 1):
+#         return True
+#     else:
+#         return False    
 
 def main():
 
-    frameRate = 60
+    frameRate = 80
 
     pygame.init()  # initiate pygame
     sysClock = pygame.time.Clock()     # set up system clock
@@ -1261,7 +1260,7 @@ def main():
     clockMatrix = Clock_Matrix(display)
 
     # initialised pattern engine with initial arm angles and rotation rates
-    patternEngine = Pattern_Engine(0, 180, 0.7, 0.7)
+    patternEngine = Pattern_Engine(0, 180, 0.5, 0.5)
     patternEngine.frameRate = frameRate
 
     running = True
@@ -1271,22 +1270,24 @@ def main():
     borderTrigger = False
 
     showTime = False
-    clockTrigger = False
+    # clockTrigger = False
 
     squares = False
-    squaresTrigger = False
+    # squaresTrigger = False
 
     reset = False
-    resetTrigger = False
+    # resetTrigger = False
 
     pointToCentre = False
 
     patternNum = 0
     firstCall = True
-    showTimeTrigger = edgeTrigger(callBack)
-    squaresTriggerF = edgeTrigger(squaresCallback)
-    pointToCentreTrigger = edgeTrigger(binaryEdgeCallback)
 
+    # Callback trigger inits
+    showTimeTrigger = edgeTrigger(binaryEdgeCallback)
+    squaresTrigger = edgeTrigger(binaryEdgeCallback)
+    pointToCentreTrigger = edgeTrigger(binaryEdgeCallback)
+    resetTrigger = edgeTrigger(binaryEdgeCallback)
 
     while running:
 
@@ -1299,11 +1300,14 @@ def main():
             showTime = True
             patternEngine.showTime(clockMatrix)
 
-        if squaresTriggerF(squares):
+        if squaresTrigger(squares):
             patternEngine.squares(clockMatrix)
 
         if pointToCentreTrigger(pointToCentre):
             patternEngine.pointToCentre(clockMatrix)
+
+        if resetTrigger(reset):
+            patternEngine.reset(clockMatrix)
     
 
         for event in pygame.event.get():  # quit pygame
@@ -1327,7 +1331,7 @@ def main():
 
                 # 'q' for reset
                 if event.key == pygame.K_q:
-                    resetTrigger = True
+                    reset = True
 
                 # '1' for centre rotate
                 if event.key == pygame.K_1:
