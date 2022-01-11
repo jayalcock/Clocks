@@ -6,6 +6,7 @@ import time
 import random
 import numpy as np
 from pygame.locals import *
+# from pygame import gfxdraw # Required for anti-aliased lines
 
 columns = 15    # number of clock columns
 rows = 8     # number of clock rows
@@ -38,8 +39,8 @@ class Screen:
     def getDisplayInfo(self):
         vidinfo = pygame.display.Info()
         ratio = 16/9
-        self.height = vidinfo.current_w / ratio
-        self.width = vidinfo.current_w# * ratio
+        self.height = vidinfo.current_h #* ratio
+        self.width = vidinfo.current_h * ratio
         # self.height = 
         # self.width = self.height * ratio
 
@@ -94,8 +95,11 @@ class Clock_Arm:
     # object on centre of clock face object
     def draw(self, display):
         self.endPtCalc()
-        pygame.draw.line(display.screen, self.colour, self.centre,
-                         self.endPoint, self.lineWidth)
+        pygame.draw.line(display.screen, self.colour, self.centre, self.endPoint, self.lineWidth)
+
+        # anti-aliased line. for a line with thickness, a rectangle would have to be drawn 
+        # pygame.gfxdraw.line(display.screen, int(self.centre[0]), int(self.centre[1]),
+                        #  int(self.endPoint[0]), int(self.endPoint[1]), BLACK) 
 
 # Initiate clock class
 class Clock:
@@ -1353,7 +1357,7 @@ def main():
             
             time.sleep(2)
 
-            if(reset):
+            if(reset): # fix up reset sequence - crashes
                 reset = False
                 patternEngine.relase(clockMatrix)
                 patternEngine.defaultRate(clockMatrix)
