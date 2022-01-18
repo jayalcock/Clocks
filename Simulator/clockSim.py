@@ -1,3 +1,4 @@
+from threading import activeCount
 from typing import Tuple
 import pygame
 import sys
@@ -38,11 +39,9 @@ class Screen:
     # gets video info (resolution) from current active display
     def getDisplayInfo(self):
         vidinfo = pygame.display.Info()
-        ratio = 16/9
-        self.height = vidinfo.current_h #* ratio
-        self.width = vidinfo.current_h * ratio
-        # self.height = 
-        # self.width = self.height * ratio
+        aspectRatio = 16/9
+        self.height = vidinfo.current_h
+        self.width = vidinfo.current_h * aspectRatio
 
     # sets up screen size and parameters that will be drawn on
     def setupScreen(self):
@@ -113,6 +112,7 @@ class Clock:
         self.hourArm = Clock_Arm(self.centre, self.hourArmLength, 0.0)
         self.colour = BLACK
         self.lineWidth = 1
+        self.active = True
 
     def draw(self, display):
         pygame.draw.circle(display.screen, self.colour, self.centre,
@@ -381,6 +381,11 @@ class Pattern_Engine:
         complete = True
 
         delayAngle = 15
+
+        
+        # for i in range(columns):
+        #     for j in range(rows):
+        #         clockMatrix.clockMtx[i, j].active = True
         
         # find centre of clock matrix
         centreX = round(columns / 2)
@@ -391,6 +396,9 @@ class Pattern_Engine:
         # minute arm control
         for i in range(columns):
             for j in range(rows):
+                # if (clockMatrix.clockMtx[i, j].active == False):
+                    # pass
+
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle, clockMatrix.clockMtx[i, j].minuteArm.targetAngle)):
                     self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
                     # continue
@@ -404,9 +412,13 @@ class Pattern_Engine:
         # hour arm control
         for i in range(columns):
             for j in range(rows):
+                # if (clockMatrix.clockMtx[i, j].active == False):
+                    # pass
+
                 if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle, clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
                     self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
                     # continue
+                
                 else:
                     self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate
                     self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
@@ -1290,14 +1302,20 @@ def main():
 
     pointToCentre = False
 
-    patternNum = 0
+
+    rotationNum = 1
+    patternNum = None
     firstCall = True
 
     # Callback trigger inits
     showTimeTrigger = edgeTrigger(binaryEdgeCallback)
+    showTimeTrigger2 = edgeTrigger(binaryEdgeCallback)
     squaresTrigger = edgeTrigger(binaryEdgeCallback)
     pointToCentreTrigger = edgeTrigger(binaryEdgeCallback)
     resetTrigger = edgeTrigger(binaryEdgeCallback)
+
+
+
 
     while running:
 
@@ -1307,7 +1325,9 @@ def main():
         currentTime = time.localtime() # get current time from  system
 
         if(showTimeTrigger(currentTime.tm_sec)):
-            showTime = True
+            patternNum = 1
+
+        if(showTimeTrigger2(showTime)):
             patternEngine.showTime(clockMatrix)
 
         if squaresTrigger(squares):
@@ -1332,100 +1352,161 @@ def main():
 
                 # 't' to show time
                 if event.key == pygame.K_t:
-                    showTime = True
+                    # showTime = True
+                    patternNum = 1
 
                 # 's' for squares
                 if event.key == pygame.K_s:
-                    squares = True
-                    # patternNum = 2
+                    # squares = True
+                    patternNum = 2
 
                 # 'q' for reset
                 if event.key == pygame.K_q:
-                    reset = True
+                    # reset = True
+                    patternNum = 0
 
-                # '1' for centre rotate
+                # '1' for centre rotate cascade
                 if event.key == pygame.K_1:
-                    pointToCentre = True
-                    # patternNum = 3
+                    patternNum = 3
+
+                # '2' for centre rotate swirl
+                if event.key == pygame.K_2:
+                    patternNum = 4
 
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
                 running = False
 
-        if(atAngle):
+    # clocks rotating
+    # time pattern is called, or user input
+    # keep driving same rotation until pattern is achieved
+    # when all arms are at angle, shift to new pattern and associated rotation 
+
+
+        # if(atAngle):
             
-            time.sleep(2)
+        #     time.sleep(2)
 
-            if(reset): # fix up reset sequence - crashes
-                reset = False
-                patternEngine.relase(clockMatrix)
-                patternEngine.defaultRate(clockMatrix)
-                patternNum = random.randint(0, 1)
-                firstCall = True
+        #     if(reset): # fix up reset sequence - crashes
+        #         reset = False
+        #         patternEngine.relase(clockMatrix)
+        #         patternEngine.defaultRate(clockMatrix)
+        #         patternNum = random.randint(0, 1)
+        #         firstCall = True
 
-            elif(showTime):
-                showTime = False
-                patternNum = random.randint(2, 5)
-                patternEngine.relase(clockMatrix)
-                # patternEngine.reset(clockMatrix)
-                # reset = True
-                # patternEngine.defaultRate(clockMatrix)
-                patternEngine.randomRate(clockMatrix)
+        #     elif(showTime):
+        #         showTime = False
+        #         patternNum = random.randint(2, 5)
+        #         patternEngine.relase(clockMatrix)
+        #         # patternEngine.reset(clockMatrix)
+        #         # reset = True
+        #         # patternEngine.defaultRate(clockMatrix)
+        #         patternEngine.randomRate(clockMatrix)
 
-            elif(squares):
-                squares = False
-                patternEngine.relase(clockMatrix)
-                patternEngine.oppositeRate(clockMatrix, 0.5)
-                patternNum = 1
+        #     elif(squares):
+        #         squares = False
+        #         patternEngine.relase(clockMatrix)
+        #         patternEngine.oppositeRate(clockMatrix, 0.5)
+        #         patternNum = 1
 
-            elif(pointToCentre):
-                pointToCentre = False
-                patternEngine.relase(clockMatrix)
-                patternEngine.oppositeRate(clockMatrix, -0.4)
-                # patternEngine.defaultRate(clockMatrix)
-                patternNum = 1
+        #     elif(pointToCentre):
+        #         pointToCentre = False
+        #         patternEngine.relase(clockMatrix)
+        #         patternEngine.oppositeRate(clockMatrix, -0.4)
+        #         # patternEngine.defaultRate(clockMatrix)
+        #         patternNum = 1
 
         # run select pattern engine functions
-        # Pattern 0 - Move to reset 
+        # Pattern 0 - All rotate at same rate
         # Pattern 1 - Cascade right to left
-        # Pattern 2 - All rotate at same rate
-        # Pattern 3 - Squares rotate inward
-        # Pattern 4 - Clocks point to centre rotate outward
-        # Pattern 5 - Clocks point to centre swirl
+        # Pattern 2 - Centre outward cascade
+        # Pattern 10 - Move to reset 
+        # Pattern 11 - Squares rotate inward
+        # Pattern 12 - Clocks point to centre rotate outward
+        # Pattern 13 - Clocks point to centre swirl
 
-        if(patternNum == 0): # Cascade right to left
+        if(rotationNum == 0): # Rotate at fixed/same rate
+            atAngle = patternEngine.rotate(clockMatrix)
+
+        elif(rotationNum == 1): # Cascade right to left
             atAngle = patternEngine.cascade(clockMatrix, firstCall)
             firstCall = False
 
-        elif(patternNum == 1): # rotate at fixed/same rate
-            atAngle = patternEngine.rotate(clockMatrix)
+        elif(rotationNum == 2): #Centre outward cascade
+            atAngle = patternEngine.centreCascade(clockMatrix)
 
-        elif(patternNum == 2): # Move to reset
-            reset = True
+
+        if(patternNum == 0): # Move to reset
+            if(atAngle):
+                atAngle = False
+                reset = False
+                patternNum = None
+                rotationNum = 1
+                firstCall = True
+                patternEngine.relase(clockMatrix)
+                patternEngine.defaultRate(clockMatrix)
+                
+            else:
+                reset = True
             # patternEngine.randomRate(clockMatrix)
-            atAngle = patternEngine.rotate(clockMatrix)
+            # atAngle = patternEngine.rotate(clockMatrix)
 
             # atAngle = patternEngine.cascade(clockMatrix, firstCall)
             # firstCall = False
 
-        elif(patternNum == 3): # inward rotate for squares
-            squares = True
-            # patternEngine.randomRate(clockMatrix)
-            # patternNum = 0
-            atAngle = patternEngine.rotate(clockMatrix)
+        elif(patternNum == 1): # Show time
+            if(atAngle):
+                time.sleep(2)
+                atAngle = False
+                showTime = False
+                patternNum = 0
+                patternEngine.relase(clockMatrix)
+                patternEngine.defaultRate(clockMatrix)
 
-        elif(patternNum == 4): # point to centre cascade
-            pointToCentre = True
-            patternEngine.oppositeRate(clockMatrix, -0.4)
-            atAngle = patternEngine.centreCascade(clockMatrix)
-            # atAngle = patternEngine.cascade(clockMatrix, firstCall)
-            # atAngle = patternEngine.rotate(clockMatrix)
+            else:
+                showTime = True
 
-        elif(patternNum == 5): # point to centre swirl
-            pointToCentre = True
-            atAngle = patternEngine.cascade(clockMatrix, firstCall)
-            patternEngine.defaultRate(clockMatrix)
+        elif(patternNum == 2): # inward rotate for squares
+            if(atAngle):
+                time.sleep(2)
+                atAngle = False
+                squares = False
+                patternNum = None
+                rotationNum = 0
+                patternEngine.relase(clockMatrix)
+                patternEngine.oppositeRate(clockMatrix, 0.5)
+
+            else:
+                squares = True
+
+
+        elif(patternNum == 3): # point to centre cascade
+            if(atAngle):
+                time.sleep(2)
+                atAngle = False
+                pointToCentre = False
+                patternNum = None
+                patternEngine.relase(clockMatrix)
+                patternEngine.oppositeRate(clockMatrix, 0.5)
+                
+            else:
+                pointToCentre = True
+
+        elif(patternNum == 4): # point to centre swirl
+            if(atAngle):
+                time.sleep(2)
+                atAngle = False
+                pointToCentre = False
+                patternNum = None
+                rotationNum = 1
+                patternEngine.relase(clockMatrix)
+                patternEngine.defaultRate(clockMatrix)
+            else:
+                pointToCentre = True
+    
+            
+
 
         # border
         while borderTrigger:
