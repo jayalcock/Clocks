@@ -1449,11 +1449,6 @@ def main():
                 
             else:
                 reset = True
-            # patternEngine.randomRate(clockMatrix)
-            # atAngle = patternEngine.rotate(clockMatrix)
-
-            # atAngle = patternEngine.cascade(clockMatrix, firstCall)
-            # firstCall = False
 
         elif(patternNum == 1): # Show time
             if(atAngle):
@@ -1505,8 +1500,6 @@ def main():
             else:
                 pointToCentre = True
     
-            
-
 
         # border
         while borderTrigger:
