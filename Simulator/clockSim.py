@@ -1350,8 +1350,8 @@ def main():
         currentTime = time.localtime() # get current time from  system
 
         if(showTimeTrigger(currentTime.tm_sec)):
-            # patternNum = 1
-            pass
+            patternNum = 1
+            # pass
 
         if(showTimeTrigger2(showTime)):
             patternEngine.showTime(clockMatrix)
