@@ -1,5 +1,12 @@
-from threading import activeCount
-from typing import Tuple
+# This file was developed to run a simulator for the clocks to develop and test
+# algorithms easily and off the hardware model. 
+# To run this file the following is needed:
+#   * python 3.10 will be required - switch statements
+#   * pygame 2.0.2 - graphics
+#   * numpy - matricies
+#
+# Developed by - Jay Alcock - 2021
+
 import pygame
 import sys
 import math
