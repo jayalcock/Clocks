@@ -248,40 +248,6 @@ class Pattern_Engine:
             else:
                 self.hourAngle += rate
 
-    # def rotate(self, clockMatrix):
-    #     complete = True
-
-    #     # minute arm control
-    #     for i in range(columns):
-    #         for j in range(rows):
-    #             if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
-    #                                 clockMatrix.clockMtx[i, j].
-    #                                 minuteArm.targetAngle)):
-    #                 self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
-        
-    #                 # continue
-    #             else:
-    #                 self.minAngleMtx[i, j] += clockMatrix.clockMtx[i, j].minuteArm.rotationRate
-    #                 self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
-
-    #                 complete = False
-
-    #     # hour arm control
-    #     for i in range(columns):
-    #         for j in range(rows):
-    #             if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
-    #                clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
-    #                 self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
-    #                 # continue
-    #             else:
-    #                 self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate
-    #                 self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
-
-    #                 complete = False
-
-
-    #     return complete
-
     def rotateToAngle(self, arm, angle):
         if arm == "min":
             self.minAngle = angle
@@ -322,48 +288,7 @@ class Pattern_Engine:
         else:
             return False
 
-    # # cascade flow pattern across matrix
-    # def cascade(self, clockMatrix, firstCall):
-    #     complete = True
-
-    #     if(firstCall):
-    #         self.isolatedColumns = 14
-    #         self.cascadeDelayCounter = self.cascadeDelayDefault
-
-    #     # minute arm control
-    #     for i in range(self.isolatedColumns, columns):
-    #         for j in range(rows):
-    #             if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle, clockMatrix.clockMtx[i, j].minuteArm.targetAngle)):
-    #                 self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
-
-    #             else:
-    #                 self.minAngleMtx[i, j] += clockMatrix.clockMtx[i, j].minuteArm.rotationRate
-    #                 self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
-
-    #                 complete = False
-
-    #     # hour arm control
-    #     for i in range(self.isolatedColumns, columns):
-    #         for j in range(rows):
-    #             if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle, clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
-    #                 self.hourAngleMtx[i, j] = clockMatrix.clockMtx[i, j].hourArm.targetAngle
-            
-    #             else:
-    #                 self.hourAngleMtx[i, j] += clockMatrix.clockMtx[i, j].hourArm.rotationRate
-    #                 self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
-
-    #                 complete = False
-
-    #     if(self.isolatedColumns > 0):
-    #         self.cascadeDelayCounter -= 1
-    #         if(self.cascadeDelayCounter == 0):
-    #             self.cascadeDelayCounter = self.cascadeDelayDefault
-    #             self.isolatedColumns -= 1
-    
-    #     return complete
-
     # cascade flow pattern from centre of matrix
-    # def centreCascade(self, clockMatrix, firstCall, rotationNum):
     def rotateClocks(self, clockMatrix, firstCall, rotationNum):
         complete = True 
 
@@ -504,10 +429,6 @@ class Pattern_Engine:
                     self.minAngleMtx[i, j] += self.minRate * (j * angle)
 
                     self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
-                    # if self.minAngleMtx[i, j] > 360.0:
-                    #     self.minAngleMtx[i, j] -= 360.0
-                    # elif self.minAngleMtx[i, j] < 0.0:
-                    #     self.minAngleMtx[i, j] += 360.0
 
         # hour arm control
         for j in range(rows):
@@ -521,10 +442,6 @@ class Pattern_Engine:
                     self.hourAngleMtx[i, j] += self.hourRate * (j * angle)
 
                     self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
-                    # if self.hourAngleMtx[i, j] > 360.0:
-                    #     self.hourAngleMtx[i, j] -= 360.0
-                    # elif self.hourAngleMtx[i, j] < 0.0:
-                    #     self.hourAngleMtx[i, j] += 360.0
 
     # draws border on outermost clocks
     def border(self, clockMatrix):
@@ -1312,18 +1229,7 @@ def binaryEdgeCallback(oldVal, newVal):
         return True
     else:
         return False 
-        
-# def callBack(oldVal, newVal):
-#     if(oldVal == 0 and newVal == 1):
-#         return True
-#     else:
-#         return False    
-
-# def squaresCallback(oldVal, newVal):
-#     if(oldVal == 0 and newVal == 1):
-#         return True
-#     else:
-#         return False    
+           
 
 def main():
 
@@ -1423,26 +1329,6 @@ def main():
                 pygame.quit()
                 sys.exit()
     
-
-        # if(rotationNum == 0): # Rotate at fixed/same rate
-        #     # atAngle = patternEngine.rotate(clockMatrix)
-        #     atAngle = patternEngine.rotateClocks(clockMatrix, firstCall, rotationNum)
-
-        # elif(rotationNum == 1): # Cascade right to left
-        #     # atAngle = patternEngine.cascade(clockMatrix, firstCall)
-        #     atAngle = patternEngine.rotateClocks(clockMatrix, firstCall, rotationNum)
-        #     firstCall = False
-
-        # elif(rotationNum == 2): #Centre outward cascade
-        #     # atAngle = patternEngine.centreCascade(clockMatrix, firstCall1, rotationNum)
-        #     atAngle = patternEngine.rotateClocks(clockMatrix, firstCall1, rotationNum)
-        #     firstCall1 = False
-
-        # elif(rotationNum == 3): #Centre outward cascade
-        #     # atAngle = patternEngine.centreCascade(clockMatrix, firstCall1, rotationNum)
-        #     atAngle = patternEngine.rotateClocks(clockMatrix, firstCall1, rotationNum)
-        #     firstCall1 = False
-
         if(patternNum == 0): # Show time
             if(atAngle):
                 time.sleep(2)
