@@ -21,9 +21,6 @@ BLACK = (0, 0, 0)
 timeAngle = {'12': 0, '1': 30, '2': 60, '3': 90, '4': 120, '5': 150,
              '6': 180, '7': 210, '8': 240, '9': 270, '10': 300, '11': 330, '45': 45}
 
-# digit position dictionary
-pos = {'1': columns / 4, '2': columns / 2}
-
 # screen class to set up window and background
 class Screen:
 
@@ -114,6 +111,7 @@ class Clock:
         self.lineWidth = 1
         self.active = True
 
+    # draw clock frame instance
     def draw(self, display):
         pygame.draw.circle(display.screen, self.colour, self.centre,
                            self.diameter / 2, self.lineWidth)
@@ -208,7 +206,7 @@ class Pattern_Engine:
                 clockMatrix.clockMtx[i, j].minuteArm.rotationRate = self.defaultRotRates
                 clockMatrix.clockMtx[i, j].hourArm.rotationRate = self.defaultRotRates
 
-    #rotates hour and minute in opposite direction - used as a squares effect
+    #rotates hour and minute arms in opposite direction
     def oppositeRate(self, clockMatrix, rate):
         for j in range(0, rows, 2):
             for i in range(0, columns, 2):
@@ -228,26 +226,8 @@ class Pattern_Engine:
                 clockMatrix.clockMtx[i, j].minuteArm.rotationRate = -rate
                 clockMatrix.clockMtx[i, j].hourArm.rotationRate = rate
 
-    def rotateAtRate(self, arm, rate, direction):
 
-        if direction == "cw":
-            if arm == "min":
-                self.minAngle += rate
-            else:
-                self.hourAngle += rate
-
-        else:
-            if arm == "min":
-                self.minAngle += rate
-            else:
-                self.hourAngle += rate
-
-    def rotateToAngle(self, arm, angle):
-        if arm == "min":
-            self.minAngle = angle
-        else:
-            self.hourAngle = angle
-
+    # checks to see if angle has been driven < 0 or > 360 degrees
     def angleBoundCheck(self, angle):
         if angle > 360.0:
             angle -= 360.0
@@ -256,6 +236,7 @@ class Pattern_Engine:
 
         return angle
 
+    # sets random rotation rate for each arm 
     def randomRate(self, clockMatrix):
         for j in range(rows):
             for i in range(columns):
@@ -269,6 +250,7 @@ class Pattern_Engine:
                 while(clockMatrix.clockMtx[i, j].hourArm.rotationRate < 0.3 and clockMatrix.clockMtx[i, j].hourArm.rotationRate > -0.3):
                     clockMatrix.clockMtx[i, j].hourArm.rotationRate = random.uniform(-0.7, 0.7) 
 
+    # releases all arms from fixed angle, to freely rotate
     def relase(self, clockMatrix):
         for i in range(columns):
             for j in range(rows):
@@ -282,7 +264,12 @@ class Pattern_Engine:
         else:
             return False
 
-    # cascade flow pattern from centre of matrix
+    # rotates clock arms with respect to different rotation patterns
+    # Rotation list:
+    # Rotation 0 = Default rotate
+    # Rotation 1 = Cascade right to left
+    # Rotation 2 = Cascade left to right
+    # Rotation 3 = Cascade centre out
     def rotateClocks(self, clockMatrix, firstCall, rotationNum):
         complete = True 
 
@@ -408,35 +395,6 @@ class Pattern_Engine:
 
         return complete
 
-    # offset clock arms by a value
-    def offset(self, clockMatrix, angle):
-
-        # minute arm control
-        for j in range(rows):
-            for i in range(columns):
-                if (self.angleCheck(clockMatrix.clockMtx[i, j].minuteArm.angle,
-                                    clockMatrix.clockMtx[i, j].
-                                    minuteArm.targetAngle)):
-                    self.minAngleMtx[i, j] = clockMatrix.clockMtx[i, j].minuteArm.targetAngle
-                    continue
-                else:
-                    self.minAngleMtx[i, j] += self.minRate * (j * angle)
-
-                    self.minAngleMtx[i, j] = self.angleBoundCheck(self.minAngleMtx[i, j])
-
-        # hour arm control
-        for j in range(rows):
-            for i in range(columns):
-                if (self.angleCheck(clockMatrix.clockMtx[i, j].hourArm.angle,
-                   clockMatrix.clockMtx[i, j].hourArm.targetAngle)):
-                    self.hourAngleMtx[i, j] =\
-                        clockMatrix.clockMtx[i, j].hourArm.targetAngle
-                    continue
-                else:
-                    self.hourAngleMtx[i, j] += self.hourRate * (j * angle)
-
-                    self.hourAngleMtx[i, j] = self.angleBoundCheck(self.hourAngleMtx[i, j])
-
     # draws border on outermost clocks
     def border(self, clockMatrix):
 
@@ -462,33 +420,38 @@ class Pattern_Engine:
         clockMatrix.clockMtx[columns - 1, rows - 1].minuteArm.targetAngle = timeAngle['9']
         clockMatrix.clockMtx[columns - 1, rows - 1].hourArm.targetAngle = timeAngle['12']
 
+    # aligns the clocks to show a digital representation of the time
     def showTime(self, clockMatrix):
 
         y_offset = 1
+        unusedAngle = 45
 
         # offset for digital representation position number
         numberPosition = {1: 1, 2: 4, 3: 8, 4: 11}
 
+        # get current time from system
         def getTime():
             t = time.localtime()
             currentTime = time.strftime("%H:%M", t)
             return currentTime
 
+        #sets clocks not used in displaying time to fixed angle
         def border(clockMatrix):
             for i in range(columns):
-                clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = 45
-                clockMatrix.clockMtx[i, 0].hourArm.targetAngle = 45
-                clockMatrix.clockMtx[i, rows - 1].minuteArm.targetAngle = 45
-                clockMatrix.clockMtx[i, rows - 1].hourArm.targetAngle = 45
+                clockMatrix.clockMtx[i, 0].minuteArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[i, 0].hourArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[i, rows - 1].minuteArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[i, rows - 1].hourArm.targetAngle = unusedAngle
 
             for j in range(rows):
-                clockMatrix.clockMtx[0, j].minuteArm.targetAngle = 45
-                clockMatrix.clockMtx[0, j].hourArm.targetAngle = 45
-                clockMatrix.clockMtx[columns - 1, j].minuteArm.targetAngle = 45
-                clockMatrix.clockMtx[columns - 1, j].hourArm.targetAngle = 45
-                clockMatrix.clockMtx[7, j].minuteArm.targetAngle = 45
-                clockMatrix.clockMtx[7, j].hourArm.targetAngle = 45
+                clockMatrix.clockMtx[0, j].minuteArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[0, j].hourArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[columns - 1, j].minuteArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[columns - 1, j].hourArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[7, j].minuteArm.targetAngle = unusedAngle
+                clockMatrix.clockMtx[7, j].hourArm.targetAngle = unusedAngle
 
+        # number 0 representation 
         def zero(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
@@ -547,6 +510,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        # number 1 representation 
         def one(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['45']
@@ -605,6 +569,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        # number 2 representation 
         def two(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
@@ -663,6 +628,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        # number 3 representation
         def three(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
@@ -721,6 +687,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        # number 4 representation
         def four(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['3']
@@ -779,6 +746,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['12']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['9']
 
+        # number 5 representation
         def five(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
@@ -837,6 +805,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['12']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['9']
 
+        # number 6 representation
         def six(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
@@ -895,6 +864,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['12']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['9']
 
+        # number 7 representation
         def seven(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['3']
@@ -953,6 +923,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        # number 8 representation
         def eight(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
@@ -1011,6 +982,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        # number 9 representation
         def nine(clockMatrix, x_offset):
             # left
             clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
@@ -1069,6 +1041,7 @@ class Pattern_Engine:
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
             clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
 
+        # set each position in display to respective digit
         def setClocks(currentTime):
             match currentTime[0]:
                 case '0':
@@ -1204,7 +1177,7 @@ class Pattern_Engine:
                 clockMatrix.clockMtx[i, j].minuteArm.targetAngle = angle
                 clockMatrix.clockMtx[i, j].hourArm.targetAngle = angle
 
-      
+# edge trigger for debouncing keystroke or show time trigger
 class edgeTrigger(object):
     def __init__(self, callback):
         self.value = None
@@ -1218,6 +1191,7 @@ class edgeTrigger(object):
 
         return self.atVal
 
+# callback for 0 to 1 transition
 def binaryEdgeCallback(oldVal, newVal):
     if(oldVal == 0 and newVal == 1):
         return True
@@ -1227,7 +1201,7 @@ def binaryEdgeCallback(oldVal, newVal):
 
 def main():
 
-    frameRate = 80
+    frameRate = 100
 
     pygame.init()  # initiate pygame
     sysClock = pygame.time.Clock()     # set up system clock
@@ -1244,8 +1218,8 @@ def main():
 
     # initialised pattern engine with initial arm angles and rotation rates
     patternEngine = Pattern_Engine(0, 180, 0.5)
-    patternEngine.frameRate = frameRate
 
+    # initialise trigger booleans
     running = True
     atAngle = False
     showTime = False
@@ -1258,7 +1232,7 @@ def main():
     patternNum = None
     firstCall = True
 
-    # Callback trigger inits
+    # Callback trigger initialisation 
     showTimeTrigger = edgeTrigger(binaryEdgeCallback)
     showTimeTrigger2 = edgeTrigger(binaryEdgeCallback)
     squaresTrigger = edgeTrigger(binaryEdgeCallback)
