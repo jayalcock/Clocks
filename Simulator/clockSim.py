@@ -1329,6 +1329,19 @@ def main():
                 pygame.quit()
                 sys.exit()
     
+        # Pattern list:
+        # Pattern 0 = Shows the current time in digital form
+        # Pattern 1 = Moves all clocks to reset angle
+        # Pattern 2 = Squares
+        # Pattern 3 = All clocks point to centre - centre out cascade rotation
+        # Pattern 4 = All clocks point to centre - swirl rotation
+
+        # Rotation list:
+        # Rotation 0 = Default rotate
+        # Rotation 1 = Cascade right to left
+        # Rotation 2 = Cascade left to right
+        # Rotation 3 = Cascade centre out
+
         if(patternNum == 0): # Show time
             if(atAngle):
                 time.sleep(2)
@@ -1343,7 +1356,7 @@ def main():
             else:
                 showTime = True
 
-        elif(patternNum == 1): # Move to reset
+        elif(patternNum == 1): # Reset angle
             if(atAngle):
                 atAngle = False
                 reset = False
@@ -1356,7 +1369,7 @@ def main():
             else:
                 reset = True
 
-        elif(patternNum == 2): # inward rotate for squares
+        elif(patternNum == 2): # Squares
             if(atAngle):
                 time.sleep(2)
                 atAngle = False
@@ -1369,7 +1382,7 @@ def main():
             else:
                 squares = True
 
-        elif(patternNum == 3): # point to centre cascade
+        elif(patternNum == 3): # Point to centre - cascade
             if(atAngle):
                 time.sleep(2)
                 atAngle = False
@@ -1383,7 +1396,7 @@ def main():
             else:
                 pointToCentre = True
 
-        elif(patternNum == 4): # point to centre swirl
+        elif(patternNum == 4): # Point to centre - swirl
             if(atAngle):
                 time.sleep(2)
                 atAngle = False
@@ -1395,6 +1408,7 @@ def main():
             else:
                 pointToCentre = True
 
+        # update clock angles
         atAngle = patternEngine.rotateClocks(clockMatrix, firstCall, rotationNum)
 
         firstCall = False
