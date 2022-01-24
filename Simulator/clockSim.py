@@ -167,7 +167,7 @@ class Clock_Matrix:
 # Engine to drive clock arms
 class Pattern_Engine:
 
-    def __init__(self, minute=0, hour=0, minRate=0.5, hourRate=0.5, defRates = 0.5):
+    def __init__(self, minute=0, hour=0, defRates = 0.5):
         self.pattern = 0
         self.minAngle = minute
         self.hourAngle = hour
@@ -177,16 +177,10 @@ class Pattern_Engine:
         self.defaultRotRates = defRates
         self.freeRotate = 400
 
-        self.frameRate = 60
-        self.isolatedColumns = 0
-        self.cascadeDelayCounter = 0
-        self.cascadeDelayDefault = self.frameRate * 0.3
-
         self.cyclesRan = 0
         self.desiredCycles = 0
         self.incrementX = 0
         self.incrementY = 0
-        self.firstCall = 1
 
         self.initialiseMatrix()
 
@@ -1249,7 +1243,7 @@ def main():
     clockMatrix = Clock_Matrix(display)
 
     # initialised pattern engine with initial arm angles and rotation rates
-    patternEngine = Pattern_Engine(0, 180, 0.5, 0.5)
+    patternEngine = Pattern_Engine(0, 180, 0.5)
     patternEngine.frameRate = frameRate
 
     running = True
