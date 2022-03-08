@@ -2806,7 +2806,7 @@ Linker script and memory map
                 0x0000000000000001                . = ASSERT (((__init_rodata_start__ == __init_rodata_end__) || ((__init_rodata_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .init_rodata is too large to fit in FLASH memory segment)
                 0x0000000000000278                __text_load_start__ = ALIGN (__init_rodata_end__, 0x4)
 
-.text           0x0000000000000278      0x3b8
+.text           0x0000000000000278      0x3b0
                 0x0000000000000278                __text_start__ = .
  *(.text .text.* .glue_7t .glue_7 .gnu.linkonce.t.* .gcc_except_table .ARM.extab* .gnu.linkonce.armextab.*)
  .glue_7        0x0000000000000278        0x0 linker stubs
@@ -2819,66 +2819,66 @@ Linker script and memory map
  .text.CAN_error
                 0x0000000000000282        0x2 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
                 0x0000000000000282                CAN_error
- .text.CAN_rx   0x0000000000000284       0x2c 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
+ .text.CAN_rx   0x0000000000000284       0x24 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
                 0x0000000000000284                CAN_rx
  .text.baudrateCalculate
-                0x00000000000002b0       0x90 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
-                0x00000000000002b0                baudrateCalculate
+                0x00000000000002a8       0x90 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
+                0x00000000000002a8                baudrateCalculate
  .text.C_CAN_IRQHandler
-                0x0000000000000340       0x14 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
-                0x0000000000000340                C_CAN_IRQHandler
- .text.main     0x0000000000000354       0xa0 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
-                0x0000000000000354                main
+                0x0000000000000338       0x14 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
+                0x0000000000000338                C_CAN_IRQHandler
+ .text.main     0x000000000000034c       0xa0 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
+                0x000000000000034c                main
  .text.Board_LED_Toggle
-                0x00000000000003f4       0x1c 11C24 LPCOpen THUMB Flash Release/board.o
-                0x00000000000003f4                Board_LED_Toggle
+                0x00000000000003ec       0x1c 11C24 LPCOpen THUMB Flash Release/board.o
+                0x00000000000003ec                Board_LED_Toggle
  .text.Board_Init
-                0x0000000000000410       0x20 11C24 LPCOpen THUMB Flash Release/board.o
-                0x0000000000000410                Board_Init
+                0x0000000000000408       0x20 11C24 LPCOpen THUMB Flash Release/board.o
+                0x0000000000000408                Board_Init
  .text.Board_SystemInit
-                0x0000000000000430       0x94 11C24 LPCOpen THUMB Flash Release/board_sysinit.o
-                0x0000000000000430                Board_SystemInit
+                0x0000000000000428       0x94 11C24 LPCOpen THUMB Flash Release/board_sysinit.o
+                0x0000000000000428                Board_SystemInit
  .text.SystemCoreClockUpdate
-                0x00000000000004c4       0x10 11C24 LPCOpen THUMB Flash Release/chip_11xx.o
-                0x00000000000004c4                SystemCoreClockUpdate
+                0x00000000000004bc       0x10 11C24 LPCOpen THUMB Flash Release/chip_11xx.o
+                0x00000000000004bc                SystemCoreClockUpdate
  .text.Chip_Clock_SetSystemPLLSource
-                0x00000000000004d4       0x14 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x00000000000004d4                Chip_Clock_SetSystemPLLSource
+                0x00000000000004cc       0x14 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x00000000000004cc                Chip_Clock_SetSystemPLLSource
  .text.Chip_Clock_SetMainClockSource
-                0x00000000000004e8       0x14 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x00000000000004e8                Chip_Clock_SetMainClockSource
+                0x00000000000004e0       0x14 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x00000000000004e0                Chip_Clock_SetMainClockSource
  .text.Chip_Clock_GetWDTOSCRate
-                0x00000000000004fc       0x28 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x00000000000004fc                Chip_Clock_GetWDTOSCRate
+                0x00000000000004f4       0x28 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x00000000000004f4                Chip_Clock_GetWDTOSCRate
  .text.Chip_Clock_GetSystemPLLInClockRate
-                0x0000000000000524       0x2c 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x0000000000000524                Chip_Clock_GetSystemPLLInClockRate
+                0x000000000000051c       0x2c 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x000000000000051c                Chip_Clock_GetSystemPLLInClockRate
  .text.Chip_Clock_GetSystemPLLOutClockRate
-                0x0000000000000550       0x18 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x0000000000000550                Chip_Clock_GetSystemPLLOutClockRate
+                0x0000000000000548       0x18 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x0000000000000548                Chip_Clock_GetSystemPLLOutClockRate
  .text.Chip_Clock_GetMainClockRate
-                0x0000000000000568       0x3c 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x0000000000000568                Chip_Clock_GetMainClockRate
+                0x0000000000000560       0x3c 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x0000000000000560                Chip_Clock_GetMainClockRate
  .text.Chip_Clock_GetSystemClockRate
-                0x00000000000005a4       0x14 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x00000000000005a4                Chip_Clock_GetSystemClockRate
+                0x000000000000059c       0x14 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x000000000000059c                Chip_Clock_GetSystemClockRate
  .text.Chip_GPIO_Init
-                0x00000000000005b8       0x14 11C24 LPCOpen THUMB Flash Release/gpio_11xx_2.o
-                0x00000000000005b8                Chip_GPIO_Init
+                0x00000000000005b0       0x14 11C24 LPCOpen THUMB Flash Release/gpio_11xx_2.o
+                0x00000000000005b0                Chip_GPIO_Init
  .text.Chip_SYSCTL_PowerDown
-                0x00000000000005cc       0x1c 11C24 LPCOpen THUMB Flash Release/sysctl_11xx.o
-                0x00000000000005cc                Chip_SYSCTL_PowerDown
+                0x00000000000005c4       0x1c 11C24 LPCOpen THUMB Flash Release/sysctl_11xx.o
+                0x00000000000005c4                Chip_SYSCTL_PowerDown
  .text.Chip_SYSCTL_PowerUp
-                0x00000000000005e8       0x20 11C24 LPCOpen THUMB Flash Release/sysctl_11xx.o
-                0x00000000000005e8                Chip_SYSCTL_PowerUp
+                0x00000000000005e0       0x20 11C24 LPCOpen THUMB Flash Release/sysctl_11xx.o
+                0x00000000000005e0                Chip_SYSCTL_PowerUp
  .text.libc.__uint32_div
-                0x0000000000000608       0x28 /Applications/CrossWorks for ARM 4.8/lib/libc_v6m_t_le_eabi.a(libc_asm.o)
-                0x0000000000000608                __udivsi3
-                0x0000000000000608                __uint32_div
-                0x0000000000000608                __aeabi_uidiv
-                0x0000000000000630                __text_end__ = (__text_start__ + SIZEOF (.text))
-                0x00000000000003b8                __text_size__ = SIZEOF (.text)
-                0x0000000000000630                __text_load_end__ = __text_end__
+                0x0000000000000600       0x28 /Applications/CrossWorks for ARM 4.8/lib/libc_v6m_t_le_eabi.a(libc_asm.o)
+                0x0000000000000600                __udivsi3
+                0x0000000000000600                __uint32_div
+                0x0000000000000600                __aeabi_uidiv
+                0x0000000000000628                __text_end__ = (__text_start__ + SIZEOF (.text))
+                0x00000000000003b0                __text_size__ = SIZEOF (.text)
+                0x0000000000000628                __text_load_end__ = __text_end__
 
 .vfp11_veneer   0x0000000100000000        0x0
  .vfp11_veneer  0x0000000100000000        0x0 linker stubs
@@ -2889,67 +2889,67 @@ Linker script and memory map
 .iplt           0x0000000100000000        0x0
  .iplt          0x0000000100000000        0x0 11C24 LPCOpen THUMB Flash Release/sysinit.o
                 0x0000000000000001                . = ASSERT (((__text_start__ == __text_end__) || ((__text_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .text is too large to fit in FLASH memory segment)
-                0x0000000000000630                __dtors_load_start__ = ALIGN (__text_end__, 0x4)
+                0x0000000000000628                __dtors_load_start__ = ALIGN (__text_end__, 0x4)
 
-.dtors          0x0000000000000630        0x0
-                0x0000000000000630                __dtors_start__ = .
+.dtors          0x0000000000000628        0x0
+                0x0000000000000628                __dtors_start__ = .
  *(SORT_BY_NAME(.dtors.*))
  *(.dtors)
  *(.fini_array)
  *(SORT_BY_NAME(.fini_array.*))
-                0x0000000000000630                __dtors_end__ = (__dtors_start__ + SIZEOF (.dtors))
+                0x0000000000000628                __dtors_end__ = (__dtors_start__ + SIZEOF (.dtors))
                 0x0000000000000000                __dtors_size__ = SIZEOF (.dtors)
-                0x0000000000000630                __dtors_load_end__ = __dtors_end__
+                0x0000000000000628                __dtors_load_end__ = __dtors_end__
                 0x0000000000000001                . = ASSERT (((__dtors_start__ == __dtors_end__) || ((__dtors_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .dtors is too large to fit in FLASH memory segment)
-                0x0000000000000630                __ctors_load_start__ = ALIGN (__dtors_end__, 0x4)
+                0x0000000000000628                __ctors_load_start__ = ALIGN (__dtors_end__, 0x4)
 
-.ctors          0x0000000000000630        0x0
-                0x0000000000000630                __ctors_start__ = .
+.ctors          0x0000000000000628        0x0
+                0x0000000000000628                __ctors_start__ = .
  *(SORT_BY_NAME(.ctors.*))
  *(.ctors)
  *(.init_array)
  *(SORT_BY_NAME(.init_array.*))
-                0x0000000000000630                __ctors_end__ = (__ctors_start__ + SIZEOF (.ctors))
+                0x0000000000000628                __ctors_end__ = (__ctors_start__ + SIZEOF (.ctors))
                 0x0000000000000000                __ctors_size__ = SIZEOF (.ctors)
-                0x0000000000000630                __ctors_load_end__ = __ctors_end__
+                0x0000000000000628                __ctors_load_end__ = __ctors_end__
                 0x0000000000000001                . = ASSERT (((__ctors_start__ == __ctors_end__) || ((__ctors_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .ctors is too large to fit in FLASH memory segment)
-                0x0000000000000630                __rodata_load_start__ = ALIGN (__ctors_end__, 0x4)
+                0x0000000000000628                __rodata_load_start__ = ALIGN (__ctors_end__, 0x4)
 
-.rodata         0x0000000000000630       0x64
-                0x0000000000000630                __rodata_start__ = .
+.rodata         0x0000000000000628       0x64
+                0x0000000000000628                __rodata_start__ = .
  *(.rodata .rodata.* .gnu.linkonce.r.*)
- .rodata        0x0000000000000630       0x20 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
+ .rodata        0x0000000000000628       0x20 11C24 LPCOpen THUMB Flash Release/ccan_rom.o
  .rodata.OscRateIn
-                0x0000000000000650        0x4 11C24 LPCOpen THUMB Flash Release/board.o
-                0x0000000000000650                OscRateIn
+                0x0000000000000648        0x4 11C24 LPCOpen THUMB Flash Release/board.o
+                0x0000000000000648                OscRateIn
  .rodata.wdtOSCRate
-                0x0000000000000654       0x40 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
-                0x0000000000000694                __rodata_end__ = (__rodata_start__ + SIZEOF (.rodata))
+                0x000000000000064c       0x40 11C24 LPCOpen THUMB Flash Release/clock_11xx.o
+                0x000000000000068c                __rodata_end__ = (__rodata_start__ + SIZEOF (.rodata))
                 0x0000000000000064                __rodata_size__ = SIZEOF (.rodata)
-                0x0000000000000694                __rodata_load_end__ = __rodata_end__
+                0x000000000000068c                __rodata_load_end__ = __rodata_end__
 
 .rel.dyn        0x0000000000000000        0x0
  .rel.iplt      0x0000000000000000        0x0 11C24 LPCOpen THUMB Flash Release/sysinit.o
                 0x0000000000000001                . = ASSERT (((__rodata_start__ == __rodata_end__) || ((__rodata_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .rodata is too large to fit in FLASH memory segment)
-                0x0000000000000694                __ARM.exidx_load_start__ = ALIGN (__rodata_end__, 0x4)
+                0x000000000000068c                __ARM.exidx_load_start__ = ALIGN (__rodata_end__, 0x4)
 
-.ARM.exidx      0x0000000000000694        0x0
-                0x0000000000000694                __ARM.exidx_start__ = .
-                0x0000000000000694                __exidx_start = __ARM.exidx_start__
+.ARM.exidx      0x000000000000068c        0x0
+                0x000000000000068c                __ARM.exidx_start__ = .
+                0x000000000000068c                __exidx_start = __ARM.exidx_start__
  *(.ARM.exidx .ARM.exidx.*)
-                0x0000000000000694                __ARM.exidx_end__ = (__ARM.exidx_start__ + SIZEOF (.ARM.exidx))
+                0x000000000000068c                __ARM.exidx_end__ = (__ARM.exidx_start__ + SIZEOF (.ARM.exidx))
                 0x0000000000000000                __ARM.exidx_size__ = SIZEOF (.ARM.exidx)
-                0x0000000000000694                __exidx_end = __ARM.exidx_end__
-                0x0000000000000694                __ARM.exidx_load_end__ = __ARM.exidx_end__
+                0x000000000000068c                __exidx_end = __ARM.exidx_end__
+                0x000000000000068c                __ARM.exidx_load_end__ = __ARM.exidx_end__
                 0x0000000000000001                . = ASSERT (((__ARM.exidx_start__ == __ARM.exidx_end__) || ((__ARM.exidx_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .ARM.exidx is too large to fit in FLASH memory segment)
-                0x0000000000000694                __fast_load_start__ = ALIGN (__ARM.exidx_end__, 0x4)
+                0x000000000000068c                __fast_load_start__ = ALIGN (__ARM.exidx_end__, 0x4)
 
-.fast           0x0000000010000000        0x0 load address 0x0000000000000694
+.fast           0x0000000010000000        0x0 load address 0x000000000000068c
                 0x0000000010000000                __fast_start__ = .
  *(.fast .fast.*)
                 0x0000000010000000                __fast_end__ = (__fast_start__ + SIZEOF (.fast))
                 0x0000000000000000                __fast_size__ = SIZEOF (.fast)
-                0x0000000000000694                __fast_load_end__ = (__fast_load_start__ + SIZEOF (.fast))
+                0x000000000000068c                __fast_load_end__ = (__fast_load_start__ + SIZEOF (.fast))
                 0x0000000000000001                . = ASSERT (((__fast_load_start__ == __fast_load_end__) || ((__fast_load_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .fast is too large to fit in FLASH memory segment)
 
 .fast_run       0x0000000010000000        0x0
@@ -2958,14 +2958,14 @@ Linker script and memory map
                 0x0000000000000000                __fast_run_size__ = (__fast_run_end__ - __fast_run_start__)
                 0x0000000010000000                __fast_run_load_end__ = __fast_run_end__
                 0x0000000000000001                . = ASSERT (((__fast_run_start__ == __fast_run_end__) || ((__fast_run_end__ - __RAM_segment_start__) <= __RAM_segment_size__)), error: .fast_run is too large to fit in RAM memory segment)
-                0x0000000000000694                __data_load_start__ = ALIGN ((__fast_load_start__ + SIZEOF (.fast)), 0x4)
+                0x000000000000068c                __data_load_start__ = ALIGN ((__fast_load_start__ + SIZEOF (.fast)), 0x4)
 
-.data           0x0000000010000000        0x0 load address 0x0000000000000694
+.data           0x0000000010000000        0x0 load address 0x000000000000068c
                 0x0000000010000000                __data_start__ = .
  *(.data .data.* .gnu.linkonce.d.*)
                 0x0000000010000000                __data_end__ = (__data_start__ + SIZEOF (.data))
                 0x0000000000000000                __data_size__ = SIZEOF (.data)
-                0x0000000000000694                __data_load_end__ = (__data_load_start__ + SIZEOF (.data))
+                0x000000000000068c                __data_load_end__ = (__data_load_start__ + SIZEOF (.data))
 
 .igot.plt       0x0000000100000000        0x0
  .igot.plt      0x0000000100000000        0x0 11C24 LPCOpen THUMB Flash Release/sysinit.o
@@ -3001,16 +3001,16 @@ Linker script and memory map
                 0x0000000000000000                __tbss_size__ = SIZEOF (.tbss)
                 0x0000000010000018                __tbss_load_end__ = __tbss_end__
                 0x0000000000000001                . = ASSERT (((__tbss_start__ == __tbss_end__) || ((__tbss_end__ - __RAM_segment_start__) <= __RAM_segment_size__)), error: .tbss is too large to fit in RAM memory segment)
-                0x0000000000000694                __tdata_load_start__ = ALIGN ((__data_load_start__ + SIZEOF (.data)), 0x4)
+                0x000000000000068c                __tdata_load_start__ = ALIGN ((__data_load_start__ + SIZEOF (.data)), 0x4)
 
-.tdata          0x0000000010000018        0x0 load address 0x0000000000000694
+.tdata          0x0000000010000018        0x0 load address 0x000000000000068c
                 0x0000000010000018                __tdata_start__ = .
  *(.tdata .tdata.*)
                 0x0000000010000018                __tdata_end__ = (__tdata_start__ + SIZEOF (.tdata))
                 0x0000000000000000                __tdata_size__ = SIZEOF (.tdata)
-                0x0000000000000694                __tdata_load_end__ = (__tdata_load_start__ + SIZEOF (.tdata))
-                0x0000000000000694                __FLASH_segment_used_end__ = (ALIGN ((__data_load_start__ + SIZEOF (.data)), 0x4) + SIZEOF (.tdata))
-                0x0000000000000694                __FLASH_segment_used_size__ = (__FLASH_segment_used_end__ - __FLASH_segment_start__)
+                0x000000000000068c                __tdata_load_end__ = (__tdata_load_start__ + SIZEOF (.tdata))
+                0x000000000000068c                __FLASH_segment_used_end__ = (ALIGN ((__data_load_start__ + SIZEOF (.data)), 0x4) + SIZEOF (.tdata))
+                0x000000000000068c                __FLASH_segment_used_size__ = (__FLASH_segment_used_end__ - __FLASH_segment_start__)
                 0x0000000000000001                . = ASSERT (((__tdata_load_start__ == __tdata_load_end__) || ((__tdata_load_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .tdata is too large to fit in FLASH memory segment)
 
 .tdata_run      0x0000000010000018        0x0

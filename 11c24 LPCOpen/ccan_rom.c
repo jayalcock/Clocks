@@ -39,6 +39,8 @@
 
 CCAN_MSG_OBJ_T msg_obj;
 
+int8_t rxData;
+
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
@@ -80,10 +82,9 @@ void CAN_rx(uint8_t msg_obj_num) {
 	msg_obj.msgobj = msg_obj_num;
 	/* Now load up the msg_obj structure with the CAN message */
 	LPC_CCAN_API->can_receive(&msg_obj);
-        if(msg_obj.data[0] == 0x41)
-        {
-            Board_LED_Toggle(0);
-        }
+        Board_LED_Toggle(0);
+
+        rxData = *msg_obj.data;
 	//if (msg_obj_num == 1) {
 	//	/* Simply transmit CAN frame (echo) with with ID +0x100 via buffer 2 */
 	//	msg_obj.msgobj = 2;
@@ -163,6 +164,8 @@ int main(void)
 	LPC_CCAN_API->config_rxmsgobj(&msg_obj);
 
 	int i = 0;
+        rxData = 0;
+        float test = 0.0;
 
 	while (1) {
 		//msg_obj.msgobj = 1;
@@ -175,6 +178,7 @@ int main(void)
 //		msg_obj.mask    = 0x0;
 //		msg_obj.dlc     = 4;
 //		LPC_CCAN_API->can_transmit(&msg_obj);
+                test = (float)rxData;
 
 		i++;
 //		__WFI();	/* Go to Sleep */

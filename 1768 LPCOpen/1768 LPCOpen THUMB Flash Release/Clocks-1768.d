@@ -45,5 +45,7 @@
  /Applications/CrossWorks\ for\ ARM\ 4.8/include/stdio.h \
  /Applications/CrossWorks\ for\ ARM\ 4.8/include/__crossworks.h \
  /Users/jayalcock/Projects/Clocks/Clocks/1768\ LPCOpen/Device/inc/lpc_phy.h \
- /Users/jayalcock/Projects/Clocks/Clocks/1768\ LPCOpen/inc/can.h \
- /Users/jayalcock/Projects/Clocks/Clocks/1768\ LPCOpen/inc/uart_rb.h
+ /Applications/CrossWorks\ for\ ARM\ 4.8/include/ctl_api.h \
+ /Users/jayalcock/Library/Rowley\ Associates\ Limited/CrossWorks\ for\ ARM/v4/packages/libraries/libctl/include/ctl.h \
+ /Applications/CrossWorks\ for\ ARM\ 4.8/include/string.h \
+ /Users/jayalcock/Projects/Clocks/Clocks/1768\ LPCOpen/inc/can.h

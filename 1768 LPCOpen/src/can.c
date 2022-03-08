@@ -30,6 +30,7 @@
  * this code.
  */
 #include "board.h"
+#include "ctl_api.h"
 //#include "uart_rb.h"
 
 
@@ -407,7 +408,7 @@ void CAN_IRQHandler(void)
 #endif /*FULL_CAN_AF_USED*/
 }
 
-void CAN_Thread(void)
+void CAN_Thread(void *p)
 {
 	CAN_BUFFER_ID_T   TxBuf;
 	CAN_MSG_T SendMsgBuf;
@@ -459,7 +460,7 @@ void CAN_Thread(void)
         DEBUGSTR("TX Success\r\n");
         
 
-	PrintCANMsg(&SendMsgBuf);
+	//PrintCANMsg(&SendMsgBuf);
         
         
 
@@ -488,8 +489,24 @@ void CAN_Thread(void)
 //	DEBUGOUT("Message Sent!!!\r\n");
 //	PrintCANMsg(&SendMsgBuf);
 
+        float desiredAngle;
+        
+        desiredAngle = 10.4;
+        
+        SendMsgBuf.Data[0] = desiredAngle;
+        
+        
 
-//	while (1) ;
+	while (1)
+        {
+            ctl_timeout_wait(ctl_get_current_time() + 1000);
+            TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
+            Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
+            while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
+            DEBUGSTR("TX Success\r\n");
+            //__asm volatile ("nop");
+        
+        }
 }
 
 /**
