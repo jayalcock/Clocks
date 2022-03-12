@@ -10,6 +10,6 @@
 
 void HANDLER_NAME(void);
 
-int UART_Thread(void);
+int UART_Thread(void *p);
 
 #endif /* UART_RB_H_ */

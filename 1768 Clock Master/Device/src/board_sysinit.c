@@ -52,6 +52,8 @@ static const PINMUX_GRP_T pinmuxing[] = {
 	//{0,  23,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ADC 0 */
 	//{0,  26,  IOCON_MODE_INACT | IOCON_FUNC2},	/* DAC */
 
+        
+        {2,  3,   IOCON_MODE_REPEATER | IOCON_FUNC0},	/* GPIO Stepper Driver Reset */
 	/* ENET */
 //	{0x1, 0,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_TXD0 */
 //	{0x1, 1,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_TXD1 */

@@ -9,5 +9,7 @@ int main(int argc, char *argv[])
 
     can_init();
     
+    
+    
     while(1){};   
 }

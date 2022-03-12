@@ -92,7 +92,7 @@ void HANDLER_NAME(void)
  * @brief	Main UART program body
  * @return	Always returns 1
  */
-int UART_Thread(void)
+int UART_Thread(void *p)
 {
 	uint8_t key;
 	int bytes;

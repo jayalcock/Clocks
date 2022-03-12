@@ -16,6 +16,7 @@ static void ReplyRemoteMessage(CAN_MSG_T *pRcvMsg);
 /* Reply message received */
 static void ReplyNormalMessage(CAN_MSG_T *pRcvMsg);
 void CAN_IRQHandler(void);
+void sendToCAN(uint8_t data);
 void CAN_Thread(void *p);
 
 

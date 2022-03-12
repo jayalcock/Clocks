@@ -64,7 +64,7 @@ static char WelcomeMenu[] = "\n\rHello NXP Semiconductors \r\n"
 							"CAN bit rate : 500kBit/s\r\n";
 
                                                         
-                                                        
+CAN_MSG_T SendMsgBuf;                                                     
 ///* Transmit and receive ring buffers */
 //STATIC RINGBUFF_T txring1, rxring1;
 
@@ -406,10 +406,17 @@ void CAN_IRQHandler(void)
 #endif /*FULL_CAN_AF_USED*/
 }
 
+
+void sendToCAN(uint8_t data)
+{
+    SendMsgBuf.Data[0] = data;
+}
+
+
 void CAN_Thread(void *p)
 {
 	CAN_BUFFER_ID_T   TxBuf;
-	CAN_MSG_T SendMsgBuf;
+	//CAN_MSG_T SendMsgBuf;
         
 //	SystemCoreClockUpdate();
 //	Board_Init();
@@ -452,7 +459,7 @@ void CAN_Thread(void *p)
 	SendMsgBuf.Data[3] = 'D';
 	TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
 	Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
-	while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
+	//while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
   
 	//DEBUGOUT("Message Sent!!!\r\n");
         DEBUGSTR("TX Success\r\n");
@@ -489,20 +496,20 @@ void CAN_Thread(void *p)
 
         float desiredAngle;
         
-        desiredAngle = 10.4;
+        //desiredAngle = 10.4;
         
-        SendMsgBuf.Data[0] = desiredAngle;
-        
+        //SendMsgBuf.Data[0] = desiredAngle*10;
         
 
 	while (1)
         {
-            ctl_timeout_wait(ctl_get_current_time() + 1000);
+            
             TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
             Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
             while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
             DEBUGSTR("TX Success\r\n");
-            //__asm volatile ("nop");
+            __asm volatile ("nop");
+            ctl_timeout_wait(ctl_get_current_time() + 1000);
         
         }
 }
