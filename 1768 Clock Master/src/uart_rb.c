@@ -37,17 +37,9 @@
  * Private types/enumerations/variables
  ****************************************************************************/
 
-#if defined(BOARD_EA_DEVKIT_1788) || defined(BOARD_EA_DEVKIT_4088)
 #define UART_SELECTION 	LPC_UART0
 #define IRQ_SELECTION 	UART0_IRQn
 #define HANDLER_NAME 	UART0_IRQHandler
-#elif defined(BOARD_NXP_LPCXPRESSO_1769)
-#define UART_SELECTION 	LPC_UART0
-#define IRQ_SELECTION 	UART0_IRQn
-#define HANDLER_NAME 	UART0_IRQHandler
-#else
-#error No UART selected for undefined board
-#endif
 
 
 /* Transmit and receive ring buffers */
@@ -60,8 +52,8 @@ STATIC RINGBUFF_T txring, rxring;
 /* Transmit and receive buffers */
 static uint8_t rxbuff[UART_RRB_SIZE], txbuff[UART_SRB_SIZE];
 
-const char inst1[] = "LPC17xx/40xx UART example using ring buffers\r\n";
-const char inst2[] = "Press a key to echo it back or ESC to quit\r\n";
+const char inst1[] = "Startup\r\n";
+const char inst2[] = "\r\n";
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -79,32 +71,47 @@ const char inst2[] = "Press a key to echo it back or ESC to quit\r\n";
  * @brief	UART 0 interrupt handler using ring buffers
  * @return	Nothing
  */
-void HANDLER_NAME(void)
+void UART0_IRQHandler(void)
 {
-	/* Want to handle any errors? Do it here. */
-
-	/* Use default ring buffer handler. Override this with your own
-	   code if you need more capability. */
-	Chip_UART_IRQRBHandler(UART_SELECTION, &rxring, &txring);
+        //TODO error handling
+	Chip_UART_IRQRBHandler(LPC_UART0, &rxring, &txring);
 }
+    
+/**
+ * @brief	UART 1 interrupt handler using ring buffers
+ * @return	Nothing
+ */
+void UART1_IRQHandler(void)
+{
+	//TODO error handling
+	Chip_UART_IRQRBHandler(LPC_UART1, &rxring, &txring);
+}   
 
 /**
  * @brief	Main UART program body
- * @return	Always returns 1
+ * @return	void
  */
-int UART_Thread(void *p)
+void uart_thread(void *p)
 {
 	uint8_t key;
 	int bytes;
 
 	//Board_UART_Init(UART_SELECTION);
 
-	///* Setup UART for 115.2K8N1 */
-	//Chip_UART_Init(UART_SELECTION);
-	//Chip_UART_SetBaud(UART_SELECTION, 115200);
-	//Chip_UART_ConfigData(UART_SELECTION, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT));
-	//Chip_UART_SetupFIFOS(UART_SELECTION, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
-	//Chip_UART_TXEnable(UART_SELECTION);
+	//* Setup UART0 for 115.2K8N1 */
+	Chip_UART_Init(LPC_UART0);
+	Chip_UART_SetBaud(LPC_UART0, 115200);
+	Chip_UART_ConfigData(LPC_UART0, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT));
+	Chip_UART_SetupFIFOS(LPC_UART0, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
+	Chip_UART_TXEnable(LPC_UART0);
+        
+        //* Setup UART1 for 115.2K8N1 */
+	Chip_UART_Init(LPC_UART1);
+	Chip_UART_SetBaud(LPC_UART1, 115200);
+	Chip_UART_ConfigData(LPC_UART1, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT));
+	Chip_UART_SetupFIFOS(LPC_UART1, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
+	Chip_UART_TXEnable(LPC_UART1);
+        
 
 	/* Before using the ring buffers, initialize them using the ring
 	   buffer init function */
@@ -112,39 +119,42 @@ int UART_Thread(void *p)
 	RingBuffer_Init(&txring, txbuff, 1, UART_SRB_SIZE);
 
 	/* Reset and enable FIFOs, FIFO trigger level 3 (14 chars) */
-	Chip_UART_SetupFIFOS(UART_SELECTION, (UART_FCR_FIFO_EN | UART_FCR_RX_RS | 
+	Chip_UART_SetupFIFOS(LPC_UART0, (UART_FCR_FIFO_EN | UART_FCR_RX_RS | 
 							UART_FCR_TX_RS | UART_FCR_TRG_LEV3));
 
 	/* Enable receive data and line status interrupt */
-	Chip_UART_IntEnable(UART_SELECTION, (UART_IER_RBRINT | UART_IER_RLSINT));
+	Chip_UART_IntEnable(LPC_UART0, (UART_IER_RBRINT | UART_IER_RLSINT));
+        
+        
+        /* Reset and enable FIFOs, FIFO trigger level 3 (14 chars) */
+	Chip_UART_SetupFIFOS(LPC_UART1, (UART_FCR_FIFO_EN | UART_FCR_RX_RS | 
+							UART_FCR_TX_RS | UART_FCR_TRG_LEV3));
+
+	/* Enable receive data and line status interrupt */
+	Chip_UART_IntEnable(LPC_UART1, (UART_IER_RBRINT | UART_IER_RLSINT));
 
 	/* preemption = 1, sub-priority = 1 */
 	NVIC_SetPriority(IRQ_SELECTION, 1);
 	NVIC_EnableIRQ(IRQ_SELECTION);
 
 	/* Send initial messages */
-	//Chip_UART_SendRB(UART_SELECTION, &txring, inst1, sizeof(inst1) - 1);
-	//Chip_UART_SendRB(UART_SELECTION, &txring, inst2, sizeof(inst2) - 1);
-
-	//printf("Hello");
+	Chip_UART_SendRB(LPC_UART0, &txring, inst1, sizeof(inst1) - 1);
+	Chip_UART_SendRB(LPC_UART0, &txring, inst2, sizeof(inst2) - 1);
 
 	/* Poll the receive ring buffer for the ESC (ASCII 27) key */
-	//key = 0;
-	//while (key != 27) {
-	//	bytes = Chip_UART_ReadRB(UART_SELECTION, &rxring, &key, 1);
-	//	if (bytes > 0) {
-	//		/* Wrap value back around */
-	//		if (Chip_UART_SendRB(UART_SELECTION, &txring, (const uint8_t *) &key, 1) != 1) {
-	//			Board_LED_Toggle(0);/* Toggle LED if the TX FIFO is full */
-	//		}
-	//	}
-	//}
-
-	/* DeInitialize UART0 peripheral */
-	//NVIC_DisableIRQ(IRQ_SELECTION);
-	//Chip_UART_DeInit(UART_SELECTION);
-
-	return 1;
+	while(1)
+        {
+            key = 0;
+            while (key != 27) {
+                    bytes = Chip_UART_ReadRB(LPC_UART0, &rxring, &key, 1);
+                    if (bytes > 0) {
+                            /* Wrap value back around */
+                            if (Chip_UART_SendRB(LPC_UART0, &txring, (const uint8_t *) &key, 1) != 1) {
+                                    Board_LED_Toggle(0);/* Toggle LED if the TX FIFO is full */
+                            }
+                    }
+            }
+        }
 }
 
 /**

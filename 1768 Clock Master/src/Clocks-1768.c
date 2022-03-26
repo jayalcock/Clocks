@@ -20,14 +20,17 @@
 #include <ctl_api.h>
 #include <string.h>
 #include "can.h"
+#include "clockEngine.h"
+//#include "cmsis.h"
 
-
-//#include "uart_rb.h"
+#include "uart_rb.h"
 #define STACKSIZE 64
-CTL_TASK_t main_task, can_task, test_task;
+CTL_TASK_t main_task, can_task, test_task, clock_task, uart_task;
 
 unsigned can_task_stack[1+STACKSIZE+1];
 unsigned test_task_stack[1+STACKSIZE+1];
+unsigned clock_task_stack[1+STACKSIZE+1];
+unsigned uart_task_stack[1+STACKSIZE+1];
 
 // CTL Error Handler
 void ctl_handle_error(CTL_ERROR_CODE_t e)
@@ -40,9 +43,10 @@ void ctl_handle_error(CTL_ERROR_CODE_t e)
 //Testing motor control
 void test_thread(void *p)
 {
-        int desired_angle = 90; 
-        int ang = desired_angle * 12;
-        int steps = 0;
+        int desired_angle = 45;
+        int current_angle = 0;
+        int step_size = 12;
+        int steps_remaining = 0;
         bool dir = false; 
         
         
@@ -54,24 +58,31 @@ void test_thread(void *p)
 
 	while (1)
         {
-            if(steps == ang)
+            
+            // Generate steps to achieve desired ange
+            if(steps_remaining == 0)
             {
                 //dir = !dir;
                 //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 4, dir);
                 //steps = 0;
-                ctl_timeout_wait(ctl_get_current_time() + 1000);
-                steps = 0;
+                sendToCAN(1);
+                ctl_timeout_wait(ctl_get_current_time() + 2000);
+                steps_remaining = (desired_angle - current_angle) * step_size;
             }
-                
+            
+            // small delay for correct pulse width
             for(int i = 0; i < 8000; i++)
             {
                 __asm volatile ("nop");
             }
            
+            // Pulse generation
             Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, true);
             Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, false);
-            steps++;
-            sendToCAN(ang);
+            steps_remaining--;
+         
+            // At angle - sent to master over CAN
+            //sendToCAN(1);
         
         }
 }
@@ -105,12 +116,19 @@ int main(void) {
     test_task_stack[0]=test_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&test_task, 45, test_thread, 0, "test_task", STACKSIZE, test_task_stack+1, 0);
     
-    //TODO - Develop UART thread and comms
-    //UART_Thread();
+    //Clock Thread
+    memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack
+    clock_task_stack[0]=clock_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    ctl_task_run(&clock_task, 55, clock_thread, 0, "clock_task", STACKSIZE, clock_task_stack+1, 0);
+    
+    //TODO In development
+    //UART Thread
+    memset(uart_task_stack, 0xcd, sizeof(uart_task_stack));  // write known values into the stack
+    uart_task_stack[0]=uart_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    ctl_task_run(&uart_task, 65, uart_thread, 0, "uart_task", STACKSIZE, uart_task_stack+1, 0);
+   
     
     bool state = false;
-    
-    
 
     ctl_task_set_priority(&main_task, 0); // drop to lowest priority to start created tasks running.
     // Force the counter to be placed into memory

@@ -122,8 +122,8 @@ extern "C" {
 #define LPC_UART2                 ((LPC_USART_T            *) LPC_UART2_BASE)
 #define LPC_UART3                 ((LPC_USART_T            *) LPC_UART3_BASE)
 #define LPC_SPI                   ((LPC_SPI_T              *) LPC_SPI_BASE)
-#define LPC_SSP0                  ((LPC_SSP_T              *) LPC_SSP0_BASE)
-#define LPC_SSP1                  ((LPC_SSP_T              *) LPC_SSP1_BASE)
+//#define LPC_SSP0                  ((LPC_SSP_T              *) LPC_SSP0_BASE)
+//#define LPC_SSP1                  ((LPC_SSP_T              *) LPC_SSP1_BASE)
 #define LPC_TIMER0                ((LPC_TIMER_T            *) LPC_TIMER0_BASE)
 #define LPC_TIMER1                ((LPC_TIMER_T            *) LPC_TIMER1_BASE)
 #define LPC_TIMER2                ((LPC_TIMER_T            *) LPC_TIMER2_BASE)
@@ -132,10 +132,10 @@ extern "C" {
 #define LPC_I2C0                  ((LPC_I2C_T              *) LPC_I2C0_BASE)
 #define LPC_I2C1                  ((LPC_I2C_T              *) LPC_I2C1_BASE)
 #define LPC_I2C2                  ((LPC_I2C_T              *) LPC_I2C2_BASE)
-#define LPC_I2S                   ((LPC_I2S_T              *) LPC_I2S_BASE)
+//#define LPC_I2S                   ((LPC_I2S_T              *) LPC_I2S_BASE)
 #define LPC_QEI                   ((LPC_QEI_T              *) LPC_QEI_BASE)
-#define LPC_DAC                   ((LPC_DAC_T              *) LPC_DAC_BASE)
-#define LPC_ADC                   ((LPC_ADC_T              *) LPC_ADC_BASE)
+//#define LPC_DAC                   ((LPC_DAC_T              *) LPC_DAC_BASE)
+//#define LPC_ADC                   ((LPC_ADC_T              *) LPC_ADC_BASE)
 #define LPC_IOCON                 ((LPC_IOCON_T            *) LPC_IOCON_BASE)
 #define LPC_SYSCTL                ((LPC_SYSCTL_T           *) LPC_SYSCTL_BASE)
 #define LPC_SYSCON                ((LPC_SYSCTL_T           *) LPC_SYSCTL_BASE) /* Alias for LPC_SYSCTL */
@@ -159,27 +159,27 @@ extern "C" {
 #include "sysctl_17xx_40xx.h"
 #include "clock_17xx_40xx.h"
 #include "iocon_17xx_40xx.h"
-#include "adc_17xx_40xx.h"
+//#include "adc_17xx_40xx.h"
 #include "can_17xx_40xx.h"
-#include "dac_17xx_40xx.h"
-#include "enet_17xx_40xx.h"
+//#include "dac_17xx_40xx.h"
+//#include "enet_17xx_40xx.h"
 #include "gpdma_17xx_40xx.h"
 #include "gpio_17xx_40xx.h"
 #include "gpioint_17xx_40xx.h"
-#include "i2c_17xx_40xx.h"
-#include "i2s_17xx_40xx.h"
+//#include "i2c_17xx_40xx.h"
+//#include "i2s_17xx_40xx.h"
 #include "mcpwm_17xx_40xx.h"
 #include "pmu_17xx_40xx.h"
-#include "qei_17xx_40xx.h"
+//#include "qei_17xx_40xx.h"
 #include "ritimer_17xx_40xx.h"
-#include "rtc_17xx_40xx.h"
-#include "spi_17xx_40xx.h"
-#include "ssp_17xx_40xx.h"
+//#include "rtc_17xx_40xx.h"
+//#include "spi_17xx_40xx.h"
+//#include "ssp_17xx_40xx.h"
 #include "timer_17xx_40xx.h"
 #include "uart_17xx_40xx.h"
-#include "usb_17xx_40xx.h"
-#include "wwdt_17xx_40xx.h"
-#include "fmc_17xx_40xx.h"
+//#include "usb_17xx_40xx.h"
+//#include "wwdt_17xx_40xx.h"
+//#include "fmc_17xx_40xx.h"
 #include "romapi_17xx_40xx.h"
 /* FIXME : PWM drivers */
 

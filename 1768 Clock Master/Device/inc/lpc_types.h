@@ -142,10 +142,10 @@ typedef int32_t (*PFI)();
 #define EXTERN extern
 
 #if !defined(MAX)
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MAXIMUM(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 #if !defined(MIN)
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MINIMUM(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 /**

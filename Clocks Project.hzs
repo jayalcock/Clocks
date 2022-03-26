@@ -66,14 +66,6 @@
  <Project>
   <ProjectSessionItem path="Clocks"/>
   <ProjectSessionItem path="Clocks;114C24"/>
-  <ProjectSessionItem path="Clocks;114C24;CMSIS Files"/>
-  <ProjectSessionItem path="Clocks;114C24;Source Files"/>
-  <ProjectSessionItem path="Clocks;114C24;System Files"/>
-  <ProjectSessionItem path="Clocks;Clocks 1768 CTL"/>
-  <ProjectSessionItem path="Clocks;Clocks 1768 CTL;Comms"/>
-  <ProjectSessionItem path="Clocks;Clocks 1768 CTL;Comms;inc"/>
-  <ProjectSessionItem path="Clocks;Clocks 1768 CTL;Comms;src"/>
-  <ProjectSessionItem path="Clocks;Clocks 1768 CTL;Sources"/>
   <SourceCodeControlLogin password="F9BB6682F5D56822" user="Jay Alcock &lt;jay.alcock@me.com>"/>
  </Project>
  <Register1>
@@ -155,12 +147,6 @@
  <Watch4>
   <Watches active="0" update="Never"/>
  </Watch4>
- <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/Sources/Clocks.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/Comms/src/Comms.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="126" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/Comms/src/CAN_comms.c" selected="0" top="102" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="11" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Clocks 1768/main_ctl.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="100" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1114Test/main.c" selected="1" top="83" codecName="Default"/>
- </Files>
+ <Files/>
  <ARMCrossStudioWindow activeProject="114C24" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="SEGGER J-Link" buildConfiguration="THUMB RAM Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/jayalcock/Documents/Crossworks Projects/Clocks/1114Test" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

@@ -64,7 +64,10 @@ static char WelcomeMenu[] = "\n\rHello NXP Semiconductors \r\n"
 							"CAN bit rate : 500kBit/s\r\n";
 
                                                         
-CAN_MSG_T SendMsgBuf;                                                     
+CAN_MSG_T SendMsgBuf;
+CTL_EVENT_SET_t can_event;
+
+
 ///* Transmit and receive ring buffers */
 //STATIC RINGBUFF_T txring1, rxring1;
 
@@ -410,6 +413,7 @@ void CAN_IRQHandler(void)
 void sendToCAN(uint8_t data)
 {
     SendMsgBuf.Data[0] = data;
+    ctl_events_set_clear(&can_event, 1<<0, 0);
 }
 
 
@@ -423,6 +427,8 @@ void CAN_Thread(void *p)
 	//DEBUGOUT(WelcomeMenu);
         DEBUGSTR(WelcomeMenu);
 
+        ctl_events_init(&can_event, 0);
+        
 	Chip_CAN_Init(LPC_CAN, LPC_CANAF, LPC_CANAF_RAM);
 
 	Chip_CAN_SetBitRate(LPC_CAN, 500000);
@@ -503,13 +509,13 @@ void CAN_Thread(void *p)
 
 	while (1)
         {
-            
+            ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &can_event, 1<<0, CTL_TIMEOUT_NONE, 0);
             TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
             Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
             while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
             DEBUGSTR("TX Success\r\n");
             __asm volatile ("nop");
-            ctl_timeout_wait(ctl_get_current_time() + 1000);
+            //ctl_timeout_wait(ctl_get_current_time() + 1000);
         
         }
 }

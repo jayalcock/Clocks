@@ -94,10 +94,10 @@ int RingBuffer_InsertMult(RINGBUFF_T *RingBuff, const void *data, int num)
 		cnt1 = RingBuff->count - RB_INDH(RingBuff);
 	cnt2 -= cnt1;
 
-	cnt1 = MIN(cnt1, num);
+	cnt1 = MINIMUM(cnt1, num);
 	num -= cnt1;
 
-	cnt2 = MIN(cnt2, num);
+	cnt2 = MINIMUM(cnt2, num);
 	num -= cnt2;
 
 	/* Write segment 1 */
@@ -146,10 +146,10 @@ int RingBuffer_PopMult(RINGBUFF_T *RingBuff, void *data, int num)
 		cnt1 = RingBuff->count - RB_INDT(RingBuff);
 	cnt2 -= cnt1;
 
-	cnt1 = MIN(cnt1, num);
+	cnt1 = MINIMUM(cnt1, num);
 	num -= cnt1;
 
-	cnt2 = MIN(cnt2, num);
+	cnt2 = MINIMUM(cnt2, num);
 	num -= cnt2;
 
 	/* Write segment 1 */

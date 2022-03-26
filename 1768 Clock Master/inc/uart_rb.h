@@ -8,8 +8,8 @@
 #ifndef UART_RB_H_
 #define UART_RB_H_
 
-void HANDLER_NAME(void);
+void UART0_IRQHandler(void);
 
-int UART_Thread(void *p);
+void uart_thread(void *p);
 
 #endif /* UART_RB_H_ */

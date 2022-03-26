@@ -209,14 +209,14 @@ const uint8_t GPDMA_LUTPerWid[] = {
  * @brief Peripheral Source and Destination address
  */
 volatile const void *GPDMA_LUTPerAddr[] = {
-	(&LPC_SSP0->DR),					// SSP0 Tx
-	(&LPC_SSP0->DR),					// SSP0 Rx
-	(&LPC_SSP1->DR),					// SSP1 Tx
-	(&LPC_SSP1->DR),					// SSP1 Rx
-	(&LPC_ADC->GDR),				// ADC
-	(&LPC_I2S->TXFIFO),				// I2S Tx
-	(&LPC_I2S->RXFIFO),				// I2S Rx
-	(&LPC_DAC->CR),					// DAC
+	//(&LPC_SSP0->DR),					// SSP0 Tx
+	//(&LPC_SSP0->DR),					// SSP0 Rx
+	//(&LPC_SSP1->DR),					// SSP1 Tx
+	//(&LPC_SSP1->DR),					// SSP1 Rx
+	//(&LPC_ADC->GDR),				// ADC
+	//(&LPC_I2S->TXFIFO),				// I2S Tx
+	//(&LPC_I2S->RXFIFO),				// I2S Rx
+	//(&LPC_DAC->CR),					// DAC
 	(&LPC_UART0-> /*RBTHDLR.*/ THR),	// UART0 Tx
 	(&LPC_UART0-> /*RBTHDLR.*/ RBR),	// UART0 Rx
 	(&LPC_UART1-> /*RBTHDLR.*/ THR),	// UART1 Tx
