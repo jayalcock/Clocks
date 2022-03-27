@@ -29,6 +29,7 @@
  * this code.
  */
 
+#include <ctl.h>
 #include "chip.h"
 #include "board.h"
 #include "string.h"
@@ -42,18 +43,33 @@
 #define HANDLER_NAME 	UART0_IRQHandler
 
 
+#define UART0_EVENT 1<<0
+#define UART0_RX_DONE 1<<1
+#define UART0_TX_DONE 1<<2
+#define UART1_EVENT 1<<3
+#define UART1_RX_DONE 1<<4
+#define UART1_TX_DONE 1<<5
+#define UART1_RX_END_OF_STRING 1<<6
+
+
+CTL_EVENT_SET_t uartEvent;
+
 /* Transmit and receive ring buffers */
-STATIC RINGBUFF_T txring, rxring;
+STATIC RINGBUFF_T txring0, rxring0, txring1, rxring1;
 
 /* Transmit and receive ring buffer sizes */
 #define UART_SRB_SIZE 128	/* Send */
 #define UART_RRB_SIZE 32	/* Receive */
 
 /* Transmit and receive buffers */
-static uint8_t rxbuff[UART_RRB_SIZE], txbuff[UART_SRB_SIZE];
+static uint8_t rxbuff0[UART_RRB_SIZE], txbuff0[UART_SRB_SIZE], rxbuff1[UART_RRB_SIZE], txbuff1[UART_SRB_SIZE];;
 
 const char inst1[] = "Startup\r\n";
 const char inst2[] = "\r\n";
+
+const char SSIDPWD[] = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
+const char INIT[] = "AT\r\n";
+const char RESET_CHIP[] = "AT+RST\r\n";
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -67,6 +83,28 @@ const char inst2[] = "\r\n";
  * Public functions
  ****************************************************************************/
 
+//Send command to ESP8266
+void ESP_command(const void* command)//, const uint16_t delay, uint8_t size)
+{
+    
+    Chip_UART_SendRB(LPC_UART1, &txring1, command, strlen(command));
+    //Chip_UART_SendBlocking(LPC_UART1, command, strlen(command));
+    
+    //if(size > 0)
+    //{
+    //    //USARTdrv1->Send(command, size);
+    //}
+    //else
+    //{
+    //    //USARTdrv1->Send(command, strlen(command));
+    //}
+    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &uartEvent, UART1_TX_DONE, CTL_TIMEOUT_NONE, 0);
+    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &uartEvent, UART1_RX_END_OF_STRING, CTL_TIMEOUT_NONE, 0);
+    //ctl_timeout_wait(ctl_current_time + 10);// + delay);
+}
+ 
+ 
+ 
 /**
  * @brief	UART 0 interrupt handler using ring buffers
  * @return	Nothing
@@ -74,7 +112,7 @@ const char inst2[] = "\r\n";
 void UART0_IRQHandler(void)
 {
         //TODO error handling
-	Chip_UART_IRQRBHandler(LPC_UART0, &rxring, &txring);
+	Chip_UART_IRQRBHandler(LPC_UART0, &rxring0, &txring0);
 }
     
 /**
@@ -83,9 +121,17 @@ void UART0_IRQHandler(void)
  */
 void UART1_IRQHandler(void)
 {
+        //char woops[] = "Hola\n";
 	//TODO error handling
-	Chip_UART_IRQRBHandler(LPC_UART1, &rxring, &txring);
-}   
+	Chip_UART_IRQRBHandler(LPC_UART1, &rxring1, &txring1);
+        if(rxring1.count > 0)
+        {
+            //Chip_UART_SendRB(LPC_UART0, &txring0,(const uint8_t *) &rxbuff1, rxring0.count);
+            //ctl_events_set_clear(&uartEvent, 1<<0, 0);
+            
+        }
+            
+}
 
 /**
  * @brief	Main UART program body
@@ -93,8 +139,8 @@ void UART1_IRQHandler(void)
  */
 void uart_thread(void *p)
 {
-	uint8_t key;
-	int bytes;
+	//uint8_t key, rx;
+	//int bytes0, bytes1;
 
 	//Board_UART_Init(UART_SELECTION);
 
@@ -115,8 +161,10 @@ void uart_thread(void *p)
 
 	/* Before using the ring buffers, initialize them using the ring
 	   buffer init function */
-	RingBuffer_Init(&rxring, rxbuff, 1, UART_RRB_SIZE);
-	RingBuffer_Init(&txring, txbuff, 1, UART_SRB_SIZE);
+	RingBuffer_Init(&rxring0, rxbuff0, 1, UART_RRB_SIZE);
+	RingBuffer_Init(&txring0, txbuff0, 1, UART_SRB_SIZE);
+        RingBuffer_Init(&rxring1, rxbuff1, 1, UART_RRB_SIZE);
+	RingBuffer_Init(&txring1, txbuff1, 1, UART_SRB_SIZE);
 
 	/* Reset and enable FIFOs, FIFO trigger level 3 (14 chars) */
 	Chip_UART_SetupFIFOS(LPC_UART0, (UART_FCR_FIFO_EN | UART_FCR_RX_RS | 
@@ -134,29 +182,115 @@ void uart_thread(void *p)
 	Chip_UART_IntEnable(LPC_UART1, (UART_IER_RBRINT | UART_IER_RLSINT));
 
 	/* preemption = 1, sub-priority = 1 */
-	NVIC_SetPriority(IRQ_SELECTION, 1);
-	NVIC_EnableIRQ(IRQ_SELECTION);
+	NVIC_SetPriority(UART0_IRQn, 2);
+	NVIC_EnableIRQ(UART0_IRQn);
+        NVIC_SetPriority(UART1_IRQn, 1);
+	NVIC_EnableIRQ(UART1_IRQn);
 
 	/* Send initial messages */
-	Chip_UART_SendRB(LPC_UART0, &txring, inst1, sizeof(inst1) - 1);
-	Chip_UART_SendRB(LPC_UART0, &txring, inst2, sizeof(inst2) - 1);
-
+	//Chip_UART_SendRB(LPC_UART0, &txring, inst1, sizeof(inst1) - 1);
+	//Chip_UART_SendRB(LPC_UART0, &txring, inst2, sizeof(inst2) - 1);
+        
+        //Ensure connection to ESP
+        //ESP_command(INIT);//, 200U, 0);
+        //ESP_command(RESET_CHIP);//, 5000U, 0);
+        
+        //Chip_UART_SendRB(LPC_UART1, &txring, RESET_CHIP, sizeof(RESET_CHIP) - 1);
+ 
 	/* Poll the receive ring buffer for the ESC (ASCII 27) key */
-	while(1)
+        uint8_t temp = 0;
+        //char temp2[] = "";
+	uint8_t temp2;
+        while(1)
+        
         {
-            key = 0;
-            while (key != 27) {
-                    bytes = Chip_UART_ReadRB(LPC_UART0, &rxring, &key, 1);
-                    if (bytes > 0) {
-                            /* Wrap value back around */
-                            if (Chip_UART_SendRB(LPC_UART0, &txring, (const uint8_t *) &key, 1) != 1) {
-                                    Board_LED_Toggle(0);/* Toggle LED if the TX FIFO is full */
-                            }
-                    }
-            }
+    
+            //key = 0;
+           //temp2 = 0; 
+            //while (key != 27) 
+            //{
+                if(temp == 0)
+                {     
+                    //Ensure connection to ESP
+                    //ESP_command(INIT);//, 200U, 0);
+                    //ctl_timeout_wait(ctl_current_time + 1000);
+                    ESP_command(RESET_CHIP);//, 5000U, 0);
+                    //ctl_timeout_wait(ctl_current_time + 5000);
+                    
+                    temp = 1;
+                }   
+
+ 
+                //bytes0 = Chip_UART_ReadRB(LPC_UART0, &rxring0, &key, 1);
+                ////Chip_UART_ReadRB(LPC_UART0, &rxring0, &key, 1);
+                ////Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
+             
+                //bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &rx, 1);
+                
+                //if (bytes0 > 0) 
+                //{
+                //    /* Wrap value back around */
+                //    //if (Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &key, 1) != 1) 
+                //    if (Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1) != 1) 
+                //    {
+                //        Board_LED_Toggle(0);/* Toggle LED if the TX FIFO is full */
+                //    }
+                //    //Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
+
+                //    //Chip_UART_SendRB(LPC_UART0, &txring0,(const uint8_t *) &rxring0, rxring0.count);
+                //    //Chip_UART_ReadRB(LPC_UART1, &rxring1, &temp, 1);
+                //    //Chip_UART_SendRB(LPC_UART0, &txring0, temp, sizeof(temp) - 1);
+                //}
+                //if(bytes1 > 0)
+                //{
+                //    Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &rx, 1);
+                //}
+                    
+            //}
+            ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &uartEvent, 1<<1, CTL_TIMEOUT_NONE, 0);
         }
 }
+        
+ 
 
 /**
  * @}
  */
+void uartRX_thread(void *p)
+{
+    uint8_t key, rx;
+    int bytes0, bytes1;
+        
+    while(1)
+    {
+        //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &uartEvent, 1<<0, CTL_TIMEOUT_NONE, 0);
+        
+        bytes0 = Chip_UART_ReadRB(LPC_UART0, &rxring0, &key, 1);
+        //Chip_UART_ReadRB(LPC_UART0, &rxring0, &key, 1);
+        //Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
+ 
+        bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &rx, 1);
+    
+        if (bytes0 > 0) 
+        {
+            /* Wrap value back around */
+            //if (Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &key, 1) != 1) 
+            if (Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1) != 1) 
+            {
+                Board_LED_Toggle(0);/* Toggle LED if the TX FIFO is full */
+            }
+            //Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
+
+            //Chip_UART_SendRB(LPC_UART0, &txring0,(const uint8_t *) &rxring0, rxring0.count);
+            //Chip_UART_ReadRB(LPC_UART1, &rxring1, &temp, 1);
+            //Chip_UART_SendRB(LPC_UART0, &txring0, temp, sizeof(temp) - 1);
+        }
+        if(bytes1 > 0)
+        {
+            Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &rx, 1);
+        }
+        
+        
+    }
+    
+}

@@ -1,6 +1,13 @@
 #include "clockEngine.h"
 
+
+
 CTL_EVENT_SET_t clockEvent;
+
+static const char* NTP = "AT+CIPSTART=\"UDP\",\"207.210.46.249\",123\r\n";
+static const char* SEND = "AT+CIPSEND=48\r\n";
+static const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n";
+static const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 
 // Sets home position of arm
 int setHome(void)
@@ -62,6 +69,45 @@ void rtcInit(void)
     
 	
 }
+    
+void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
+{
+
+    char timeString[9] = "00:00:00";
+
+    //Connect to NTP Server
+    ESP_command(NTP);//, ONE_SEC_DELAY, 0);
+   
+    ctl_timeout_wait(ctl_current_time + 1000);
+   
+    //Interrogate NTP
+    //Send command
+    ESP_command(SEND);//, ONE_SEC_DELAY, 0);
+    
+    ctl_timeout_wait(ctl_current_time + 1000);
+
+    //Send NTP Packet
+    ESP_command(NTP_PACKET);//, ONE_SEC_DELAY, 48);
+    ctl_timeout_wait(ctl_current_time + 1000);
+    
+    //Chip_UART_SendByte(LPC_UART1, "\n\n");
+
+    //UART_send("\n\n", 2, 0);
+        
+    //Read NTP Packet from UART rx buffer
+    //readBuffer(ntpPacketBuffer, 48);
+
+    //Extrapolate time data from bufffer
+    //calculateTime(ntpPacketBuffer, hour, min, sec, timeString);
+   
+    //Print formatted time string
+    //UART_send("The current time is: ", 21, 0);
+    //UART_send(timeString, 9, 0);
+    //UART_send("\n\n", 2, 0);
+
+    //Disconnect from NTP
+    ESP_command(DISCONNECT_FROM_IP);//, ONE_SEC_DELAY, 0);
+}
 
 
 void clock_thread(void *p)
@@ -74,6 +120,9 @@ void clock_thread(void *p)
     rtcInit();
     setTime(10, 5, 55);
     
+    
+    ctl_timeout_wait(ctl_current_time + 5000);
+    getNTPtime();
     
     
     

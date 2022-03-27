@@ -425,7 +425,7 @@ void CAN_Thread(void *p)
 //	SystemCoreClockUpdate();
 //	Board_Init();
 	//DEBUGOUT(WelcomeMenu);
-        DEBUGSTR(WelcomeMenu);
+        //DEBUGSTR(WelcomeMenu);
 
         ctl_events_init(&can_event, 0);
         

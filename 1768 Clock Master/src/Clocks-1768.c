@@ -25,12 +25,13 @@
 
 #include "uart_rb.h"
 #define STACKSIZE 64
-CTL_TASK_t main_task, can_task, test_task, clock_task, uart_task;
+CTL_TASK_t main_task, can_task, test_task, clock_task, uart_task, uartRX_task;
 
 unsigned can_task_stack[1+STACKSIZE+1];
 unsigned test_task_stack[1+STACKSIZE+1];
 unsigned clock_task_stack[1+STACKSIZE+1];
 unsigned uart_task_stack[1+STACKSIZE+1];
+unsigned uartRX_task_stack[1+STACKSIZE+1];
 
 // CTL Error Handler
 void ctl_handle_error(CTL_ERROR_CODE_t e)
@@ -122,10 +123,16 @@ int main(void) {
     ctl_task_run(&clock_task, 55, clock_thread, 0, "clock_task", STACKSIZE, clock_task_stack+1, 0);
     
     //TODO In development
+    
     //UART Thread
     memset(uart_task_stack, 0xcd, sizeof(uart_task_stack));  // write known values into the stack
     uart_task_stack[0]=uart_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&uart_task, 65, uart_thread, 0, "uart_task", STACKSIZE, uart_task_stack+1, 0);
+    
+    //UARTrx Thread
+    memset(uartRX_task_stack, 0xcd, sizeof(uartRX_task_stack));  // write known values into the stack
+    uartRX_task_stack[0]=uartRX_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    ctl_task_run(&uartRX_task, 64, uartRX_thread, 0, "uartRX_task", STACKSIZE, uartRX_task_stack+1, 0);
    
     
     bool state = false;

@@ -5,6 +5,7 @@
 #include <ctl_api.h>
 #include "stdio.h"
 #include "LPC1768.h"
+//#include "uart_17xx_40xx.h"
 
 //typedef enum {
 //	RTC_SECOND,		/*!< Second */
@@ -28,6 +29,7 @@
 int setHome(void);
 void getTime(void);
 void setTime(uint8_t hour, uint8_t min, uint8_t sec);
+void getNTPtime();//uint8_t *hour, uint8_t *min, uint8_t *sec);
 
 // Initialises RTC
 void rtcInit(void);
