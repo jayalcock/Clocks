@@ -5,8 +5,8 @@
  *      Author: jayalcock
  */
 
-#ifndef CAN_H_
-#define CAN_H_
+#ifndef _CAN_H_
+#define _CAN_H_
 
 static void PrintCANErrorInfo(uint32_t Status);
 /* Print CAN Message */
@@ -21,4 +21,4 @@ void CAN_Thread(void *p);
 
 
 
-#endif /* CAN_H_ */
+#endif /* _CAN_H_ */

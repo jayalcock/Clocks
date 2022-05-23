@@ -29,9 +29,13 @@
  * copyright, permission, and disclaimer notice must appear in all copies of
  * this code.
  */
+
+#include <stdint.h>
+//#include "core_cm3.h"
 #include "board.h"
 #include "ctl_api.h"
-//#include "uart_rb.h"
+#include "can_17xx_40xx.h"
+#include "can.h"
 
 
 /*****************************************************************************
@@ -372,7 +376,7 @@ void CAN_IRQHandler(void)
 	if (IntStatus & CAN_ICR_RI) {
 		Chip_CAN_Receive(LPC_CAN, &RcvMsgBuf);
 		//DEBUGOUT("Message Received!!!\r\n");
-                DEBUGSTR("RX Success\r\n");
+                //DEBUGSTR("RX Success\r\n");
                 Board_LED_Toggle(0);
                
 		//PrintCANMsg(&RcvMsgBuf);
@@ -468,7 +472,7 @@ void CAN_Thread(void *p)
 	//while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
   
 	//DEBUGOUT("Message Sent!!!\r\n");
-        DEBUGSTR("TX Success\r\n");
+        //DEBUGSTR("TX Success\r\n");
         
 
 	//PrintCANMsg(&SendMsgBuf);
@@ -513,7 +517,7 @@ void CAN_Thread(void *p)
             TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
             Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
             while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
-            DEBUGSTR("TX Success\r\n");
+            //DEBUGSTR("TX Success\r\n");
             __asm volatile ("nop");
             //ctl_timeout_wait(ctl_get_current_time() + 1000);
         

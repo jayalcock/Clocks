@@ -19,9 +19,11 @@
 
 #include <ctl_api.h>
 #include <string.h>
+#include <stdint.h>
+#include "core_cm3.h"
 #include "can.h"
 #include "clockEngine.h"
-//#include "cmsis.h"
+#include "cmsis.h"
 
 #include "uart_rb.h"
 #define STACKSIZE 64
@@ -29,7 +31,8 @@ CTL_TASK_t main_task, can_task, test_task, clock_task, uart_task, uartRX_task;
 
 unsigned can_task_stack[1+STACKSIZE+1];
 unsigned test_task_stack[1+STACKSIZE+1];
-unsigned clock_task_stack[1+STACKSIZE+1];
+//unsigned clock_task_stack[1+STACKSIZE+1];
+unsigned clock_task_stack[200];
 unsigned uart_task_stack[1+STACKSIZE+1];
 unsigned uartRX_task_stack[1+STACKSIZE+1];
 
@@ -50,11 +53,19 @@ void test_thread(void *p)
         int steps_remaining = 0;
         bool dir = false; 
         
+         Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 2, true); //Motor driver dir
+         Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 2, false); //Motor driver dir
+        
         
         //Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 3, true); //Motor driver reset control - low to activate
         Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 3, false); //Motor driver reset control - low to activate
         Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 4, true); //Motor driver dir
         Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 5, true); //Motor driver pulse as output
+        
+        //shaft 2
+        //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 2);
+        Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 2, false); //Motor driver dir
+        Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 1, true); //Motor driver pulse as output
         
 
 	while (1)
@@ -67,7 +78,7 @@ void test_thread(void *p)
                 //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 4, dir);
                 //steps = 0;
                 sendToCAN(1);
-                ctl_timeout_wait(ctl_get_current_time() + 2000);
+                ctl_timeout_wait(ctl_get_current_time() + 1000);
                 steps_remaining = (desired_angle - current_angle) * step_size;
             }
             
@@ -80,6 +91,8 @@ void test_thread(void *p)
             // Pulse generation
             Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, true);
             Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, false);
+            Chip_GPIO_WritePortBit(LPC_GPIO, 2, 1, true);
+            Chip_GPIO_WritePortBit(LPC_GPIO, 2, 1, false);
             steps_remaining--;
          
             // At angle - sent to master over CAN
@@ -110,12 +123,12 @@ int main(void) {
     //CAN Thread
     memset(can_task_stack, 0xcd, sizeof(can_task_stack));  // write known values into the stack
     can_task_stack[0]=can_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&can_task, 50, CAN_Thread, 0, "can_task", STACKSIZE, can_task_stack+1, 0);
+    //ctl_task_run(&can_task, 50, CAN_Thread, 0, "can_task", STACKSIZE, can_task_stack+1, 0);
     
     //TEST Thread
     memset(test_task_stack, 0xcd, sizeof(test_task_stack));  // write known values into the stack
     test_task_stack[0]=test_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&test_task, 45, test_thread, 0, "test_task", STACKSIZE, test_task_stack+1, 0);
+    //ctl_task_run(&test_task, 45, test_thread, 0, "test_task", STACKSIZE, test_task_stack+1, 0);
     
     //Clock Thread
     memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack
@@ -123,16 +136,15 @@ int main(void) {
     ctl_task_run(&clock_task, 55, clock_thread, 0, "clock_task", STACKSIZE, clock_task_stack+1, 0);
     
     //TODO In development
-    
     //UART Thread
     memset(uart_task_stack, 0xcd, sizeof(uart_task_stack));  // write known values into the stack
     uart_task_stack[0]=uart_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&uart_task, 65, uart_thread, 0, "uart_task", STACKSIZE, uart_task_stack+1, 0);
     
     //UARTrx Thread
-    memset(uartRX_task_stack, 0xcd, sizeof(uartRX_task_stack));  // write known values into the stack
-    uartRX_task_stack[0]=uartRX_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&uartRX_task, 64, uartRX_thread, 0, "uartRX_task", STACKSIZE, uartRX_task_stack+1, 0);
+    //memset(uartRX_task_stack, 0xcd, sizeof(uartRX_task_stack));  // write known values into the stack
+    //uartRX_task_stack[0]=uartRX_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    //ctl_task_run(&uartRX_task, 64, uartRX_thread, 0, "uartRX_task", STACKSIZE, uartRX_task_stack+1, 0);
    
     
     bool state = false;

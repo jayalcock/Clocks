@@ -119,6 +119,10 @@ void Board_USBD_Init(uint32_t port);
 /**
  * @}
  */
+ 
+void Board_UARTPutChar(char ch);
+
+
 
 #include "board_api.h"
 //#include "lpc_phy.h"

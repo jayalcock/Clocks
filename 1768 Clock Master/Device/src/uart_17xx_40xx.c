@@ -29,7 +29,10 @@
  * this code.
  */
 
+#include "uart_17xx_40xx.h"
 #include "chip.h"
+
+
 
 /*****************************************************************************
  * Private types/enumerations/variables
@@ -319,11 +322,8 @@ void Chip_UART_RXIntHandlerRB(LPC_USART_T *pUART, RINGBUFF_T *pRB)
     {
             uint8_t ch = Chip_UART_ReadByte(pUART);
             RingBuffer_Insert(pRB, &ch);
-            //if(pUART == LPC_UART1)
-            //{
-            //    Chip_UART_SendByte(LPC_UART0, ch);
-            //}
     }
+    
 }
 
 /* UART transmit-only interrupt handler for ring buffers */

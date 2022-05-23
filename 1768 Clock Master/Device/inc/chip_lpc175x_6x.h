@@ -29,8 +29,8 @@
  * this code.
  */
 
-#ifndef __CHIP_LPC175X_6X_H_
-#define __CHIP_LPC175X_6X_H_
+#ifndef _CHIP_LPC175X_6X_H_
+#define _CHIP_LPC175X_6X_H_
 
 #include "lpc_types.h"
 #include "sys_config.h"
@@ -148,9 +148,9 @@ extern "C" {
 #define LPC_FMC                   ((LPC_FMC_T              *) LPC_FMC_BASE)
 
 /* IRQ Handler Alias list */
-#define UART_IRQHandler           UART0_IRQHandler
-#define I2C_IRQHandler            I2C0_IRQHandler
-#define SSP_IRQHandler            SSP0_IRQHandler
+//#define UART_IRQHandler           UART0_IRQHandler
+//#define I2C_IRQHandler            I2C0_IRQHandler
+//#define SSP_IRQHandler            SSP0_IRQHandler
 
 /**
  * @}

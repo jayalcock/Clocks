@@ -33,6 +33,7 @@
 #define __UART_17XX_40XX_H_
 
 #include "ring_buffer.h"
+#include "core_cm3.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,11 +1,8 @@
-#ifndef CLOCKENGINE_H
-#define CLOCKENGINE_H
+#ifndef _CLOCKENGINE_H_
+#define _CLOCKENGINE_H_
 
-#include <stdint.h>
-#include <ctl_api.h>
-#include "stdio.h"
-#include "LPC1768.h"
-//#include "uart_17xx_40xx.h"
+
+//#define RTC_IRQn 17
 
 //typedef enum {
 //	RTC_SECOND,		/*!< Second */
@@ -30,11 +27,14 @@ int setHome(void);
 void getTime(void);
 void setTime(uint8_t hour, uint8_t min, uint8_t sec);
 void getNTPtime();//uint8_t *hour, uint8_t *min, uint8_t *sec);
+void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec, char* timeString);
 
 // Initialises RTC
 void rtcInit(void);
 
+// Real time clock interrupt handler
+void RTC_IRQHandler(void);
 
 void clock_thread(void *p);
 
-#endif /* CLOCKENGINE_H */
+#endif /* _CLOCKENGINE_H_ */

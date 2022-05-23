@@ -52,8 +52,12 @@ static const PINMUX_GRP_T pinmuxing[] = {
 	//{0,  23,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ADC 0 */
 	//{0,  26,  IOCON_MODE_INACT | IOCON_FUNC2},	/* DAC */
 
-        
+        {2,  1,   IOCON_MODE_REPEATER | IOCON_FUNC0},	/* Motor shaft 2 pulse */
+        {2,  2,   IOCON_MODE_PULLUP | IOCON_FUNC0},	/* Motor shaft 2 direction */
         {2,  3,   IOCON_MODE_REPEATER | IOCON_FUNC0},	/* GPIO Stepper Driver Reset */
+        {2,  4,   IOCON_MODE_REPEATER | IOCON_FUNC0},	/* Motor shaft 1 pulse */
+        {2,  5,   IOCON_MODE_REPEATER | IOCON_FUNC0},	/* Motor shaft 1 direction */            
+                    
 	/* ENET */
 //	{0x1, 0,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_TXD0 */
 //	{0x1, 1,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_TXD1 */
