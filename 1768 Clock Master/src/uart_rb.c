@@ -160,9 +160,7 @@ void ringBuffer1Copy(uint8_t *data, const uint8_t size)
     for(int i = 0; i <= size; i++)
     {
         RingBuffer_Pop(&rxring1, &data[i]);
-    }
-    
-    
+    }    
 }
 
 
@@ -172,10 +170,8 @@ void ringBuffer1Copy(uint8_t *data, const uint8_t size)
  */
 void uart_thread(void *p)
 {
-	//uint8_t key, rx;
-	//int bytes0, bytes1;
-        ctl_mutex_init(&UART_mutex);
-	//Board_UART_Init(UART_SELECTION);
+        uint8_t data0, data1;
+        uint8_t bytes0, bytes1; 
 
 	//* Setup UART0 for 115.2K8N1 */
 	Chip_UART_Init(LPC_UART0);
@@ -214,58 +210,43 @@ void uart_thread(void *p)
 	/* Enable receive data and line status interrupt */
 	Chip_UART_IntEnable(LPC_UART1, (UART_IER_RBRINT | UART_IER_RLSINT));
 
-	/* preemption = 1, sub-priority = 1 */
+        /* Set NVIC priority */
 	NVIC_SetPriority(UART0_IRQn, 2);
 	NVIC_EnableIRQ(UART0_IRQn);
         NVIC_SetPriority(UART1_IRQn, 1);
 	NVIC_EnableIRQ(UART1_IRQn);
 
-	/* Send initial messages */
-	//Chip_UART_SendRB(LPC_UART0, &txring, inst1, sizeof(inst1) - 1);
-	//Chip_UART_SendRB(LPC_UART0, &txring, inst2, sizeof(inst2) - 1);
-        
-        //Ensure connection to ESP
-        //ESP_command(INIT);//, 200U, 0);
-        //ESP_command(RESET_CHIP);//, 5000U, 0);
-        
-        //Chip_UART_SendRB(LPC_UART1, &txring, RESET_CHIP, sizeof(RESET_CHIP) - 1);
- 
-	/* Poll the receive ring buffer for the ESC (ASCII 27) key */
-        uint8_t temp;
-        uint8_t bytes0, bytes1, counter; 
-        //char temp2[] = "";
-	uint8_t temp2;
         while(1)
-        
         {
+            // Wait for RX UART IRQ from either UART 
             ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &uartEvent, UART0_RX | UART1_RX, CTL_TIMEOUT_NONE, 0);
             
             if(UART0_RX)
             {
-                bytes0 = Chip_UART_ReadRB(LPC_UART0, &rxring0, &temp, 1);
-       
+                // Pop 1 byte of data from UART0 ringbuffer
+                bytes0 = Chip_UART_ReadRB(LPC_UART0, &rxring0, &data0, 1);
+                
+                // If data was popped from ringbuffer, loop to UART1
                 if(bytes0)
                 {
-           
-                    Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &temp, 1);
+                    Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &data0, 1);
                 }
             }
             
-            if(UART1_RX && !noTx)
+            if(UART1_RX)
             {
-                bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &temp2, 1);
+                // Pop 1 byte of data from UART1 ringbuffer
+                bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &data1, 1);
        
-                if(bytes1 && !noTx)
+                // If data was popped from ringbuffer, loop to UART0
+                if(bytes1)
                 {
-           
-                    Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &temp2, 1);
-                    
+                    Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &data1, 1);
                 }
                 
             }
-            
-            
-       
+                   
+        // Rest event flags if no data popped from ringbuffer
         if(bytes0 == 0)
         {
             ctl_events_set_clear(&uartEvent, 0, UART0_RX);
@@ -274,84 +255,5 @@ void uart_thread(void *p)
         {
             ctl_events_set_clear(&uartEvent, 0, UART1_RX);
         }
-    }
-            
-       
-       
-}
-        
- 
-
-/**
- * @}
- */
-void uartRX_thread(void *p)
-{
-    uint8_t key, rx, key1;
-    int bytes0, bytes1;
-        
-    while(1)
-    {
-        
-        //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &uartEvent, UART1_RX, CTL_TIMEOUT_NONE, 0);
-        
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &uartEvent, 1<<10, CTL_TIMEOUT_NONE, 0);
-        
-        bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &key1, 1);
-        Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &key1, 1);
-        
-        //if(uartEvent && UART0_RX)
-        //{
-        //   bytes0 = Chip_UART_ReadRB(LPC_UART0, &rxring0, &key, 1);
-        //   Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
-        //}
-       
-        //if(uartEvent && UART1_RX)
-        //{
-        //   bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &key1, 1);
-        //   Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &key1, 1);
-        //}
-        
-        //bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &key1, 1);
-        //Chip_UART_ReadRB(LPC_UART0, &rxring0, &key, 1);
-        //Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
- 
-        //bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &rx, 1);
-    
-        //if (bytes0 > 0) 
-        //{
-        //    /* Wrap value back around */
-        //    Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &key, 1);
-            
-        //    if (Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1) != 1) 
-        //    {
-        //        Board_LED_Toggle(0);/* Toggle LED if the TX FIFO is full */
-        //    }
-        //    //Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
-
-        //    //Chip_UART_SendRB(LPC_UART0, &txring0,(const uint8_t *) &rxring0, rxring0.count);
-        //    //Chip_UART_ReadRB(LPC_UART1, &rxring1, &temp, 1);
-        //    //Chip_UART_SendRB(LPC_UART0, &txring0, temp, sizeof(temp) - 1);
-        //}
-        
-        //if(bytes1 > 0)
-        //{
-        //    Chip_UART_SendRB(LPC_UART1, &txring1, (const uint8_t *) &key, 1);
-        //}
-        
-        //if(bytes1 > 0)
-        //{
-        //    Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &rx, 1);
-        //}
-        
-        //if(RingBuffer_IsEmpty(&rxring0))
-        //{
-        //    ctl_events_set_clear(&uartEvent, 0, 1<<0);
-        //}
-        if(RingBuffer_IsEmpty(&rxring1))
-        {
-            ctl_events_set_clear(&uartEvent, 0, UART1_RX);
-        }
-    }
-    
+    }      
 }

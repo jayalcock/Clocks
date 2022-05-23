@@ -285,15 +285,11 @@ void clock_thread(void *p)
     setTime(10, 5, 55);
     
     #if RESET_WIFI
-    ESP_command(RESET_CHIP, ONE_SECOND, 0);
+        ESP_command(RESET_CHIP, ONE_SECOND, 0);
     #endif
     
     ctl_timeout_wait(ctl_current_time + 5000);
     getNTPtime();
-    
-    
-    
-    
     
  
     while(1)
