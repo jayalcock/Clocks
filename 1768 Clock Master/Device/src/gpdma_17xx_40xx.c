@@ -506,7 +506,7 @@ int Chip_GPDMA_InitChannelCfg(LPC_GPDMA_T *pGPDMA,
 IntStatus Chip_GPDMA_IntGetStatus(LPC_GPDMA_T *pGPDMA, GPDMA_STATUS_T type, uint8_t channel)
 {
 	/**
-	 * TODO check the channel <=8 type is exited
+	 *  check the channel <=8 type is exited
 	 */
 	switch (type) {
 	case GPDMA_STAT_INT:/* check status of DMA channel interrupts */

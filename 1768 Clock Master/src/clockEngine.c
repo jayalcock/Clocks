@@ -16,18 +16,122 @@
 #define UNUSED_ANGLE 45
 #define ONE_SECOND 1000U
 #define GMT -7
+#define UNIX_EPOCH 2208988800UL //Seconds between 01Jan1900 and 01Jan1970 2207520000UL
+#define SECONDS_PER_MIN 60
+#define SECONDS_PER_HOUR 3600
+#define SECONDS_PER_DAY 86400
+#define CLOCK_COLUMNS 15
+#define CLOCK_ROWS 8
+
 
 CTL_EVENT_SET_t clockEvent;
+  
 
-
-const char RESET_CHIP[] = "AT+RESTORE\r\n";
+static const char* RESET_CHIP = "AT+RESTORE\r\n";
 static const char* NTP = "AT+CIPSTART=\"UDP\",\"207.210.46.249\",123\r\n";
 static const char* SEND = "AT+CIPSEND=48\r\n";
 static const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n";
 static const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 static const char* MODE = "AT+CWMODE=1\r\n";
 static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
-   
+
+
+static const uint16_t timeAngle[13] = {0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0};
+
+
+
+clockData clockMatrix[2] = {0};
+
+digitData ZERO[2] = 
+{
+    { // hour
+        // left side of digit
+        {timeAngle[6], timeAngle[6], timeAngle[6], 
+            timeAngle[6], timeAngle[6], timeAngle[3]},
+        // middle
+        {timeAngle[9], timeAngle[6], timeAngle[12], 
+            timeAngle[12],timeAngle[12], timeAngle[9]},
+        //right
+        {timeAngle[9], timeAngle[6], timeAngle[6], 
+            timeAngle[6], timeAngle[6], timeAngle[9]}
+    },
+    { // minute
+        // left
+         {timeAngle[3], timeAngle[12], timeAngle[6], 
+            timeAngle[12], timeAngle[12], timeAngle[12]},
+        // middle
+        {timeAngle[3], timeAngle[6], timeAngle[6], 
+            timeAngle[6], timeAngle[12], timeAngle[3]},
+        // right
+        {timeAngle[6], timeAngle[12], timeAngle[12], 
+            timeAngle[12], timeAngle[12], timeAngle[12]}
+                                    
+    }
+                                
+};
+                            
+digitData ONE[2] = 
+{
+    { // hour
+        // left side of digit
+        {45, 45, 45, 45, 45, 45},
+        // middle
+        {timeAngle[6], timeAngle[12], timeAngle[12], 
+            timeAngle[12],timeAngle[12], timeAngle[12]},
+        //right
+        {timeAngle[9], timeAngle[6], timeAngle[6], 
+            timeAngle[6], timeAngle[6], timeAngle[9]}
+    },
+    { // minute
+        // left
+        {45, 45, 45, 45, 45, 45},
+        // middle
+        {timeAngle[3], timeAngle[6], timeAngle[6], 
+            timeAngle[6], timeAngle[6], timeAngle[3]},
+        // right
+        {timeAngle[6], timeAngle[12], timeAngle[12], 
+            timeAngle[12], timeAngle[12], timeAngle[12]}
+                                    
+    }
+                                
+};
+                            
+void writeClockValue(const uint8_t pos, const digitData *val)
+{
+    uint8_t x_offset;
+    
+    // Determine offset in x direction given digit position
+    if(pos == 0)
+    {
+        x_offset = 1;
+    }
+    else if (pos == 1)
+    {
+        x_offset = 4;
+    }
+    else if (pos == 2)
+    {
+        x_offset = 8;
+    }
+    else if (pos == 3)
+    {
+        x_offset = 11;
+    }
+    
+    // Populate clock matirx with desired position
+    for(int k = 0; k < 2; k++) // hr/min
+    {
+        for(int i = 0; i < 3; i++) // column
+        {
+            for(int j = 0; j < 6; j++) // row
+            {
+                clockMatrix[k][i+x_offset][j+1] = val[k][i][j];
+            }
+        }
+    }
+    
+}
+    
 
 // Sets home position of arm
 int setHome(void)
@@ -90,7 +194,6 @@ void rtcInit(void)
     
     // Enable RTC in NVIC
     NVIC_ISER0 |= RTC_IRQn;
-    //NVIC_ISER0 |= 1<<17; //TODO clean this up
     
     // Set Counter Increment Interrupt Register to generate intterupt on increment of minute 
     CIIR |= CIIR_IMMIN;
@@ -141,11 +244,11 @@ void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
     //Calculate time from received NTP data
     calculateTime(ntpTemp, &hour, &min, &sec, timeString);
 
-  
-    //Print formatted time string
-    //UART_send("The current time is: ", 21, 0);
-    //UART_send(timeString, 9, 0);
-    //UART_send("\n\n", 2, 0);
+    // Print current time 
+    Chip_UART_SendBlocking(LPC_UART0, "The current time is: ", 21);
+    Chip_UART_SendBlocking(LPC_UART0, timeString, 9);
+    Chip_UART_SendBlocking(LPC_UART0, "\n\n", 2);    
+    
 
     //Disconnect from NTP
     ESP_command(DISCONNECT_FROM_IP, ONE_SECOND, 0);
@@ -162,7 +265,7 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
     timeInt = dataBuffer[40] << 24 |  dataBuffer[41] << 16 | dataBuffer[42] << 8 | dataBuffer[43] << 0;
 
     epoch = timeInt - 2207520000UL; 
-    *hour = epoch % 86400UL / 3600;
+    *hour = epoch % SECONDS_PER_DAY / SECONDS_PER_HOUR;
     
     //Adjust for GMT
     if(*hour < abs(GMT))
@@ -170,8 +273,8 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
         *hour += 24;
     }
     *hour += GMT;
-    *min = epoch % 3600 / 60;
-    *sec = epoch % 60;
+    *min = epoch % SECONDS_PER_HOUR / SECONDS_PER_MIN;
+    *sec = epoch % SECONDS_PER_MIN;
 
     //Correctly format time string
     if(*hour < 10)
@@ -202,72 +305,6 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
     //Construct formatted time string
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
 }
-//void showTime(void)
-//{
-//    //numberPos1 = 
-    
-//    if(HOUR == 0)
-//    {
-//            // left side of digit
-//            clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[0 + x_offset, 0 + y_offset].hourArm.targetAngle = timeAngle['3']
-
-//            clockMatrix.clockMtx[0 + x_offset, 1 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[0 + x_offset, 1 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[0 + x_offset, 2 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[0 + x_offset, 2 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[0 + x_offset, 3 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[0 + x_offset, 3 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[0 + x_offset, 4 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[0 + x_offset, 4 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[0 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['3']
-//            clockMatrix.clockMtx[0 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            // middle of digit 
-//            clockMatrix.clockMtx[1 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['9']
-//            clockMatrix.clockMtx[1 + x_offset, 0 + y_offset].hourArm.targetAngle = timeAngle['3']
-
-//            clockMatrix.clockMtx[1 + x_offset, 1 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[1 + x_offset, 1 + y_offset].hourArm.targetAngle = timeAngle['6']
-
-//            clockMatrix.clockMtx[1 + x_offset, 2 + y_offset].minuteArm.targetAngle = timeAngle['12']
-//            clockMatrix.clockMtx[1 + x_offset, 2 + y_offset].hourArm.targetAngle = timeAngle['6']
-
-//            clockMatrix.clockMtx[1 + x_offset, 3 + y_offset].minuteArm.targetAngle = timeAngle['12']
-//            clockMatrix.clockMtx[1 + x_offset, 3 + y_offset].hourArm.targetAngle = timeAngle['6']
-
-//            clockMatrix.clockMtx[1 + x_offset, 4 + y_offset].minuteArm.targetAngle = timeAngle['12']
-//            clockMatrix.clockMtx[1 + x_offset, 4 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[1 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
-//            clockMatrix.clockMtx[1 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['3']
-
-//            // right side of digit
-//            clockMatrix.clockMtx[2 + x_offset, 0 + y_offset].minuteArm.targetAngle = timeAngle['9']
-//            clockMatrix.clockMtx[2 + x_offset, 0 + y_offset].hourArm.targetAngle = timeAngle['6']
-
-//            clockMatrix.clockMtx[2 + x_offset, 1 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[2 + x_offset, 1 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[2 + x_offset, 2 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[2 + x_offset, 2 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[2 + x_offset, 3 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[2 + x_offset, 3 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[2 + x_offset, 4 + y_offset].minuteArm.targetAngle = timeAngle['6']
-//            clockMatrix.clockMtx[2 + x_offset, 4 + y_offset].hourArm.targetAngle = timeAngle['12']
-
-//            clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].minuteArm.targetAngle = timeAngle['9']
-//            clockMatrix.clockMtx[2 + x_offset, 5 + y_offset].hourArm.targetAngle = timeAngle['12']
-//        }
-        
-    
-//}
 
 
 void clock_thread(void *p)
@@ -286,11 +323,16 @@ void clock_thread(void *p)
     
     #if RESET_WIFI
         ESP_command(RESET_CHIP, ONE_SECOND, 0);
+        ctl_timeout_wait(ctl_current_time + 5000);
     #endif
     
-    ctl_timeout_wait(ctl_current_time + 5000);
+    
     getNTPtime();
     
+    writeClockValue(0, ONE);
+    writeClockValue(1, ONE);
+    writeClockValue(2, ONE);
+    writeClockValue(3, ONE);
  
     while(1)
     {

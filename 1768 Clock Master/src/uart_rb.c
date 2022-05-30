@@ -117,14 +117,9 @@ void UART0_IRQHandler(void)
 {
         //TODO error handling
 	Chip_UART_IRQRBHandler(LPC_UART0, &rxring0, &txring0);
-        //if(rxring0.head != rxring0.tail)
         if(!RingBuffer_IsEmpty(&rxring0))
-        //if(rxring0.count > 0)
         {
-            //TODO THIS IS WHAT YOU'RE WORKING ON
-            //Chip_UART_SendRB(LPC_UART0, &txring0,(const uint8_t *) &rxbuff1, rxring0.count);
-            ctl_events_set_clear(&uartEvent, UART0_RX, 0); 
-            
+            ctl_events_set_clear(&uartEvent, UART0_RX, 0);
         }
 }
     
@@ -134,15 +129,12 @@ void UART0_IRQHandler(void)
  */
 void UART1_IRQHandler(void)
 {
-        //char woops[] = "Hola\n";
 	//TODO error handling
 	Chip_UART_IRQRBHandler(LPC_UART1, &rxring1, &txring1);
 
         if(!RingBuffer_IsEmpty(&rxring1) && !noTx)
         {
-            //Chip_UART_SendRB(LPC_UART0, &txring0,(const uint8_t *) &rxbuff1, rxring0.count);
-            ctl_events_set_clear(&uartEvent, UART1_RX, 0);
-            
+            ctl_events_set_clear(&uartEvent, UART1_RX, 0);            
         }
         
 }

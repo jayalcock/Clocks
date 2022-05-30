@@ -146,7 +146,7 @@ int main(void) {
 
     ctl_task_set_priority(&main_task, 0); // drop to lowest priority to start created tasks running.
     // Force the counter to be placed into memory
-    volatile static int i = 0, j = 0;
+    volatile static int i = 0;
     // Enter an infinite loop, just incrementing a counter
     while(1) 
     {
