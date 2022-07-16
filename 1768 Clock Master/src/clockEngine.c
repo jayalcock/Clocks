@@ -12,7 +12,7 @@
 
 //#include "uart_17xx_40xx.h"
 
-#define RESET_WIFI 1
+#define RESET_WIFI 0
 #define UNUSED_ANGLE 45
 #define ONE_SECOND 1000U
 #define GMT -7

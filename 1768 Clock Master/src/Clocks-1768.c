@@ -31,7 +31,8 @@
 CTL_TASK_t main_task, can_task, test_task, clock_task, uart_task;
 
 unsigned can_task_stack[1+STACKSIZE+1];
-unsigned test_task_stack[1+STACKSIZE+1];
+//unsigned test_task_stack[1+STACKSIZE+1];
+unsigned test_task_stack[100];
 //unsigned clock_task_stack[1+STACKSIZE+1];
 unsigned clock_task_stack[200];
 unsigned uart_task_stack[1+STACKSIZE+1];
@@ -123,12 +124,12 @@ int main(void) {
     //CAN Thread
     memset(can_task_stack, 0xcd, sizeof(can_task_stack));  // write known values into the stack
     can_task_stack[0]=can_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    //ctl_task_run(&can_task, 50, CAN_Thread, 0, "can_task", STACKSIZE, can_task_stack+1, 0);
+    ctl_task_run(&can_task, 50, CAN_Thread, 0, "can_task", STACKSIZE, can_task_stack+1, 0);
     
     //TEST Thread
     memset(test_task_stack, 0xcd, sizeof(test_task_stack));  // write known values into the stack
     test_task_stack[0]=test_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    //ctl_task_run(&test_task, 45, test_thread, 0, "test_task", STACKSIZE, test_task_stack+1, 0);
+    ctl_task_run(&test_task, 200, test_thread, 0, "test_task", STACKSIZE, test_task_stack+1, 0);
     
     //Clock Thread
     memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack

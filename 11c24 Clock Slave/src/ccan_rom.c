@@ -124,7 +124,7 @@ int can_init(void)
 	msg_obj.data[1] = 'E';	// 0x45
 	msg_obj.data[2] = 'S';	// 0x53
 	msg_obj.data[3] = 'T';	// 0x54
-	LPC_CCAN_API->can_transmit(&msg_obj);
+	//LPC_CCAN_API->can_transmit(&msg_obj);
 
 	/* Configure message object 1 to receive all 11-bit messages 0x400-0x4FF */
 	msg_obj.msgobj = 1;
