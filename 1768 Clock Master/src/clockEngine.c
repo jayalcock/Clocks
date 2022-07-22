@@ -9,6 +9,7 @@
 #include "uart_17xx_40xx.h"
 #include "uart_rb.h"
 #include "LPC1768.h"
+#include "clockData.h"
 
 //#include "uart_17xx_40xx.h"
 
@@ -23,6 +24,12 @@
 #define CLOCK_COLUMNS 15
 #define CLOCK_ROWS 8
 
+// Offsets for each physical position in digital representation 
+#define POS_A 1
+#define POS_B 4
+#define POS_C 8
+#define POS_D 11
+
 
 CTL_EVENT_SET_t clockEvent;
   
@@ -36,70 +43,21 @@ static const char* MODE = "AT+CWMODE=1\r\n";
 static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
 
 
-static const uint16_t timeAngle[13] = {0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0};
+/* Called in clockData.h
+    // Clock hour representation of angular position
+    static const uint16_t timeAngle[13] = {0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0};
+*/
 
-
-
+// Initialise clock matrix - 1x hour, 1x minute
 clockData clockMatrix[2] = {0};
 
-digitData ZERO[2] = 
-{
-    { // hour
-        // left side of digit
-        {timeAngle[6], timeAngle[6], timeAngle[6], 
-            timeAngle[6], timeAngle[6], timeAngle[3]},
-        // middle
-        {timeAngle[9], timeAngle[6], timeAngle[12], 
-            timeAngle[12],timeAngle[12], timeAngle[9]},
-        //right
-        {timeAngle[9], timeAngle[6], timeAngle[6], 
-            timeAngle[6], timeAngle[6], timeAngle[9]}
-    },
-    { // minute
-        // left
-         {timeAngle[3], timeAngle[12], timeAngle[6], 
-            timeAngle[12], timeAngle[12], timeAngle[12]},
-        // middle
-        {timeAngle[3], timeAngle[6], timeAngle[6], 
-            timeAngle[6], timeAngle[12], timeAngle[3]},
-        // right
-        {timeAngle[6], timeAngle[12], timeAngle[12], 
-            timeAngle[12], timeAngle[12], timeAngle[12]}
-                                    
-    }
-                                
-};
-                            
-digitData ONE[2] = 
-{
-    { // hour
-        // left side of digit
-        {45, 45, 45, 45, 45, 45},
-        // middle
-        {timeAngle[6], timeAngle[12], timeAngle[12], 
-            timeAngle[12],timeAngle[12], timeAngle[12]},
-        //right
-        {timeAngle[9], timeAngle[6], timeAngle[6], 
-            timeAngle[6], timeAngle[6], timeAngle[9]}
-    },
-    { // minute
-        // left
-        {45, 45, 45, 45, 45, 45},
-        // middle
-        {timeAngle[3], timeAngle[6], timeAngle[6], 
-            timeAngle[6], timeAngle[6], timeAngle[3]},
-        // right
-        {timeAngle[6], timeAngle[12], timeAngle[12], 
-            timeAngle[12], timeAngle[12], timeAngle[12]}
-                                    
-    }
-                                
-};
+
                             
 void writeClockValue(const uint8_t pos, const digitData *val)
 {
-    uint8_t x_offset;
+    //uint8_t x_offset;
     
+    /* Replaced by #define offsets
     // Determine offset in x direction given digit position
     if(pos == 0)
     {
@@ -117,6 +75,7 @@ void writeClockValue(const uint8_t pos, const digitData *val)
     {
         x_offset = 11;
     }
+    */
     
     // Populate clock matirx with desired position
     for(int k = 0; k < 2; k++) // hr/min
@@ -125,7 +84,7 @@ void writeClockValue(const uint8_t pos, const digitData *val)
         {
             for(int j = 0; j < 6; j++) // row
             {
-                clockMatrix[k][i+x_offset][j+1] = val[k][i][j];
+                clockMatrix[k][i+pos][j+1] = val[k][i][j];
             }
         }
     }
@@ -254,6 +213,7 @@ void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
     ESP_command(DISCONNECT_FROM_IP, ONE_SECOND, 0);
 }
 
+// Calculates readable time value from NTP data
 void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec, char* timeString)
 {
     char hourC[4], minC[4], secC[4];
@@ -326,13 +286,13 @@ void clock_thread(void *p)
         ctl_timeout_wait(ctl_current_time + 5000);
     #endif
     
-    
+    // Update time from NTP server
     getNTPtime();
     
-    writeClockValue(0, ONE);
-    writeClockValue(1, ONE);
-    writeClockValue(2, ONE);
-    writeClockValue(3, ONE);
+    writeClockValue(POS_A, ONE);
+    writeClockValue(POS_B, TWO);
+    writeClockValue(POS_C, THREE);
+    writeClockValue(POS_D, FOUR);
  
     while(1)
     {
