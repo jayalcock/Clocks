@@ -9,33 +9,38 @@
 #define NUMBEROFARMS 2
 #define TIMESTEPMS 1
 #define STEPSIZE 12 // 1/12 degree per step
-#define PULSEWIDTH 8000UL
+#define PULSEWIDTH 2000UL
 
 uint16_t angle[NUMBEROFCLOCKS][2] = {0}; // minute and hour angle 
 uint16_t angleNew[NUMBEROFCLOCKS][2] = {0}; // desired minute and hour angle
 uint8_t updatePosition = 0;
-uint8_t moveComplete = 0;
+static uint8_t moveComplete = 0;
 
-static const motorStruct motorData[] =
+motorStruct motorData[] =
 {
-    {0, 1, 0, 0, 0, 1}, // motor 0
-    {1, 1, 1, 0, 0, 1}, // motor 1
-    {2, 1, 2, 0, 0, 1}, // motor 2
-    {3, 1, 5, 0, 0, 1}, // motor 3
-};
+    //{0, 1, 0, 0, 0, 45, 45, 0, 0, 1, 1}, // motor 0
+    //{1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1}, // motor 1
+    //{2, 1, 2, 0, 0, 0, 0, 0, 0, 1, 1}, // motor 2
+    //{3, 1, 5, 0, 0, 0, 0, 0, 0, 1, 1}, // motor 3
+    {1, 0, 0, 45, 0, 1}, // motor 0
+    {1, 1, 0, 90, 0, 1}, // motor 1
+    {1, 2, 0, 0, 0, 1}, // motor 2
+    {1, 5, 0, 0, 0, 1}, // motor 3
+    
+    };
 
-void pulse_generation(const motorStruct motorNum)
+void pulse_generation(const uint8_t motorNum)
 {
 
-    Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorNum.port, motorNum.pin);
-    Chip_GPIO_SetPinOutLow(LPC_GPIO, motorNum.port, motorNum.pin);
+    Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].port, motorData[motorNum].pin);
+    Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].port, motorData[motorNum].pin);
 }
 
 // TODO - clean this up - devleop proper function 
 void pulse_delay(void)
 {
     // small delay for correct pulse width
-    for(int i = 0; i < 8000; i++)
+    for(int i = 0; i < PULSEWIDTH; i++)
     {
         __asm volatile ("nop");
     }
@@ -49,35 +54,45 @@ void position_control(void)
     //uint16_t remainingSteps[NUMBEROFCLOCKS][NUMBEROFARMS];
     clockArmStruct remainingSteps[NUMBEROFCLOCKS];
 
-    // Calculate steps to traverse for each arm of each clock
-    //for(i = 0; i < NUMBEROFCLOCKS; i++)
-    //{
-    //    for(j = 0; j < NUMBEROFARMS; j++)
-    //    {
-    //        remainingSteps[i][j] = calculate_steps(angle[i][j], angleNew[i][j]);
-    //    }
-    //}
-    
-    // calculate number of steps between angles
+    // calculate number of steps between desirec and actual angles
     for(i = 0; i < NUMBEROFCLOCKS; i++)
     {
-        remainingSteps[i].min = calculate_steps(motorData[i].minAngleDesired, motorData[i].minAngle);
-        remainingSteps[i].hour = calculate_steps(motorData[i].hourAngleDesired, motorData[i].hourAngle);
+
+        motorData[i].remainingSteps = calculate_steps(motorData[i].angleDesired, motorData[i].angle);
+
+           if(motorData[i].remainingSteps != 0)
+        {
+            motorData[i].atPosition = 0;
+        }
+
     }    
+
     
-    // drive each clock motor until angle == angleNew
+    // drive each clock motor until each arm is at desired angle
     while(!moveComplete)
     {
-        if(!motorData[i].minAtPosition)
+
+        for(i = 0; i < NUMBEROFCLOCKS; i++)
         {
-            pulse_generation(motorData[i]);
-            --remainingSteps[i].min;
-        }
-        
-        if(!motorData[i].minAtPosition)
-        {
-            pulse_generation(motorData[i]);
-            --remainingSteps[i].min;
+            if(!motorData[i].atPosition)
+            {
+                pulse_generation(i);
+            
+                --motorData[i].remainingSteps;
+            
+                if(motorData[i].remainingSteps == 0)
+                {
+                    motorData[i].atPosition = 1;
+                }
+            
+                moveComplete = 0;
+            }
+
+            
+            pulse_delay(); // delay for correct pulse width
+         
+            
+ 
         }
         
     }
@@ -89,7 +104,7 @@ void position_control(void)
 }
 
 // Calculate how many steps to get to desired angle
-uint16_t calculate_steps(uint16_t angle, uint16_t newAngle)
+uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
 {
     return (newAngle - angle) * STEPSIZE;   
 }

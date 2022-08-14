@@ -54,8 +54,8 @@ void test_thread(void *p)
         int steps_remaining = 0;
         bool dir = false; 
         
-        Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 2, true); //Motor driver dir
-        Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 2, false); //Motor driver dir
+        //Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 2, true); //Motor driver dir
+        //Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 2, false); //Motor driver dir
         
         
         //Chip_GPIO_WriteDirBit(LPC_GPIO, 2, 3, true); //Motor driver reset control - low to activate

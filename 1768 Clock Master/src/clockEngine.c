@@ -10,6 +10,7 @@
 #include "uart_rb.h"
 #include "LPC1768.h"
 #include "clockData.h"
+#include "can_17xx_40xx.h"
 
 //#include "uart_17xx_40xx.h"
 
@@ -37,7 +38,7 @@ CTL_EVENT_SET_t clockEvent;
 static const char* RESET_CHIP = "AT+RESTORE\r\n";
 static const char* NTP = "AT+CIPSTART=\"UDP\",\"207.210.46.249\",123\r\n";
 static const char* SEND = "AT+CIPSEND=48\r\n";
-static const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n";
+static const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n"; 
 static const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 static const char* MODE = "AT+CWMODE=1\r\n";
 static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
@@ -51,7 +52,31 @@ static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
 // Initialise clock matrix - 1x hour, 1x minute
 clockData clockMatrix[2] = {0};
 
+//send position data to relevant mcu over CAN
+void sendData(void)
+{
+    uint16_t remoteID = 0x200;
+    
+    CAN_MSG_T sendMsgBuff;
+    CAN_BUFFER_ID_T txBuff;
+   
+    sendMsgBuff.ID = remoteID;
+    sendMsgBuff.DLC = 4;
+    sendMsgBuff.Type = 0;
+    sendMsgBuff.Data[0] = clockMatrix[0][6][0];
+    sendMsgBuff.Data[1] = clockMatrix[0][6][1];
+    sendMsgBuff.Data[2] = clockMatrix[0][6][2];
+    sendMsgBuff.Data[3] = clockMatrix[0][6][3];
+    //sendMsgBuff.Data[0] = 'A';
+    //sendMsgBuff.Data[1] = 'B';
+    //sendMsgBuff.Data[2] = 'C';
+    //sendMsgBuff.Data[3] = 'D';
+    txBuff = Chip_CAN_GetFreeTxBuf(LPC_CAN1);
+    
+    Chip_CAN_Send(LPC_CAN1, txBuff, &sendMsgBuff);
 
+}
+    
                             
 void writeClockValue(const uint8_t pos, const digitData *val)
 {
@@ -87,7 +112,7 @@ void writeClockValue(const uint8_t pos, const digitData *val)
                 clockMatrix[k][i+pos][j+1] = val[k][i][j];
             }
         }
-    }
+    } 
     
 }
     
@@ -296,7 +321,9 @@ void clock_thread(void *p)
  
     while(1)
     {
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
-        __asm volatile ("nop"); 
+        //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
+        ctl_timeout_wait(ctl_get_current_time() + 1000);
+        sendData();
+        
     }
 }

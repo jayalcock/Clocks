@@ -8,17 +8,31 @@
 #ifndef _CLOCKDRIVER_H_
 #define _CLOCKDRIVER_H_
 
+//typedef struct
+//{
+//    uint8_t number;
+//    uint8_t port;
+//    uint8_t pin;
+//    uint16_t minAngle;
+//    uint16_t hourAngle;
+//    uint16_t minAngleDesired;
+//    uint16_t hourAngleDesired;
+//    uint16_t minRemainingSteps;
+//    uint16_t hourRemainingSteps;
+//    uint8_t minAtPosition;
+//    uint8_t hourAtPosition;
+    
+//} motorStruct;
+
+
 typedef struct
 {
-    uint8_t number;
     uint8_t port;
     uint8_t pin;
-    uint16_t minAngle;
-    uint16_t hourAngle;
-    uint16_t minAngleDesired;
-    uint16_t hourAngleDesired;
-    uint8_t minAtPosition;
-    uint8_t hourAtPosition;
+    uint16_t angle;
+    uint16_t angleDesired;
+    uint16_t remainingSteps;
+    uint8_t atPosition;
     
 } motorStruct;
 
@@ -32,10 +46,11 @@ typedef struct
 
 
 void position_control(void);
-void pulse_generation(const motorStruct motorNum);
+void pulse_generation(const uint8_t motorNum);
+void pulse_delay(void);
 
 // Calculate how many steps to get to desired angle
-uint16_t calculate_steps(uint16_t angle, uint16_t newAngle);
+uint16_t calculate_steps(uint16_t newAngle, uint16_t angle);
 
 void update(void);
 

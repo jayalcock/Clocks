@@ -144,6 +144,9 @@ void Board_Init(void)
 
 	/* Initialize GPIO */
 	Chip_GPIO_Init(LPC_GPIO);
+        
+        // initialise systick
+        SysTick_Config(1000000);
 
 	/* Initialize LEDs */
 	Board_LED_Init();
