@@ -127,9 +127,9 @@ int main(void) {
     ctl_task_run(&can_task, 50, CAN_Thread, 0, "can_task", STACKSIZE, can_task_stack+1, 0);
     
     //TEST Thread
-    memset(test_task_stack, 0xcd, sizeof(test_task_stack));  // write known values into the stack
-    test_task_stack[0]=test_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&test_task, 200, test_thread, 0, "test_task", STACKSIZE, test_task_stack+1, 0);
+    //memset(test_task_stack, 0xcd, sizeof(test_task_stack));  // write known values into the stack
+    //test_task_stack[0]=test_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    //ctl_task_run(&test_task, 200, test_thread, 0, "test_task", STACKSIZE, test_task_stack+1, 0);
     
     //Clock Thread
     memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack

@@ -20,6 +20,7 @@ void rtcInit(void);
 // Real time clock interrupt handler
 void RTC_IRQHandler(void);
 
+// RT thread for calculating clock positions
 void clock_thread(void *p);
 
 #endif /* _CLOCKENGINE_H_ */

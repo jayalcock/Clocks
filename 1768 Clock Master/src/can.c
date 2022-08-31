@@ -414,7 +414,7 @@ void CAN_IRQHandler(void)
 }
 
 
-void sendToCAN(uint8_t data)
+void sendToCAN(uint8_t *data)
 {
     SendMsgBuf.Data[0] = data;
     ctl_events_set_clear(&can_event, 1<<0, 0);

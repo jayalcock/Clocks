@@ -11,6 +11,7 @@
 #include "LPC1768.h"
 #include "clockData.h"
 #include "can_17xx_40xx.h"
+//#include "can.h"
 
 //#include "uart_17xx_40xx.h"
 
@@ -51,6 +52,8 @@ static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
 
 // Initialise clock matrix - 1x hour, 1x minute
 clockData clockMatrix[2] = {0};
+    
+static uint16_t clockTemp;
 
 //send position data to relevant mcu over CAN
 void sendData(void)
@@ -63,7 +66,8 @@ void sendData(void)
     sendMsgBuff.ID = remoteID;
     sendMsgBuff.DLC = 4;
     sendMsgBuff.Type = 0;
-    sendMsgBuff.Data[0] = clockMatrix[0][6][0];
+    //sendMsgBuff.Data[0] = clockMatrix[0][6][0];
+    sendMsgBuff.Data[0] = clockTemp;
     sendMsgBuff.Data[1] = clockMatrix[0][6][1];
     sendMsgBuff.Data[2] = clockMatrix[0][6][2];
     sendMsgBuff.Data[3] = clockMatrix[0][6][3];
@@ -73,7 +77,8 @@ void sendData(void)
     //sendMsgBuff.Data[3] = 'D';
     txBuff = Chip_CAN_GetFreeTxBuf(LPC_CAN1);
     
-    Chip_CAN_Send(LPC_CAN1, txBuff, &sendMsgBuff);
+    //sendToCAN(sendMsgBuff);
+    //Chip_CAN_Send(LPC_CAN1, txBuff, &sendMsgBuff);
 
 }
     
@@ -296,6 +301,8 @@ void clock_thread(void *p)
 {
     //RTC_TIME_T fullTime;
     
+    clockTemp = 0;
+    
     // Generate clock matricies
     //uint16_t angleMatrix[15][8];
  
@@ -324,6 +331,8 @@ void clock_thread(void *p)
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
         ctl_timeout_wait(ctl_get_current_time() + 1000);
         sendData();
+        
+        clockTemp += 10;
         
     }
 }

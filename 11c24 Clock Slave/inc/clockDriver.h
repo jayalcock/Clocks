@@ -29,8 +29,11 @@ typedef struct
 {
     uint8_t port;
     uint8_t pin;
+    uint8_t dirPort;
+    uint8_t dirPin;
     uint16_t angle;
     uint16_t angleDesired;
+    uint8_t dir;
     uint16_t remainingSteps;
     uint8_t atPosition;
     
@@ -45,12 +48,15 @@ typedef struct
 
 
 
-void position_control(void);
+void pulse_delay(const uint16_t time);
 void pulse_generation(const uint8_t motorNum);
-void pulse_delay(void);
+//void pulse_delay(void);
 
 // Calculate how many steps to get to desired angle
 uint16_t calculate_steps(uint16_t newAngle, uint16_t angle);
+
+void position_control(void);
+
 
 void update(void);
 
