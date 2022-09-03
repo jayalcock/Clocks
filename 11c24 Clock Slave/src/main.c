@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 7);  // Dir C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 8);  // Dir D
     
-    Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 6); // Set reset pin low 
+    Chip_GPIO_SetPinOutLow(LPC_GPIO, 1, 6); // Set reset pin low 
    
     
     while(1)

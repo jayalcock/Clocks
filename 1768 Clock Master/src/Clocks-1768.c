@@ -26,7 +26,9 @@
 #include "cmsis.h"
 #include "uart_rb.h"
 
-#define STACKSIZE 64
+//#define STACKSIZE 64
+#define STACKSIZE 128
+
 
 CTL_TASK_t main_task, can_task, test_task, clock_task, uart_task;
 
@@ -73,28 +75,28 @@ void test_thread(void *p)
         {
             
             // Generate steps to achieve desired ange
-            if(steps_remaining == 0)
-            {
-                //dir = !dir;
-                //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 4, dir);
-                //steps = 0;
-                sendToCAN(1);
-                ctl_timeout_wait(ctl_get_current_time() + 1000);
-                steps_remaining = (desired_angle - current_angle) * step_size;
-            }
+            //if(steps_remaining == 0)
+            //{
+            //    //dir = !dir;
+            //    //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 4, dir);
+            //    //steps = 0;
+            //    sendToCAN(1);
+            //    ctl_timeout_wait(ctl_get_current_time() + 1000);
+            //    steps_remaining = (desired_angle - current_angle) * step_size;
+            //}
             
-            // small delay for correct pulse width
-            for(int i = 0; i < 8000; i++)
-            {
-                __asm volatile ("nop");
-            }
+            //// small delay for correct pulse width
+            //for(int i = 0; i < 8000; i++)
+            //{
+            //    __asm volatile ("nop");
+            //}
            
-            // Pulse generation
-            Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, true);
-            Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, false);
-            Chip_GPIO_WritePortBit(LPC_GPIO, 2, 1, true);
-            Chip_GPIO_WritePortBit(LPC_GPIO, 2, 1, false);
-            steps_remaining--;
+            //// Pulse generation
+            //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, true);
+            //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 5, false);
+            //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 1, true);
+            //Chip_GPIO_WritePortBit(LPC_GPIO, 2, 1, false);
+            //steps_remaining--;
          
             // At angle - sent to master over CAN
             //sendToCAN(1);

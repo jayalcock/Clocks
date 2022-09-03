@@ -9,7 +9,10 @@
 #define NUMBEROFARMS 2
 #define TIMESTEPMS 1
 #define STEPSIZE 12 // 1/12 degree per step
-#define PULSEWIDTH 500UL
+#define PULSEWIDTH 5
+#define PULSEPERIOD 500
+
+//CCAN_MSG_OBJ_T msgObj;
 
 uint16_t angle[NUMBEROFCLOCKS][2] = {0}; // minute and hour angle 
 uint16_t angleNew[NUMBEROFCLOCKS][2] = {0}; // desired minute and hour angle
@@ -18,15 +21,13 @@ static uint8_t moveComplete = 0;
 
 motorStruct motorData[] =
 {
-    {1, 0, 1, 2, 0, 360, 0, 0, 1}, // motor 0 - minute
-    {1, 1, 1, 5, 0, 360, 1, 0, 1}, // motor 1 - hour
-    {2, 3, 2, 7, 0, 360, 1, 0, 1}, // motor 2 - minute
-    {2, 6, 2, 8, 0, 360, 1, 0, 1}, // motor 3 - hour
+    {1, 0, 1, 2, 0, 0, 0, 0, 1}, // motor 0 - minute
+    {1, 1, 1, 5, 0, 0, 1, 0, 1}, // motor 1 - hour
+    {2, 3, 2, 7, 0, 0, 1, 0, 1}, // motor 2 - minute
+    {2, 6, 2, 8, 0, 0, 1, 0, 1}, // motor 3 - hour
     
 };
 
-
-clockArmStruct remainingSteps[NUMBEROFCLOCKS];
 
 
 void pulse_generation(const uint8_t motorNum)
@@ -43,7 +44,7 @@ void pulse_generation(const uint8_t motorNum)
     
     // Generate pulse
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].port, motorData[motorNum].pin);
-    pulse_delay(5);
+    pulse_delay(PULSEWIDTH);
     Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].port, motorData[motorNum].pin);
     
     //Chip_GPIO_SetPinOutHigh(LPC_GPIO, 2, 8);
@@ -74,7 +75,7 @@ void position_control(void)
 
         motorData[i].remainingSteps = calculate_steps(motorData[i].angleDesired, motorData[i].angle);
 
-           if(motorData[i].remainingSteps != 0)
+        if(motorData[i].remainingSteps != 0)
         {
             motorData[i].atPosition = 0;
         }
@@ -94,15 +95,16 @@ void position_control(void)
             
                 --motorData[i].remainingSteps;
             
-                if(motorData[i].remainingSteps == 0)
+                if(motorData[i].remainingSteps <= 0)
                 {
                     motorData[i].atPosition = 1;
+                    motorData[i].angle = motorData[i].angleDesired;
                 }
             
                 moveComplete = 0;
             }
 
-            pulse_delay(PULSEWIDTH); // delay for correct pulse width
+            pulse_delay(PULSEPERIOD); // delay for correct pulse width
 
         }
         
@@ -122,10 +124,40 @@ void position_control(void)
 // Calculate how many steps to get to desired angle
 uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
 {
-    return (newAngle - angle) * STEPSIZE;   
+    if((newAngle - angle) < 0)
+    {
+        return (newAngle - angle + 360) * STEPSIZE;  
+    }
+    else
+    {    
+        return (newAngle - angle) * STEPSIZE;   
+    }
 }
 
-void update(void)
+void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 {
-    updatePosition = 1;
+    /* Message types:
+            0x200 - position
+            0x201 - speed
+            0x202 - acceleration */
+       
+     
+    // position update
+    if(CANdata->mode_id == 0x200)
+    {
+        motorData[0].angleDesired = ((CANdata->data[0] << 8) | (CANdata->data[1]));
+        motorData[1].angleDesired = ((CANdata->data[2] << 8) | (CANdata->data[3]));
+        moveComplete = 0;
+        updatePosition = 1;
+    }
+    // speed update
+    if (CANdata->mode_id == 0x201)
+    {
+        
+    }
+    // acceleration update
+    if (CANdata->mode_id == 0x202)
+    {
+        
+    }
 }    

@@ -25,8 +25,17 @@
 //} motorStruct;
 
 
+
+
+struct clockArm
+{
+    uint8_t min;
+    uint8_t hour;   
+};
+
 typedef struct
 {
+    uint8_t clockNumber;
     uint8_t port;
     uint8_t pin;
     uint8_t dirPort;
@@ -39,14 +48,6 @@ typedef struct
     
 } motorStruct;
 
-typedef struct
-{
-    uint8_t min;
-    uint8_t hour;
-    
-} clockArmStruct;
-
-
 
 void pulse_delay(const uint16_t time);
 void pulse_generation(const uint8_t motorNum);
@@ -58,7 +59,7 @@ uint16_t calculate_steps(uint16_t newAngle, uint16_t angle);
 void position_control(void);
 
 
-void update(void);
+void update_from_CAN(CCAN_MSG_OBJ_T *data);
 
 
 

@@ -10,8 +10,8 @@
 #include "uart_rb.h"
 #include "LPC1768.h"
 #include "clockData.h"
-#include "can_17xx_40xx.h"
-//#include "can.h"
+//#include "can_17xx_40xx.h"
+#include "can.h"
 
 //#include "uart_17xx_40xx.h"
 
@@ -61,23 +61,25 @@ void sendData(void)
     uint16_t remoteID = 0x200;
     
     CAN_MSG_T sendMsgBuff;
+    uint8_t data;
     CAN_BUFFER_ID_T txBuff;
    
     sendMsgBuff.ID = remoteID;
-    sendMsgBuff.DLC = 4;
+    sendMsgBuff.DLC = 1;
     sendMsgBuff.Type = 0;
     //sendMsgBuff.Data[0] = clockMatrix[0][6][0];
-    sendMsgBuff.Data[0] = clockTemp;
-    sendMsgBuff.Data[1] = clockMatrix[0][6][1];
-    sendMsgBuff.Data[2] = clockMatrix[0][6][2];
-    sendMsgBuff.Data[3] = clockMatrix[0][6][3];
+    //sendMsgBuff.Data[0] = clockTemp;
+    //sendMsgBuff.Data[1] = clockMatrix[0][6][1];
+    //sendMsgBuff.Data[2] = clockMatrix[0][6][2];
+    //sendMsgBuff.Data[3] = clockMatrix[0][6][3];
     //sendMsgBuff.Data[0] = 'A';
     //sendMsgBuff.Data[1] = 'B';
     //sendMsgBuff.Data[2] = 'C';
     //sendMsgBuff.Data[3] = 'D';
-    txBuff = Chip_CAN_GetFreeTxBuf(LPC_CAN1);
+    //txBuff = Chip_CAN_GetFreeTxBuf(LPC_CAN1);
+ 
     
-    //sendToCAN(sendMsgBuff);
+    sendToCAN(&sendMsgBuff);
     //Chip_CAN_Send(LPC_CAN1, txBuff, &sendMsgBuff);
 
 }
@@ -300,6 +302,11 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
 void clock_thread(void *p)
 {
     //RTC_TIME_T fullTime;
+    uint16_t remoteID = 0x200;
+    uint8_t clockNode = 0;
+    
+    CAN_MSG_T sendMsgBuff;
+    
     
     clockTemp = 0;
     
@@ -329,10 +336,29 @@ void clock_thread(void *p)
     while(1)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
-        ctl_timeout_wait(ctl_get_current_time() + 1000);
-        sendData();
+        ctl_timeout_wait(ctl_get_current_time() + 2000);
         
         clockTemp += 10;
+        
+        if(clockTemp >= 360)
+            clockTemp -= 360;
+            
+            
+        sendMsgBuff.ID = remoteID;
+        sendMsgBuff.DLC = 5;
+        sendMsgBuff.Type = 0;
+        sendMsgBuff.Data[0] = clockNode;
+        sendMsgBuff.Data[1] = clockTemp >> 8;
+        sendMsgBuff.Data[2] = clockTemp & 0xFF;
+        sendMsgBuff.Data[3] = clockTemp >> 8;
+        sendMsgBuff.Data[4] = clockTemp & 0xFF;
+        
+        
+        
+        sendToCAN(&sendMsgBuff);
+        
+       
+    
         
     }
 }

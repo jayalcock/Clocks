@@ -34,8 +34,9 @@
 //#include "core_cm3.h"
 #include "board.h"
 #include "ctl_api.h"
-#include "can_17xx_40xx.h"
 #include "can.h"
+#include "can_17xx_40xx.h"
+
 
 
 /*****************************************************************************
@@ -56,8 +57,8 @@
 #define FULL_CAN_AF_USED    1
 #endif
 #define CAN_TX_MSG_STD_ID (0x200)
-#define CAN_TX_MSG_REMOTE_STD_ID (0x300)
-#define CAN_TX_MSG_EXT_ID (0x10000200)
+//#define CAN_TX_MSG_REMOTE_STD_ID (0x300)
+//#define CAN_TX_MSG_EXT_ID (0x10000200)
 #define CAN_RX_MSG_ID (0x100)
 
 /*****************************************************************************
@@ -131,25 +132,25 @@ CANAF_LUT_T AFSections = {
  * Private functions
  ****************************************************************************/
 /* Print error */
-static void PrintCANErrorInfo(uint32_t Status)
+static void PrintCANErrorInfo(uint32_t status)
 {
-	if (Status & CAN_ICR_EI) {
+	if (status & CAN_ICR_EI) {
 		DEBUGOUT("Error Warning!\r\n");
 	}
-	if (Status & CAN_ICR_DOI) {
+	if (status & CAN_ICR_DOI) {
 		DEBUGOUT("Data Overrun!\r\n");
 	}
-	if (Status & CAN_ICR_EPI) {
+	if (status & CAN_ICR_EPI) {
 		DEBUGOUT("Error Passive!\r\n");
 	}
-	if (Status & CAN_ICR_ALI) {
-		DEBUGOUT("Arbitration lost in the bit: %d(th)\r\n", CAN_ICR_ALCBIT_VAL(Status));
+	if (status & CAN_ICR_ALI) {
+		DEBUGOUT("Arbitration lost in the bit: %d(th)\r\n", CAN_ICR_ALCBIT_VAL(status));
 	}
-	if (Status & CAN_ICR_BEI) {
+	if (status & CAN_ICR_BEI) {
 
 		DEBUGOUT("Bus error !!!\r\n");
 
-		if (Status & CAN_ICR_ERRDIR_RECEIVE) {
+		if (status & CAN_ICR_ERRDIR_RECEIVE) {
 			DEBUGOUT("\t Error Direction: Transmiting\r\n");
                         //DEBUGSTR("\t Error Direction: Transmiting\r\n");
 		}
@@ -158,8 +159,8 @@ static void PrintCANErrorInfo(uint32_t Status)
                         //DEBUGSTR("\t Error Direction: Receiving\r\n");
 		}
 
-		DEBUGOUT("\t Error Location: 0x%2x\r\n", CAN_ICR_ERRBIT_VAL(Status));
-		DEBUGOUT("\t Error Type: 0x%1x\r\n", CAN_ICR_ERRC_VAL(Status));
+		DEBUGOUT("\t Error Location: 0x%2x\r\n", CAN_ICR_ERRBIT_VAL(status));
+		DEBUGOUT("\t Error Type: 0x%1x\r\n", CAN_ICR_ERRC_VAL(status));
 	}
 }
 
@@ -370,7 +371,7 @@ void CAN_IRQHandler(void)
 	CAN_MSG_T RcvMsgBuf;
 	IntStatus = Chip_CAN_GetIntStatus(LPC_CAN);
 
-	PrintCANErrorInfo(IntStatus);
+	//PrintCANErrorInfo(IntStatus);
 
 	/* New Message came */
 	if (IntStatus & CAN_ICR_RI) {
@@ -414,9 +415,10 @@ void CAN_IRQHandler(void)
 }
 
 
-void sendToCAN(uint8_t *data)
-{
-    SendMsgBuf.Data[0] = data;
+void sendToCAN(CAN_MSG_T *sendMsg)
+{    
+    
+    SendMsgBuf = *sendMsg;
     ctl_events_set_clear(&can_event, 1<<0, 0);
 }
 
@@ -426,10 +428,7 @@ void CAN_Thread(void *p)
 	CAN_BUFFER_ID_T   TxBuf;
 	//CAN_MSG_T SendMsgBuf;
         
-//	SystemCoreClockUpdate();
-//	Board_Init();
-	//DEBUGOUT(WelcomeMenu);
-        //DEBUGSTR(WelcomeMenu);
+
 
         ctl_events_init(&can_event, 0);
         
@@ -460,15 +459,15 @@ void CAN_Thread(void *p)
 //	DEBUGOUT("%d\n", temp);
 
 
-	SendMsgBuf.ID = CAN_TX_MSG_STD_ID;
-	SendMsgBuf.DLC = 4;
-	SendMsgBuf.Type = 0;
-	SendMsgBuf.Data[0] = 'A';
-	SendMsgBuf.Data[1] = 'B';
-	SendMsgBuf.Data[2] = 'C';
-	SendMsgBuf.Data[3] = 'D';
-	TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
-	Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
+	//SendMsgBuf.ID = CAN_TX_MSG_STD_ID;
+	//SendMsgBuf.DLC = 4;
+	//SendMsgBuf.Type = 0;
+	//SendMsgBuf.Data[0] = 'A';
+	//SendMsgBuf.Data[1] = 'B';
+	//SendMsgBuf.Data[2] = 'C';
+	//SendMsgBuf.Data[3] = 'D';
+	//TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
+	//Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
 	//while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
   
 	//DEBUGOUT("Message Sent!!!\r\n");
@@ -504,12 +503,7 @@ void CAN_Thread(void *p)
 //	DEBUGOUT("Message Sent!!!\r\n");
 //	PrintCANMsg(&SendMsgBuf);
 
-        float desiredAngle;
-        
-        //desiredAngle = 10.4;
-        
-        //SendMsgBuf.Data[0] = desiredAngle*10;
-        
+       
 
 	while (1)
         {
@@ -518,8 +512,7 @@ void CAN_Thread(void *p)
             Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
             while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
             //DEBUGSTR("TX Success\r\n");
-            __asm volatile ("nop");
-            //ctl_timeout_wait(ctl_get_current_time() + 1000);
+            Board_LED_Toggle(0);
         
         }
 }
