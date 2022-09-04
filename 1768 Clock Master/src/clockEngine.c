@@ -338,21 +338,12 @@ void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const u
 
 void clock_thread(void *p)
 {
-    //RTC_TIME_T fullTime;
-    //uint16_t posID = 0x200;
-    uint16_t speedID = 0x201;
+
     uint8_t clockNode0 = 0;
     uint8_t clockNode1 = 1;
     uint16_t minTemp = 0;
     uint16_t hourTemp = 0;
-    
-    CAN_MSG_T sendMsgBuff;
-    
-    
-
-    // Generate clock matricies
-    //uint16_t angleMatrix[15][8];
- 
+     
     ctl_events_init(&clockEvent, 0);
     
  

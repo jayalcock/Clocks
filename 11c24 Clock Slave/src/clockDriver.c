@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-
 #include "board.h"
 #include "clockDriver.h"
 
@@ -12,10 +11,6 @@
 #define PULSEWIDTH 1
 //#define PULSEPERIOD 10000
 
-//CCAN_MSG_OBJ_T msgObj;
-
-uint16_t angle[NUMBEROFCLOCKS][2] = {0}; // minute and hour angle 
-uint16_t angleNew[NUMBEROFCLOCKS][2] = {0}; // desired minute and hour angle
 uint8_t updatePosition = 0;
 static uint8_t moveComplete = 0;
 
@@ -197,10 +192,7 @@ void clock_control(void)
     
     // check for 0 > angle > 360
     
-    // return at angle status
-    
-    //Chip_GPIO_SetPinOutHigh(LPC_GPIO, 2, 6); // Set reset pin low
-    
+    // return at angle status  
     
 }
 
