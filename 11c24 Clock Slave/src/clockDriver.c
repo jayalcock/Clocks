@@ -9,7 +9,7 @@
 #define NUMBEROFARMS 2
 #define TIMESTEPMS 1
 #define STEPSIZE 12 // 1/12 degree per step
-#define PULSEWIDTH 5
+#define PULSEWIDTH 1
 //#define PULSEPERIOD 10000
 
 //CCAN_MSG_OBJ_T msgObj;
@@ -21,7 +21,6 @@ static uint8_t moveComplete = 0;
 
 uint16_t speed[] = {500, 1000, 2500, 5000, 7500, 10000};
     
-
 motorStruct motorData[] =
 {
     {0, //motor num
@@ -52,6 +51,32 @@ motorStruct motorData[] =
               
 };
 
+void driver_init(void)
+{
+    
+    //Set up GPIO
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_0, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_1, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_2, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_5, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 0);  // Pulse A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 1);  // Pulse B
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 2);  // Dir A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 5);  // Dir B
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 6);  // Reset
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 3);  // Pulse C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 6);  // Pulse D
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 7);  // Dir C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 8);  // Dir D
+    
+    Chip_GPIO_SetPinOutLow(LPC_GPIO, 1, 6); // Set reset pin low 
+}
 
 
 void pulse_generation(const uint8_t motorNum, const char arm)
@@ -88,9 +113,7 @@ void pulse_generation(const uint8_t motorNum, const char arm)
         Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].hour.port, motorData[motorNum].hour.pin);
     }
     
-    //Chip_GPIO_SetPinOutHigh(LPC_GPIO, 2, 8);
-    //pulse_delay(10);
-    //Chip_GPIO_SetPinOutLow(LPC_GPIO, 2, 3);
+    
 }
 
 // TODO - clean this up - devleop proper function 
@@ -163,7 +186,8 @@ void clock_control(void)
                 moveComplete = 0;
             }
 
-            //pulse_delay(PULSEPERIOD); // delay for correct pulse width
+            // delay to control speed
+            //TODO develop speed control for each arm
             pulse_delay(speed[motorData[i].min.speed]);
         }
         

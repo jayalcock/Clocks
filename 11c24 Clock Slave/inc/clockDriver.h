@@ -32,7 +32,7 @@ typedef struct
     
 } motorStruct;
 
-
+void driver_init(void);
 void pulse_delay(const uint16_t time);
 
 // Generates pulses to stepper driver

@@ -61,29 +61,7 @@ void CAN_rx(uint8_t msg_obj_num)
     Board_LED_Toggle(0);
 
     update_from_CAN(&msg_obj);
-    // Only process data applicable to nodes under this MCU
-    //for(i = 0; i < (sizeof(clockNumbers) / sizeof(clockNumbers[0])); i++)
-    //{
-    //    if(msg_obj.data[0] == clockNumbers[i])
-    //    {
-    //        update_from_CAN(&msg_obj);
-    //    }
-    //}
-    
-    //msg_obj.msgobj = 1;
-    //msg_obj.mode_id = 0x200;
-    //msg_obj.mask = 0x3F0;
-
-    //LPC_CCAN_API->config_rxmsgobj(&msg_obj);
-    //if (msg_obj_num == 1) {
-    //	/* Simply transmit CAN frame (echo) with with ID +0x100 via buffer 2 */
-    //	msg_obj.msgobj = 2;
-    //	msg_obj.mode_id += 0x100;
-    //	LPC_CCAN_API->can_trans`mit(&msg_obj);
-    //}
-        
-    return;
-       
+          
 }
 
 /*	CAN transmit callback */

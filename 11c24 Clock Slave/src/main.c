@@ -20,31 +20,9 @@ int main(int argc, char *argv[])
   
     SystemCoreClockUpdate();
     Board_Init();
-
     can_init();
-    
-    
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_0, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_1, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_2, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_5, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 0);  // Pulse A
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 1);  // Pulse B
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 2);  // Dir A
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 5);  // Dir B
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 6);  // Reset
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 3);  // Pulse C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 6);  // Pulse D
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 7);  // Dir C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 8);  // Dir D
-    
-    Chip_GPIO_SetPinOutLow(LPC_GPIO, 1, 6); // Set reset pin low 
+    driver_init();  
+
    
     
     while(1)
