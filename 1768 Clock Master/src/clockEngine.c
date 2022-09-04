@@ -32,6 +32,12 @@
 #define POS_C 8
 #define POS_D 11
 
+// CAN bus constants
+#define POS_ID 0x200
+#define POS_DL 5
+#define SPEED_ID 0x201
+#define SPEED_DL 5
+#define ACCEL_ID 0x202
 
 CTL_EVENT_SET_t clockEvent;
   
@@ -298,18 +304,52 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
 }
 
+void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle)
+{
+    CAN_MSG_T sendMsgBuff;
+    
+    sendMsgBuff.ID = POS_ID;
+    sendMsgBuff.DLC = POS_DL;
+    sendMsgBuff.Type = 0;
+    sendMsgBuff.Data[0] = clockNum;
+    sendMsgBuff.Data[1] = minuteAngle >> 8;
+    sendMsgBuff.Data[2] = minuteAngle & 0xFF;
+    sendMsgBuff.Data[3] = hourAngle >> 8;
+    sendMsgBuff.Data[4] = hourAngle & 0xFF;
+
+    sendToCAN(&sendMsgBuff);
+}
+
+void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir)
+{
+    CAN_MSG_T sendMsgBuff;
+    
+    sendMsgBuff.ID = SPEED_ID;
+    sendMsgBuff.DLC = SPEED_DL;
+    sendMsgBuff.Type = 0;
+    sendMsgBuff.Data[0] = clockNum;
+    sendMsgBuff.Data[1] = minuteSpeed;
+    sendMsgBuff.Data[2] = hourSpeed;
+    sendMsgBuff.Data[3] = minDir;
+    sendMsgBuff.Data[4] = hourDir;
+
+    sendToCAN(&sendMsgBuff);
+}
 
 void clock_thread(void *p)
 {
     //RTC_TIME_T fullTime;
-    uint16_t remoteID = 0x200;
-    uint8_t clockNode = 0;
+    //uint16_t posID = 0x200;
+    uint16_t speedID = 0x201;
+    uint8_t clockNode0 = 0;
+    uint8_t clockNode1 = 1;
+    uint16_t minTemp = 0;
+    uint16_t hourTemp = 0;
     
     CAN_MSG_T sendMsgBuff;
     
     
-    clockTemp = 0;
-    
+
     // Generate clock matricies
     //uint16_t angleMatrix[15][8];
  
@@ -332,33 +372,33 @@ void clock_thread(void *p)
     writeClockValue(POS_B, TWO);
     writeClockValue(POS_C, THREE);
     writeClockValue(POS_D, FOUR);
+    
+    
+    uint8_t speed = 2;
+    uint8_t dir0m = 0;
+    uint8_t dir0h = 0;
+    uint8_t dir1m = 0;
+    uint8_t dir1h = 1;
  
     while(1)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         
-        clockTemp += 10;
-        
-        if(clockTemp >= 360)
-            clockTemp -= 360;
+        minTemp += 20;
+        hourTemp += 10;
+              
+        if(minTemp >= 360)
+            minTemp -= 360;
+        if(hourTemp >= 360)
+            hourTemp -= 360;
             
             
-        sendMsgBuff.ID = remoteID;
-        sendMsgBuff.DLC = 5;
-        sendMsgBuff.Type = 0;
-        sendMsgBuff.Data[0] = clockNode;
-        sendMsgBuff.Data[1] = clockTemp >> 8;
-        sendMsgBuff.Data[2] = clockTemp & 0xFF;
-        sendMsgBuff.Data[3] = clockTemp >> 8;
-        sendMsgBuff.Data[4] = clockTemp & 0xFF;
+        update_position(clockNode0, minTemp, hourTemp);
+        update_position(clockNode1, minTemp, hourTemp);  
+        update_speed_dir(clockNode0, speed, speed, dir0m, dir0h);
+        update_speed_dir(clockNode1, speed, speed, dir1m, dir1h);   
         
-        
-        
-        sendToCAN(&sendMsgBuff);
-        
-       
-    
         
     }
 }

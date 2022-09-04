@@ -4,17 +4,19 @@
 
 
 
-int temp = 0;
+uint8_t tick, clock_task;
+
 
 void SysTick_Handler(void)
 {
-    temp = 1;
+    tick = 1;
 }
 
 
 int main(int argc, char *argv[])
 {
-    temp = 0;  
+    tick = 0;
+    clock_task = 0; 
   
     SystemCoreClockUpdate();
     Board_Init();
@@ -48,13 +50,18 @@ int main(int argc, char *argv[])
     while(1)
     {
         
-        if(temp == 1)
+        if(tick == 1)
         {
-         
-            position_control();
+            clock_control();
             //printf("%d\n", Chip_TIMER_ReadCount(LPC_TIMER16_0));
             //Chip_TIMER_Reset(LPC_TIMER16_0);
-            temp = 0;
+            tick = 0;
         }
+        
+        if(clock_task = 1)
+        {
+            //clock_control();
+            
+        }   
     };   
 }

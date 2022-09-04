@@ -11,7 +11,7 @@
 
 CCAN_MSG_OBJ_T msg_obj;
 
-uint8_t clockNumbers[] = {0, 1, 2, 3};
+uint8_t clockNumbers[] = {0, 1};
 uint8_t rxData;
 int i; 
 
@@ -60,18 +60,20 @@ void CAN_rx(uint8_t msg_obj_num)
     LPC_CCAN_API->can_receive(&msg_obj);
     Board_LED_Toggle(0);
 
+    update_from_CAN(&msg_obj);
     // Only process data applicable to nodes under this MCU
-    for(i = 0; i < (sizeof(clockNumbers) / sizeof(clockNumbers[0])); i++)
-    {
-        if(msg_obj.data[0] == clockNumbers[i])
-        {
-            update_from_CAN(&msg_obj);
-        }
-    }
+    //for(i = 0; i < (sizeof(clockNumbers) / sizeof(clockNumbers[0])); i++)
+    //{
+    //    if(msg_obj.data[0] == clockNumbers[i])
+    //    {
+    //        update_from_CAN(&msg_obj);
+    //    }
+    //}
+    
+    //msg_obj.msgobj = 1;
+    //msg_obj.mode_id = 0x200;
+    //msg_obj.mask = 0x3F0;
 
-//       msg_obj.msgobj = 1;
-    //msg_obj.mode_id = 0x204;
-    //msg_obj.mask = 0x700;
     //LPC_CCAN_API->config_rxmsgobj(&msg_obj);
     //if (msg_obj_num == 1) {
     //	/* Simply transmit CAN frame (echo) with with ID +0x100 via buffer 2 */
@@ -158,7 +160,7 @@ int can_init(void)
 	/* Configure message object 1 to receive all 11-bit messages 0x400-0x4FF */
 	msg_obj.msgobj = 1;
 	msg_obj.mode_id = 0x200;
-	msg_obj.mask = 0x3F8;
+	msg_obj.mask = 0x3F0;
 	LPC_CCAN_API->config_rxmsgobj(&msg_obj);
 
 
