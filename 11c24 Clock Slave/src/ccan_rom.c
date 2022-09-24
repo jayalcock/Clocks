@@ -11,10 +11,6 @@
 
 CCAN_MSG_OBJ_T msg_obj;
 
-uint8_t clockNumbers[] = {0, 1};
-uint8_t rxData;
-int i; 
-
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
@@ -53,8 +49,7 @@ void baudrateCalculate(uint32_t baud_rate, uint32_t *can_api_timing_cfg)
     a CAN message has been received */
 void CAN_rx(uint8_t msg_obj_num) 
 {
-    uint8_t i;
-    /* Determine which CAN message has been received */
+     /* Determine which CAN message has been received */
     msg_obj.msgobj = msg_obj_num;
     /* Now load up the msg_obj structure with the CAN message */
     LPC_CCAN_API->can_receive(&msg_obj);

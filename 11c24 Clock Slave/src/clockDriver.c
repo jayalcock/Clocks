@@ -3,25 +3,25 @@
 #include "board.h"
 #include "clockDriver.h"
 
-
-#define NUMBEROFCLOCKS 2
+#define NUMBEROFCLOCKS 4
 #define NUMBEROFARMS 2
 #define TIMESTEPMS 1
 #define STEPSIZE 12 // 1/12 degree per step
 #define PULSEWIDTH 1
 //#define PULSEPERIOD 10000
 
-uint8_t updatePosition = 0;
-static uint8_t moveComplete = 0;
+uint8_t moveComplete = 0;
 
-uint16_t speed[] = {500, 1000, 2500, 5000, 7500, 10000};
+//const uint16_t speed[] = {500, 1000, 2500, 5000, 7500, 10000};
+//const uint16_t speed[] = {250, 500, 1500, 2500, 5000, 10000};
+const uint16_t speed[] = {100, 200, 500, 1000, 2500, 5000};
     
 motorStruct motorData[] =
 {
     {0, //motor num
         //minute
-        { 1, 0, // pulse port/pin 
-          1, 2, // direction port/pin 
+        { 0, 3, // pulse port/pin 
+          0, 2, // direction port/pin 
           0,    // angle
           0,    // desired angle 
           0,    // direction
@@ -30,8 +30,8 @@ motorStruct motorData[] =
           1,    // speed
           2 },  // accel
         //hour
-        { 1, 1, // pulse port/pin
-          1, 5, // direction port/pin
+        { 0, 5, // pulse port/pin
+          0, 4, // direction port/pin
           0,    // angle
           0,    // desired angle
           0,    // direction
@@ -41,36 +41,65 @@ motorStruct motorData[] =
           2 }}, // accel
                 
     {1, //motor num
-        {2, 3, 2, 7, 0, 0, 1, 0, 1, 1, 2}, //min
-        {2, 6, 2, 8, 0, 0, 1, 0, 1, 1, 2}}, //hour         
-              
+        {0, 7, 0, 6, 0, 0, 1, 0, 1, 1, 2}, //min
+        {0, 9, 0, 8, 0, 0, 1, 0, 1, 1, 2}}, //hour         
+                            
+    {2, //motor num
+        {1, 7, 1, 6, 0, 0, 1, 0, 1, 1, 2}, //min
+        {1, 10, 1, 8, 0, 0, 1, 0, 1, 1, 2}}, //hour   
+                     
+    {3, //motor num
+        {2, 0, 1, 11, 0, 0, 1, 0, 1, 1, 2}, //min
+        {2, 3, 2, 2, 0, 0, 1, 0, 1, 1, 2}}, //hour   
+          
 };
 
-void driver_init(void)
+void driver_gpio_init(void)
 {
     
-    //Set up GPIO
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_0, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_1, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_2, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_5, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    // Set up GPIO
+    // Driver 1
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_1, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_2, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, (IOCON_FUNC0 | IOCON_STDI2C_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, (IOCON_FUNC0 | IOCON_STDI2C_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 0);  // Pulse A
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 1);  // Pulse B
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 2);  // Dir A
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 5);  // Dir B
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 6);  // Reset
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 3);  // Pulse C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 6);  // Pulse D
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 7);  // Dir C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 8);  // Dir D
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 1);  // Reset
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 2);  // Dir A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 3);  // Pulse A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 4);  // Dir B
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 5);  // Pulse B
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 6);  // Dir C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 7);  // Pulse C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 8);  // Dir D
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);  // Pulse D
     
-    Chip_GPIO_SetPinOutLow(LPC_GPIO, 1, 6); // Set reset pin low 
+    Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 1); // Set reset pin low 
+    
+    // Driver 2
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP | IOCON_DIGMODE_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP | IOCON_DIGMODE_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_0, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 6);  // Dir A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 7);  // Pulse A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 8);  // Dir B
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 10);  // Pulse B
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 11);  // Dir C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 0);  // Pulse C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 1);  // Dir D
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 2);  // Pulse D
 }
 
 
@@ -125,7 +154,7 @@ void pulse_delay(const uint16_t time)
 
 void clock_control(void)
 {
-    uint8_t i, j;
+    uint8_t i;
 
     // calculate number of steps between desired and actual angles
     for(i = 0; i < NUMBEROFCLOCKS; i++)
@@ -150,8 +179,10 @@ void clock_control(void)
     while(!moveComplete)
     {
         moveComplete = 1;
+        
         for(i = 0; i < NUMBEROFCLOCKS; i++)
         {
+            // keep driving minute arm until at position
             if(!motorData[i].min.atPosition)
             {
                 pulse_generation(i, 'm');
@@ -166,6 +197,8 @@ void clock_control(void)
             
                 moveComplete = 0;
             }
+            
+            // keep driving hour arm until at position
             if(!motorData[i].hour.atPosition)
             {
                 pulse_generation(i, 'h');
@@ -203,12 +236,17 @@ uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
     {
         return (newAngle - angle + 360) * STEPSIZE;  
     }
+    else if ((newAngle - angle) >= 360)
+    {
+        return (newAngle - angle - 360) * STEPSIZE;
+    }
     else
     {    
         return (newAngle - angle) * STEPSIZE;   
     }
 }
 
+// Receive updates from can bus and apply to motor setpoints
 void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 {
     /* Message types:
@@ -226,8 +264,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
             {
                 motorData[i].min.angleDesired = ((CANdata->data[1] << 8) | (CANdata->data[2])); // minute
                 motorData[i].hour.angleDesired = ((CANdata->data[3] << 8) | (CANdata->data[4])); // hour
-                moveComplete = 0;
-                updatePosition = 1;
+                //moveComplete = 0;
             }
         }
     }
@@ -251,4 +288,26 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
     {
         
     }
+    
+    // start movement
+    if (CANdata->mode_id == 0x203)
+    {
+        if(CANdata->data[0] == 200)
+        {
+            moveComplete = 0;
+        }
+        
+        // Individual clock 
+        //else
+        //{
+        //    for(int i = 0; i < NUMBEROFCLOCKS; i++)
+        //    {
+        //        if(CANdata->data[0] == motorData[i].clockNumber) // find which clock to update
+        //        {
+        //           motorData[i].hour.atPosition = 0;
+        //        }
+        //    }
+        //}
+    }
+        
 }    

@@ -20,14 +20,15 @@ int main(int argc, char *argv[])
   
     SystemCoreClockUpdate();
     Board_Init();
+    driver_gpio_init();  
+
     can_init();
-    driver_init();  
 
    
     
     while(1)
     {
-        
+
         if(tick == 1)
         {
             clock_control();

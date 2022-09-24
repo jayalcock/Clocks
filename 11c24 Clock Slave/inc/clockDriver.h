@@ -32,7 +32,10 @@ typedef struct
     
 } motorStruct;
 
-void driver_init(void);
+// Sets up GPIO for stepper control
+void driver_gpio_init(void);
+
+// Delay function for stepper driver pulses
 void pulse_delay(const uint16_t time);
 
 // Generates pulses to stepper driver
@@ -41,9 +44,10 @@ void pulse_generation(const uint8_t motorNum, const char arm);
 // Calculate how many steps to get to desired angle
 uint16_t calculate_steps(uint16_t newAngle, uint16_t angle);
 
+// Calculates and controls clock arm movement
 void clock_control(void);
 
-
+// Receive updates from CAN bus
 void update_from_CAN(CCAN_MSG_OBJ_T *data);
 
 

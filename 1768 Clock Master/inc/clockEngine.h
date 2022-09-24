@@ -26,6 +26,9 @@ void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const u
 // Update clock arm speeds and directions
 void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir);
 
+// Start clock arm movemet
+void start_movement(const uint8_t clockNum);
+
 // RT thread for calculating clock positions
 void clock_thread(void *p);
 

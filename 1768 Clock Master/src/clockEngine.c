@@ -15,16 +15,16 @@
 
 //#include "uart_17xx_40xx.h"
 
-#define RESET_WIFI 0
-#define UNUSED_ANGLE 45
-#define ONE_SECOND 1000U
-#define GMT -7
-#define UNIX_EPOCH 2208988800UL //Seconds between 01Jan1900 and 01Jan1970 2207520000UL
+#define RESET_WIFI      0
+#define UNUSED_ANGLE    45
+#define ONE_SECOND      1000U
+#define GMT             -7
+#define UNIX_EPOCH      2208988800UL //Seconds between 01Jan1900 and 01Jan1970 2207520000UL
 #define SECONDS_PER_MIN 60
 #define SECONDS_PER_HOUR 3600
 #define SECONDS_PER_DAY 86400
-#define CLOCK_COLUMNS 15
-#define CLOCK_ROWS 8
+#define CLOCK_COLUMNS   15
+#define CLOCK_ROWS      8
 
 // Offsets for each physical position in digital representation 
 #define POS_A 1
@@ -33,11 +33,13 @@
 #define POS_D 11
 
 // CAN bus constants
-#define POS_ID 0x200
-#define POS_DL 5
-#define SPEED_ID 0x201
-#define SPEED_DL 5
-#define ACCEL_ID 0x202
+#define POS_ID      0x200
+#define POS_DL      5
+#define SPEED_ID    0x201
+#define SPEED_DL    5
+#define ACCEL_ID    0x202
+#define START_ID    0x203
+#define ALL_CLOCKS 200
 
 CTL_EVENT_SET_t clockEvent;
   
@@ -73,20 +75,8 @@ void sendData(void)
     sendMsgBuff.ID = remoteID;
     sendMsgBuff.DLC = 1;
     sendMsgBuff.Type = 0;
-    //sendMsgBuff.Data[0] = clockMatrix[0][6][0];
-    //sendMsgBuff.Data[0] = clockTemp;
-    //sendMsgBuff.Data[1] = clockMatrix[0][6][1];
-    //sendMsgBuff.Data[2] = clockMatrix[0][6][2];
-    //sendMsgBuff.Data[3] = clockMatrix[0][6][3];
-    //sendMsgBuff.Data[0] = 'A';
-    //sendMsgBuff.Data[1] = 'B';
-    //sendMsgBuff.Data[2] = 'C';
-    //sendMsgBuff.Data[3] = 'D';
-    //txBuff = Chip_CAN_GetFreeTxBuf(LPC_CAN1);
- 
     
     sendToCAN(&sendMsgBuff);
-    //Chip_CAN_Send(LPC_CAN1, txBuff, &sendMsgBuff);
 
 }
     
@@ -200,6 +190,8 @@ void rtcInit(void)
 // Real time clock interrupt handler
 void RTC_IRQHandler(void)
 {
+    
+    
     // Reset interrupt
     ILR |= ILR_RTCCIF;
     
@@ -320,6 +312,7 @@ void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const u
     sendToCAN(&sendMsgBuff);
 }
 
+// Update speed and direction of clocks via can bus
 void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir)
 {
     CAN_MSG_T sendMsgBuff;
@@ -336,11 +329,26 @@ void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const u
     sendToCAN(&sendMsgBuff);
 }
 
+// UStart movement of clocks via can bus
+void start_movement(const uint8_t clockNum)
+{
+    CAN_MSG_T sendMsgBuff;
+    
+    sendMsgBuff.ID = START_ID;
+    sendMsgBuff.DLC = 1;
+    sendMsgBuff.Type = 0;
+    sendMsgBuff.Data[0] = clockNum;
+
+    sendToCAN(&sendMsgBuff);
+}
+
 void clock_thread(void *p)
 {
 
     uint8_t clockNode0 = 0;
     uint8_t clockNode1 = 1;
+    uint8_t clockNode2 = 2;
+    uint8_t clockNode3 = 3;
     uint16_t minTemp = 0;
     uint16_t hourTemp = 0;
      
@@ -369,15 +377,25 @@ void clock_thread(void *p)
     uint8_t dir0m = 0;
     uint8_t dir0h = 0;
     uint8_t dir1m = 0;
-    uint8_t dir1h = 1;
+    uint8_t dir1h = 0;
+    uint8_t dir2m = 0;
+    uint8_t dir2h = 0;
+    uint8_t dir3m = 0;
+    uint8_t dir3h = 0;
+    
+    update_speed_dir(clockNode0, speed, speed, dir0m, dir0h);
+    update_speed_dir(clockNode1, speed, speed, dir1m, dir1h);   
+    update_speed_dir(clockNode2, speed, speed, dir2m, dir2h);
+    update_speed_dir(clockNode3, speed, speed, dir3m, dir3h);   
+ 
  
     while(1)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
-        ctl_timeout_wait(ctl_get_current_time() + 2000);
+        ctl_timeout_wait(ctl_get_current_time() + 1000);
         
-        minTemp += 20;
-        hourTemp += 10;
+        minTemp += 90;
+        hourTemp += 45;
               
         if(minTemp >= 360)
             minTemp -= 360;
@@ -386,9 +404,18 @@ void clock_thread(void *p)
             
             
         update_position(clockNode0, minTemp, hourTemp);
-        update_position(clockNode1, minTemp, hourTemp);  
-        update_speed_dir(clockNode0, speed, speed, dir0m, dir0h);
-        update_speed_dir(clockNode1, speed, speed, dir1m, dir1h);   
+        update_position(clockNode2, minTemp, hourTemp);
+        
+        start_movement(200);
+        
+        ctl_timeout_wait(ctl_get_current_time() + 1000);
+        
+        update_position(clockNode1, minTemp, hourTemp);
+        update_position(clockNode3, minTemp, hourTemp);
+        
+        //start_movement(ALL_CLOCKS);
+        start_movement(200);
+ 
         
         
     }
