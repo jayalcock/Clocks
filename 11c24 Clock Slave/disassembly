@@ -1,0 +1,407 @@
+    508B        str r3, [r1, r2]
+--- clock_11xx.h -- 294 ------------------------------------
+*/
+STATIC INLINE void Chip_Clock_EnablePeriphClock(CHIP_SYSCTL_CLOCK_T clk)
+{
+LPC_SYSCTL->SYSAHBCLKCTRL |= (1 << clk);
+}
+    46C0        nop
+    B002        add sp, sp, #8
+    4770        bx lr
+    46C0        nop
+    40048000    .word 0x40048000
+--- ccan_rom.c -- 18 ---------------------------------------
+/*****************************************************************************
+* Private functions
+****************************************************************************/
+void baudrateCalculate(uint32_t baud_rate, uint32_t *can_api_timing_cfg)
+{
+    B500        push {lr}
+    B08B        sub sp, sp, #0x2C
+    9001        str r0, [sp, #4]
+    9100        str r1, [sp]
+--- ccan_rom.c -- 23 ---------------------------------------
+uint32_t pClk, div, quanta, segs, seg1, seg2, clk_per_bit, can_sjw;
+Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_CAN);
+    2011        movs r0, #17
+    F7FFFFE1    bl 0x00000494 <Chip_Clock_EnablePeriphClock>
+--- ccan_rom.c -- 25 ---------------------------------------
+pClk = Chip_Clock_GetMainClockRate();
+    F000FD4F    bl 0x00000F74 <Chip_Clock_GetMainClockRate>
+    0003        movs r3, r0
+    9306        str r3, [sp, #24]
+--- ccan_rom.c -- 26 ---------------------------------------
+clk_per_bit = pClk / baud_rate;
+    9901        ldr r1, [sp, #4]
+    9806        ldr r0, [sp, #24]
+    F000FDEA    bl 0x000010B6 <__uint32_div>
+    0003        movs r3, r0
+    9305        str r3, [sp, #20]
+--- ccan_rom.c -- 28 ---------------------------------------
+for (div = 0; div <= 15; div++) {
+    2300        movs r3, #0
+    9309        str r3, [sp, #0x24]
+    E049        b 0x00000580
+--- ccan_rom.c -- 30 ---------------------------------------
+for (quanta = 1; quanta <= 32; quanta++) {
+    2301        movs r3, #1
+    9308        str r3, [sp, #32]
+    E040        b 0x00000574
+--- ccan_rom.c -- 31 ---------------------------------------
+for (segs = 3; segs <= 17; segs++) {
+    2303        movs r3, #3
+    9307        str r3, [sp, #28]
+    E037        b 0x00000568
+--- ccan_rom.c -- 32 ---------------------------------------
+if (clk_per_bit == (segs * quanta * (div + 1))) {
+    9B07        ldr r3, [sp, #28]
+    9A08        ldr r2, [sp, #32]
+    4353        muls r3, r2
+    9A09        ldr r2, [sp, #0x24]
+    3201        adds r2, #1
+    4353        muls r3, r2
+    9A05        ldr r2, [sp, #20]
+    429A        cmp r2, r3
+    D12B        bne 0x00000562
+--- ccan_rom.c -- 33 ---------------------------------------
+segs -= 3;
+    9B07        ldr r3, [sp, #28]
+    3B03        subs r3, #3
+    9307        str r3, [sp, #28]
+--- ccan_rom.c -- 34 ---------------------------------------
+seg1 = segs / 2;
+    9B07        ldr r3, [sp, #28]
+    085B        lsrs r3, r3, #1
+    9304        str r3, [sp, #16]
+--- ccan_rom.c -- 35 ---------------------------------------
+seg2 = segs - seg1;
+    9A07        ldr r2, [sp, #28]
+    9B04        ldr r3, [sp, #16]
+    1AD3        subs r3, r2, r3
+    9303        str r3, [sp, #12]
+--- ccan_rom.c -- 36 ---------------------------------------
+can_sjw = seg1 > 3 ? 3 : seg1;
+    9B04        ldr r3, [sp, #16]
+    2B03        cmp r3, #3
+    D900        bls 0x00000526
+    2303        movs r3, #3
+    9302        str r3, [sp, #8]
+--- ccan_rom.c -- 37 ---------------------------------------
+can_api_timing_cfg[0] = div;
+    9B00        ldr r3, [sp]
+    9A09        ldr r2, [sp, #0x24]
+    601A        str r2, [r3]
+--- ccan_rom.c -- 38 ---------------------------------------
+can_api_timing_cfg[1] =
+((quanta - 1) & 0x3F) | (can_sjw & 0x03) << 6 | (seg1 & 0x0F) << 8 | (seg2 & 0x07) << 12;
+    9B08        ldr r3, [sp, #32]
+    3B01        subs r3, #1
+    223F        movs r2, #0x3F
+    401A        ands r2, r3
+    9B02        ldr r3, [sp, #8]
+    019B        lsls r3, r3, #6
+    21FF        movs r1, #0xFF
+    400B        ands r3, r1
+    431A        orrs r2, r3
+    9B04        ldr r3, [sp, #16]
+    0219        lsls r1, r3, #8
+    23F0        movs r3, #0xF0
+    011B        lsls r3, r3, #4
+    400B        ands r3, r1
+    431A        orrs r2, r3
+    0011        movs r1, r2
+    9B03        ldr r3, [sp, #12]
+    031A        lsls r2, r3, #12
+    23E0        movs r3, #0xE0
+    01DB        lsls r3, r3, #7
+    401A        ands r2, r3
+--- ccan_rom.c -- 38 ---------------------------------------
+can_api_timing_cfg[1] =
+    9B00        ldr r3, [sp]
+    3304        adds r3, #4
+--- ccan_rom.c -- 39 ---------------------------------------
+((quanta - 1) & 0x3F) | (can_sjw & 0x03) << 6 | (seg1 & 0x0F) << 8 | (seg2 & 0x07) << 12;
+    430A        orrs r2, r1
+--- ccan_rom.c -- 38 ---------------------------------------
+can_api_timing_cfg[1] =
+    601A        str r2, [r3]
+--- ccan_rom.c -- 39 ---------------------------------------
+((quanta - 1) & 0x3F) | (can_sjw & 0x03) << 6 | (seg1 & 0x0F) << 8 | (seg2 & 0x07) << 12;
+return;
+    E011        b 0x00000586
+--- ccan_rom.c -- 31 ---------------------------------------
+for (segs = 3; segs <= 17; segs++) {
+    9B07        ldr r3, [sp, #28]
+    3301        adds r3, #1
+    9307        str r3, [sp, #28]
+    9B07        ldr r3, [sp, #28]
+    2B11        cmp r3, #17
+    D9C4        bls 0x000004F8
+--- ccan_rom.c -- 30 ---------------------------------------
+for (quanta = 1; quanta <= 32; quanta++) {
+    9B08        ldr r3, [sp, #32]
+    3301        adds r3, #1
+    9308        str r3, [sp, #32]
+    9B08        ldr r3, [sp, #32]
+    2B20        cmp r3, #32
+    D9BB        bls 0x000004F2
+--- ccan_rom.c -- 29 ---------------------------------------
+for (div = 0; div <= 15; div++) {
+    9B09        ldr r3, [sp, #0x24]
+    3301        adds r3, #1
+    9309        str r3, [sp, #0x24]
+    9B09        ldr r3, [sp, #0x24]
+    2B0F        cmp r3, #15
+    D9B2        bls 0x000004EC
+--- ccan_rom.c -- 41 ---------------------------------------
+}
+}
+}
+}
+}
+    B00B        add sp, sp, #0x2C
+    BD00        pop {pc}
+    0000        movs r0, r0
+--- ccan_rom.c -- 46 ---------------------------------------
+/* CAN receive callback */
+/* Function is executed by the Callback handler after
+a CAN message has been received */
+void CAN_rx(uint8_t msg_obj_num) {
+    B500        push {lr}
+    B083        sub sp, sp, #12
+    0002        movs r2, r0
+    466B        mov r3, sp
+    3307        adds r3, #7
+    701A        strb r2, [r3]
+--- ccan_rom.c -- 51 ---------------------------------------
+/* Determine which CAN message has been received */
+msg_obj.msgobj = msg_obj_num;
+    4B0B        ldr r3, =0x1000003C <msg_obj>
+    466A        mov r2, sp
+    3207        adds r2, #7
+    7812        ldrb r2, [r2]
+    745A        strb r2, [r3, #17]
+--- ccan_rom.c -- 53 ---------------------------------------
+/* Now load up the msg_obj structure with the CAN message */
+LPC_CCAN_API->can_receive(&msg_obj);
+    4B0A        ldr r3, =0x1FFF1FF8
+    681B        ldr r3, [r3]
+    689B        ldr r3, [r3, #8]
+    68DB        ldr r3, [r3, #12]
+    4A07        ldr r2, =0x1000003C <msg_obj>
+    0010        movs r0, r2
+    4798        blx r3
+--- ccan_rom.c -- 55 ---------------------------------------
+Board_LED_Toggle(0);
+    2000        movs r0, #0
+    F000FB3B    bl 0x00000C2C <Board_LED_Toggle>
+--- ccan_rom.c -- 56 ---------------------------------------
+rxData = *msg_obj.data;
+    4B04        ldr r3, =0x1000003C <msg_obj>
+    7A1B        ldrb r3, [r3, #8]
+    B25A        sxtb r2, r3
+    4B04        ldr r3, =0x10000050 <rxData>
+    701A        strb r2, [r3]
+--- ccan_rom.c -- 60 ---------------------------------------
+// msg_obj.msgobj = 2;
+// msg_obj.mode_id += 0x100;
+// LPC_CCAN_API->can_transmit(&msg_obj);
+//}
+}
+    46C0        nop
+    B003        add sp, sp, #12
+    BD00        pop {pc}
+    46C0        nop
+    1000003C    .word 0x1000003C
+    1FFF1FF8    .word 0x1FFF1FF8
+    10000050    .word 0x10000050
+--- ccan_rom.c -- 65 ---------------------------------------
+/* CAN transmit callback */
+/* Function is executed by the Callback handler after
+a CAN message has been transmitted */
+void CAN_tx(uint8_t msg_obj_num) {}
+    B082        sub sp, sp, #8
+    0002        movs r2, r0
+    466B        mov r3, sp
+    3307        adds r3, #7
+    701A        strb r2, [r3]
+    46C0        nop
+    B002        add sp, sp, #8
+    4770        bx lr
+--- ccan_rom.c -- 70 ---------------------------------------
+/* CAN error callback */
+/* Function is executed by the Callback handler after
+an error has occured on the CAN bus */
+void CAN_error(uint32_t error_info) {}
+    B082        sub sp, sp, #8
+    9001        str r0, [sp, #4]
+    46C0        nop
+    B002        add sp, sp, #8
+    4770        bx lr
+    0000        movs r0, r0
+--- ccan_rom.c -- 79 ---------------------------------------
+* @note The CCAN interrupt handler must be provided by the user application.
+* It's function is to call the isr() API located in the ROM
+*/
+//void CAN_IRQHandler(void)
+void C_CAN_IRQHandler(void){
+    B510        push {r4, lr}
+--- ccan_rom.c -- 84 ---------------------------------------
+LPC_CCAN_API->isr();
+    4B03        ldr r3, =0x1FFF1FF8
+    681B        ldr r3, [r3]
+    689B        ldr r3, [r3, #8]
+    685B        ldr r3, [r3, #4]
+    4798        blx r3
+--- ccan_rom.c -- 85 ---------------------------------------
+}
+    46C0        nop
+    BD10        pop {r4, pc}
+    1FFF1FF8    .word 0x1FFF1FF8
+--- ccan_rom.c -- 92 ---------------------------------------
+* @brief Main routine for CCAN_ROM example
+* @return Nothing
+*/
+int can_init(void)
+{
+    B510        push {r4, lr}
+    B08C        sub sp, sp, #0x30
+--- ccan_rom.c -- 97 ---------------------------------------
+uint32_t CanApiClkInitTable[2];
+/* Publish CAN Callback Functions */
+CCAN_CALLBACKS_T callbacks = {
+    466B        mov r3, sp
+    4A2A        ldr r2, =0x000010E0 <__ctors_end__>
+    CA13        ldm r2!, {r0-r1, r4}
+    C313        stm r3!, {r0-r1, r4}
+    CA13        ldm r2!, {r0-r1, r4}
+    C313        stm r3!, {r0-r1, r4}
+    CA03        ldm r2!, {r0-r1}
+    C303        stm r3!, {r0-r1}
+--- ccan_rom.c -- 106 --------------------------------------
+NULL,
+NULL,
+};
+baudrateCalculate(TEST_CCAN_BAUD_RATE, CanApiClkInitTable);
+    AB08        add r3, sp, #32
+    4A27        ldr r2, =0x0007A120
+    0019        movs r1, r3
+    0010        movs r0, r2
+    F7FFFF50    bl 0x000004C4 <baudrateCalculate>
+--- ccan_rom.c -- 111 --------------------------------------
+LPC_CCAN_API->init_can(&CanApiClkInitTable[0], TRUE);
+    4B25        ldr r3, =0x1FFF1FF8
+    681B        ldr r3, [r3]
+    689B        ldr r3, [r3, #8]
+    681B        ldr r3, [r3]
+    AA08        add r2, sp, #32
+    2101        movs r1, #1
+    0010        movs r0, r2
+    4798        blx r3
+--- ccan_rom.c -- 113 --------------------------------------
+/* Configure the CAN callback functions */
+LPC_CCAN_API->config_calb(&callbacks);
+    4B21        ldr r3, =0x1FFF1FF8
+    681B        ldr r3, [r3]
+    689B        ldr r3, [r3, #8]
+    69DB        ldr r3, [r3, #28]
+    466A        mov r2, sp
+    0010        movs r0, r2
+    4798        blx r3
+--- ccan_rom.c -- 115 --------------------------------------
+/* Enable the CAN Interrupt */
+NVIC_EnableIRQ(CAN_IRQn);
+    200D        movs r0, #13
+    F7FFFF12    bl 0x0000046C <NVIC_EnableIRQ>
+--- ccan_rom.c -- 117 --------------------------------------
+/* Send a simple one time CAN message */
+msg_obj.msgobj = 0;
+    4B1D        ldr r3, =0x1000003C <msg_obj>
+    2200        movs r2, #0
+    745A        strb r2, [r3, #17]
+--- ccan_rom.c -- 120 --------------------------------------
+msg_obj.mode_id = 0x100;
+    4B1C        ldr r3, =0x1000003C <msg_obj>
+    2280        movs r2, #0x80
+    0052        lsls r2, r2, #1
+    601A        str r2, [r3]
+--- ccan_rom.c -- 121 --------------------------------------
+msg_obj.mask = 0x0;
+    4B1A        ldr r3, =0x1000003C <msg_obj>
+    2200        movs r2, #0
+    605A        str r2, [r3, #4]
+--- ccan_rom.c -- 122 --------------------------------------
+msg_obj.dlc = 4;
+    4B18        ldr r3, =0x1000003C <msg_obj>
+    2204        movs r2, #4
+    741A        strb r2, [r3, #16]
+--- ccan_rom.c -- 123 --------------------------------------
+msg_obj.data[0] = 'T'; // 0x54
+    4B17        ldr r3, =0x1000003C <msg_obj>
+    2254        movs r2, #0x54
+    721A        strb r2, [r3, #8]
+--- ccan_rom.c -- 124 --------------------------------------
+msg_obj.data[1] = 'E'; // 0x45
+    4B15        ldr r3, =0x1000003C <msg_obj>
+    2245        movs r2, #0x45
+    725A        strb r2, [r3, #9]
+--- ccan_rom.c -- 125 --------------------------------------
+msg_obj.data[2] = 'S'; // 0x53
+    4B14        ldr r3, =0x1000003C <msg_obj>
+    2253        movs r2, #0x53
+    729A        strb r2, [r3, #10]
+--- ccan_rom.c -- 126 --------------------------------------
+msg_obj.data[3] = 'T'; // 0x54
+    4B12        ldr r3, =0x1000003C <msg_obj>
+    2254        movs r2, #0x54
+    72DA        strb r2, [r3, #11]
+--- ccan_rom.c -- 127 --------------------------------------
+//LPC_CCAN_API->can_transmit(&msg_obj);
+/* Configure message object 1 to receive all 11-bit messages 0x400-0x4FF */
+msg_obj.msgobj = 1;
+    4B11        ldr r3, =0x1000003C <msg_obj>
+    2201        movs r2, #1
+    745A        strb r2, [r3, #17]
+--- ccan_rom.c -- 131 --------------------------------------
+msg_obj.mode_id = 0x200;
+    4B0F        ldr r3, =0x1000003C <msg_obj>
+    2280        movs r2, #0x80
+    0092        lsls r2, r2, #2
+    601A        str r2, [r3]
+--- ccan_rom.c -- 132 --------------------------------------
+msg_obj.mask = 0x700;
+    4B0D        ldr r3, =0x1000003C <msg_obj>
+    22E0        movs r2, #0xE0
+    00D2        lsls r2, r2, #3
+    605A        str r2, [r3, #4]
+--- ccan_rom.c -- 133 --------------------------------------
+LPC_CCAN_API->config_rxmsgobj(&msg_obj);
+    4B0A        ldr r3, =0x1FFF1FF8
+    681B        ldr r3, [r3]
+    689B        ldr r3, [r3, #8]
+    689B        ldr r3, [r3, #8]
+    4A09        ldr r2, =0x1000003C <msg_obj>
+    0010        movs r0, r2
+    4798        blx r3
+--- ccan_rom.c -- 134 --------------------------------------
+int i = 0;
+    2300        movs r3, #0
+    930B        str r3, [sp, #0x2C]
+--- ccan_rom.c -- 136 --------------------------------------
+rxData = 0;
+    4B08        ldr r3, =0x10000050 <rxData>
+    2200        movs r2, #0
+    701A        strb r2, [r3]
+--- ccan_rom.c -- 137 --------------------------------------
+float test = 0.0;
+    2300        movs r3, #0
+    930A        str r3, [sp, #0x28]
+--- ccan_rom.c -- 151 --------------------------------------
+// i++;
+//// __WFI(); /* Go to Sleep */
+// }
+}
+    46C0        nop
+    0018        movs r0, r3
+    B00C        add sp, sp, #0x30
+    BD10        pop {r4, pc}
