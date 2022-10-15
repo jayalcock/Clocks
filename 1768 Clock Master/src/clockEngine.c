@@ -349,8 +349,7 @@ void clock_thread(void *p)
     uint8_t clockNode1 = 1;
     uint8_t clockNode2 = 2;
     uint8_t clockNode3 = 3;
-    uint16_t minTemp = 0;
-    uint16_t hourTemp = 0;
+    
      
     ctl_events_init(&clockEvent, 0);
     
@@ -372,8 +371,14 @@ void clock_thread(void *p)
     writeClockValue(POS_C, THREE);
     writeClockValue(POS_D, FOUR);
     
-    
-    uint8_t speed = 2;
+    uint16_t min0 = 0;
+    uint16_t hour0 = 0;
+    uint16_t min1 = 0;
+    uint16_t hour1 = 0;
+    uint8_t speed0m = 2;
+    uint8_t speed0h = 2;
+    uint8_t speed1m = 2;
+    uint8_t speed1h = 2;
     uint8_t dir0m = 0;
     uint8_t dir0h = 0;
     uint8_t dir1m = 0;
@@ -383,35 +388,60 @@ void clock_thread(void *p)
     uint8_t dir3m = 0;
     uint8_t dir3h = 0;
     
-    update_speed_dir(clockNode0, speed, speed, dir0m, dir0h);
-    update_speed_dir(clockNode1, speed, speed, dir1m, dir1h);   
-    update_speed_dir(clockNode2, speed, speed, dir2m, dir2h);
-    update_speed_dir(clockNode3, speed, speed, dir3m, dir3h);   
- 
+    update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h);
+    update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h);   
+    //update_speed_dir(clockNode2, speed, speed, dir2m, dir2h);
+    //update_speed_dir(clockNode3, speed, speed, dir3m, dir3h);   
+    
  
     while(1)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
-        ctl_timeout_wait(ctl_get_current_time() + 1000);
+        ctl_timeout_wait(ctl_get_current_time() + 2000);
         
-        minTemp += 90;
-        hourTemp += 45;
-              
-        if(minTemp >= 360)
-            minTemp -= 360;
-        if(hourTemp >= 360)
-            hourTemp -= 360;
+        min0 += 90;
+        hour0 += 90;
+        min1 += 90;
+        hour1 += 90;
+        
+        
+        //min0 = rand()/91;
+        //hour0 = rand()/91;
+        //min1 = rand()/91;
+        //hour1 = rand()/91;
+        //speed0m = rand()/6554.4;
+        //speed0h = rand()/6553.4;
+        //speed1m = rand()/6553.4;
+        //speed1h = rand()/6553.4;
+        
+        //dir0m = rand()/16383.5;
+        //dir0h = rand()/16383.5;
+        //dir1m = rand()/16383.5;
+        //dir1h = rand()/16383.5;
+        
+                    
+        if(min0 >= 360)
+            min0 -= 360;
+        if(hour0 >= 360)
+            hour0 -= 360;
+         if(min1 >= 360);
+            min1 -= 360;
+        if(hour1 >= 360)
+            hour1 -= 360;
             
             
-        update_position(clockNode0, minTemp, hourTemp);
-        update_position(clockNode2, minTemp, hourTemp);
+        update_position(clockNode0, min0, hour0);
+        //update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h);
+   
+        //update_position(clockNode2, minTemp, hourTemp);
         
         start_movement(200);
         
-        ctl_timeout_wait(ctl_get_current_time() + 1000);
+        ctl_timeout_wait(ctl_get_current_time() + 2000);
         
-        update_position(clockNode1, minTemp, hourTemp);
-        update_position(clockNode3, minTemp, hourTemp);
+        update_position(clockNode1, min1, hour1);
+         //update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h);   
+        //update_position(clockNode3, minTemp, hourTemp);
         
         //start_movement(ALL_CLOCKS);
         start_movement(200);
