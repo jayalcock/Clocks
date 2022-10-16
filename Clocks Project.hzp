@@ -244,7 +244,7 @@
       macros="LPC1000_Series=LPC17xx"
       oscillator_frequency="12MHz"
       package_dependencies="mbed_NXP_LPC1768"
-      project_directory="/Users/jayalcock/Projects/Clocks/1768 Clock Master"
+      project_directory="./1768 Clock Master/"
       project_type="Executable"
       property_groups_file_path="$(TargetsDir)/LPC1000/propertyGroups.xml" />
     <configuration
@@ -339,19 +339,8 @@
       c_preprocessor_definitions="STARTUP_FROM_RESET"
       debug_initial_breakpoint=""
       debug_initial_breakpoint_set_option="Never" />
-    <file file_name="../../../Nextcloud/Projects/Clocks/.gitignore" />
-    <folder
-      Name="inc"
-      exclude=""
-      filter=""
-      path="../../../Nextcloud/Projects/Clocks/1768 Clock Master/inc"
-      recurse="No" />
-    <folder
-      Name="Source"
-      exclude=""
-      filter=""
-      path="../../../Nextcloud/Projects/Clocks/1768 Clock Master/src"
-      recurse="No" />
+    <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
+    <folder Name="Source" exclude="" filter="" path="src" recurse="No" />
   </project>
   <project Name="Kalman">
     <configuration
@@ -493,14 +482,22 @@
         <file file_name="Device/inc/timer_11xx.h" />
         <file file_name="Device/inc/clock_11xx.h" />
         <file file_name="Device/inc/board.h" />
-        <file file_name="inc/ccan_rom.h" />
+        <file file_name="inc/ccan_rom.h">
+          <configuration
+            Name="THUMB Flash Debug"
+            build_exclude_from_build="Yes" />
+        </file>
         <file file_name="Device/inc/ccand_11xx.h" />
       </folder>
       <folder Name="src">
         <file file_name="Device/src/timer_11xx.c" />
         <file file_name="Device/src/clock_11xx.c" />
         <file file_name="Device/src/board.c" />
-        <file file_name="src/ccan_rom.c" />
+        <file file_name="src/ccan_rom.c">
+          <configuration
+            Name="THUMB Flash Debug"
+            build_exclude_from_build="Yes" />
+        </file>
       </folder>
     </folder>
     <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />

@@ -86,8 +86,10 @@
  </Memory4>
  <Project>
   <ProjectSessionItem path="Clocks"/>
-  <ProjectSessionItem path="Clocks;1768 Clock Master"/>
-  <ProjectSessionItem path="Clocks;1768 Clock Master;Source"/>
+  <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS"/>
+  <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;inc"/>
+  <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;Source"/>
+  <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;System Files"/>
   <SourceCodeControlLogin password="F9BB6682F5D56822" user="Jay Alcock &lt;jay.alcock@me.com>"/>
  </Project>
  <Register1>
@@ -195,17 +197,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="114" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/1768 Clock Master/src/Clocks-1768.c" selected="0" top="106" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="23" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/11c24 Clock Slave/src/main.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="147" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/11c24 Clock Slave/src/clockDriver.c" selected="0" top="153" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="43" y="50" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/11c24 Clock Slave/inc/clockDriver.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="11" y="442" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/1768 Clock Master/src/clockEngine.c" selected="0" top="389" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="33" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/1768 Clock Master/inc/clockEngine.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="33" y="49" useTextEdit="1" openedFrom="/Users/jayalcock/Projects/Clocks/11c24 Clock Slave/src/main.c" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/11c24 Clock Slave/src/ccan_rom.c" selected="0" top="28" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="58" y="55" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/11C24 Clock Slave RTOS/main_ctl.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="14" y="24" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/11C24 Clock Slave RTOS/inc/clockDriverRT.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="6" y="216" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../Projects/Clocks/11C24 Clock Slave RTOS/src/clockDriverRT.c" selected="0" top="128" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="22" y="4" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path=".gitignore" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="11C24 Clock Slave RTOS/src/comms.c" selected="1" top="0" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="1768 Clock Master" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="SEGGER J-Link" buildConfiguration="THUMB Flash Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/jayalcock/Projects/Clocks/11C24 Clock Slave RTOS/Device/inc" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

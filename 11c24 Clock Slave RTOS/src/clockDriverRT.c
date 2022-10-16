@@ -42,7 +42,9 @@
 CTL_EVENT_SET_t clock0Event, clock1Event, clock2Event, clock3Event, clockControlEvent;
 
 CCAN_MSG_OBJ_T can_RX_data;
+
 const uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
+
 uint32_t timerFreq;
 
 
@@ -84,10 +86,11 @@ motorStruct motorData[] =
         {2, 3, 2, 2, 0, 0, 1, 0, 1, 2, 2}}, //hour   
           
 };
-      
+
+// Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
 void CT32B0_IRQHandler(void)
 {
-    
+    // Clock 0 minute timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 0)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 0);
@@ -96,7 +99,7 @@ void CT32B0_IRQHandler(void)
         ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, 0);
 
     }
-    
+    // Clock 1 minute timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 1)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 1);
@@ -104,7 +107,7 @@ void CT32B0_IRQHandler(void)
         ctl_events_set_clear(&clock1Event, RUN_CLOCK1_MIN, 0);
 
     }
-    
+    // Clock 2 minute timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 2)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 2);
@@ -112,7 +115,7 @@ void CT32B0_IRQHandler(void)
         ctl_events_set_clear(&clock2Event, RUN_CLOCK2_MIN, 0);
 
     }
-    
+    // Clock 3 minute timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 3)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 3);
@@ -121,10 +124,12 @@ void CT32B0_IRQHandler(void)
 
     }
   
-}    
+} 
+
+// Interrupt handler for 32-bit timer 1 - Controlling hour arm speeds
 void CT32B1_IRQHandler(void)
 {
-    
+    // Clock 0 hour timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 0)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 0);
@@ -133,7 +138,7 @@ void CT32B1_IRQHandler(void)
         ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
 
     }
-    
+    // Clock 1 hour timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 1)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 1);
@@ -141,7 +146,7 @@ void CT32B1_IRQHandler(void)
         ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
 
     }
-    
+    // Clock 2 hour timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 2)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 2);
@@ -149,7 +154,7 @@ void CT32B1_IRQHandler(void)
         ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
 
     }
-    
+    // Clock 3 hour timer - match clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 3)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 3);
@@ -162,7 +167,7 @@ void CT32B1_IRQHandler(void)
 
 void pulse_generation(const uint8_t motorNum, const char arm)
 {
-    // Set direction
+    // Set direction - minute arms
     if(motorData[motorNum].min.dir == 0)
     {
         Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].min.dirPort, motorData[motorNum].min.dirPin);
@@ -171,6 +176,8 @@ void pulse_generation(const uint8_t motorNum, const char arm)
     {
         Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].min.dirPort, motorData[motorNum].min.dirPin);
     }
+    
+    // Set direction - hour arms
     if(motorData[motorNum].hour.dir == 0)
     {
         Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].hour.dirPort, motorData[motorNum].hour.dirPin);
