@@ -187,15 +187,14 @@ void pulse_generation(const uint8_t motorNum, const char arm)
         Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].hour.dirPort, motorData[motorNum].hour.dirPin);
     }
     
-    // Generate pulse
-    if(arm == 'm')
+    // Generate stepper pulse
+    if(arm == 'm') // minute arm
     {
         Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].min.port, motorData[motorNum].min.pin);
         //pulse_delay(PULSEWIDTH);
-       
         Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].min.port, motorData[motorNum].min.pin);
     }
-    if(arm == 'h')
+    if(arm == 'h') // hour arm
     {
         Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].hour.port, motorData[motorNum].hour.pin);
         //pulse_delay(PULSEWIDTH);
@@ -205,13 +204,14 @@ void pulse_generation(const uint8_t motorNum, const char arm)
     
 }
 
-
+// Clock 0 control function 
 void clock0_func(void *p)
 {  
     unsigned int v=0;
     const uint8_t clockNum = 0;
     uint8_t mSteps, hSteps;
     
+    // Initialise clock 0 events
     ctl_events_init(&clock0Event, 0);
     
     // Set up GPIO
@@ -221,15 +221,17 @@ void clock0_func(void *p)
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, (IOCON_FUNC0 | IOCON_STDI2C_EN)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, (IOCON_FUNC0 | IOCON_STDI2C_EN)); 
-    //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_4, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC0 | IOCON_MODE_INACT)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC0 | IOCON_MODE_INACT)); 
    
-    
+    // Set required pin direction
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 1);  // Reset
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 2);  // Dir A
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 3);  // Pulse A
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 4);  // Dir B
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 5);  // Pulse B
-    //Chip_GPIO_SetPinDIRInput(LPC_GPIO, 1, 4);  // Hall A
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 1);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 2);   // Hall hour
     
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 1); // Set reset pin low 
     
@@ -359,20 +361,23 @@ void clock1_func(void *p)
     const uint8_t clockNum = 1;
     uint8_t mSteps, hSteps;
      
-     
+    // Initialise clock 1 events
     ctl_events_init(&clock1Event, 0);
     
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_INACT)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_6, (IOCON_FUNC0 | IOCON_MODE_INACT)); 
     
-   
+    // Set required pin direction
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 6);  // Dir C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 7);  // Pulse C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 8);  // Dir D
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);  // Pulse D
-
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 3);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 6);   // Hall hour
     
     Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 1);
     Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, timerFreq/10);
@@ -476,6 +481,7 @@ void clock2_func(void *p)
     unsigned int v=0;
     const uint8_t clockNum = 2;
 
+    // Initialise clock 2 events
     ctl_events_init(&clock2Event, 0);
     
     // Driver 2
@@ -483,12 +489,16 @@ void clock2_func(void *p)
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP | IOCON_DIGMODE_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_7, (IOCON_FUNC0 | IOCON_MODE_INACT)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_8, (IOCON_FUNC0 | IOCON_MODE_INACT)); 
     
+    // Set required pin direction
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 6);  // Dir A
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 7);  // Pulse A
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 8);  // Dir B
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 10);  // Pulse B
-    
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 10); // Pulse B
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 7);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 8);   // Hall hour
     
     Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 2);
     Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, timerFreq/10);
@@ -522,19 +532,24 @@ void clock3_func(void *p)
     unsigned int v=0;
     const uint8_t clockNum = 3;
     
+    // Initialise clock 3 events
     ctl_events_init(&clock3Event, 0);
     
-    //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP | IOCON_DIGMODE_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_0, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     
+    // Set required pin direction
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 8);  // Dir C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 10); // Pulse C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 11); // Dir D
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 0);  // Pulse D
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 10);  // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 11);  // Hall hour
     
-    //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 11);  // Dir C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 0);  // Pulse C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 1);  // Dir D
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 2);  // Pulse D
     
     Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 3);
     Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, timerFreq/10);
@@ -592,7 +607,6 @@ void clock_control(void *p)
     
     
     ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
-    //ctl_events_set_clear(&clockControlEvent, UPDATE_CLOCK0_HOUR, 0);
     
     while(1)
     {
