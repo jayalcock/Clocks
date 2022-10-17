@@ -296,18 +296,18 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
 }
 
-void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle)
+void update_position(const uint8_t *clockNum, const uint16_t *minuteAngle, const uint16_t *hourAngle)
 {
     CAN_MSG_T sendMsgBuff;
     
     sendMsgBuff.ID = POS_ID;
     sendMsgBuff.DLC = POS_DL;
     sendMsgBuff.Type = 0;
-    sendMsgBuff.Data[0] = clockNum;
-    sendMsgBuff.Data[1] = minuteAngle >> 8;
-    sendMsgBuff.Data[2] = minuteAngle & 0xFF;
-    sendMsgBuff.Data[3] = hourAngle >> 8;
-    sendMsgBuff.Data[4] = hourAngle & 0xFF;
+    sendMsgBuff.Data[0] = *clockNum;
+    sendMsgBuff.Data[1] = *minuteAngle >> 8;
+    sendMsgBuff.Data[2] = *minuteAngle & 0xFF;
+    sendMsgBuff.Data[3] = *hourAngle >> 8;
+    sendMsgBuff.Data[4] = *hourAngle & 0xFF;
 
     sendToCAN(&sendMsgBuff);
 }
@@ -430,7 +430,7 @@ void clock_thread(void *p)
             hour1 -= 360;
             
             
-        update_position(clockNode0, min0, hour0);
+        update_position(&clockNode0, &min0, &hour0);
         //update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h);
    
         //update_position(clockNode2, minTemp, hourTemp);
@@ -439,7 +439,7 @@ void clock_thread(void *p)
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         
-        update_position(clockNode1, min1, hour1);
+        update_position(&clockNode1, &min1, &hour1);
          //update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h);   
         //update_position(clockNode3, minTemp, hourTemp);
         

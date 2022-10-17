@@ -272,68 +272,6 @@
       <file file_name="$(TargetsDir)/mbed_NXP_LPC1768/ctl_mbed_nxp_lpc1768.c" />
       <file file_name="$(TargetsDir)/LPC1000/ctl_lpc1700.c" />
     </folder>
-    <folder Name="Device">
-      <folder Name="inc">
-        <file file_name="Device/inc/board.h" />
-        <file file_name="Device/inc/board_api.h" />
-        <file file_name="Device/inc/can_17xx_40xx.h" />
-        <file file_name="Device/inc/chip.h" />
-        <file file_name="Device/inc/chip_lpc175x_6x.h" />
-        <file file_name="Device/inc/chip_lpc177x_8x.h" />
-        <file file_name="Device/inc/chip_lpc407x_8x.h" />
-        <file file_name="Device/inc/clock_17xx_40xx.h" />
-        <file file_name="Device/inc/cmsis.h" />
-        <file file_name="Device/inc/cmsis_175x_6x.h" />
-        <file file_name="Device/inc/core_cm3.h" />
-        <file file_name="Device/inc/core_cmFunc.h" />
-        <file file_name="Device/inc/core_cmInstr.h" />
-        <file file_name="Device/inc/error.h" />
-        <file file_name="Device/inc/fmc_17xx_40xx.h" />
-        <file file_name="Device/inc/gpdma_17xx_40xx.h" />
-        <file file_name="Device/inc/gpio_17xx_40xx.h" />
-        <file file_name="Device/inc/gpioint_17xx_40xx.h" />
-        <file file_name="Device/inc/iap.h" />
-        <file file_name="Device/inc/iocon_17xx_40xx.h" />
-        <file file_name="Device/inc/lpc_types.h" />
-        <file file_name="Device/inc/mcpwm_17xx_40xx.h" />
-        <file file_name="Device/inc/pmu_17xx_40xx.h" />
-        <file file_name="Device/inc/ring_buffer.h" />
-        <file file_name="Device/inc/romapi_17xx_40xx.h" />
-        <file file_name="Device/inc/stopwatch.h" />
-        <file file_name="Device/inc/sys_config.h" />
-        <file file_name="Device/inc/sysctl_17xx_40xx.h">
-          <configuration
-            Name="THUMB RAM Debug"
-            build_exclude_from_build="No" />
-        </file>
-        <file file_name="Device/inc/timer_17xx_40xx.h" />
-        <file file_name="Device/inc/uart_17xx_40xx.h" />
-        <file file_name="Device/src/retarget.h" />
-      </folder>
-      <folder Name="src">
-        <file file_name="Device/src/board.c" />
-        <file file_name="Device/src/board_sysinit.c" />
-        <file file_name="Device/src/can_17xx_40xx.c" />
-        <file file_name="Device/src/chip_17xx_40xx.c">
-          <configuration
-            Name="THUMB Flash Debug"
-            build_exclude_from_build="No" />
-        </file>
-        <file file_name="Device/src/clock_17xx_40xx.c" />
-        <file file_name="Device/src/gpdma_17xx_40xx.c" />
-        <file file_name="Device/src/gpio_17xx_40xx.c" />
-        <file file_name="Device/src/gpioint_17xx_40xx.c" />
-        <file file_name="Device/src/iap.c" />
-        <file file_name="Device/src/iocon_17xx_40xx.c" />
-        <file file_name="Device/src/pmu_17xx_40xx.c" />
-        <file file_name="Device/src/ring_buffer.c" />
-        <file file_name="Device/src/stopwatch_17xx_40xx.c" />
-        <file file_name="Device/src/sysctl_17xx_40xx.c" />
-        <file file_name="Device/src/sysinit_17xx_40xx.c" />
-        <file file_name="Device/src/timer_17xx_40xx.c" />
-        <file file_name="Device/src/uart_17xx_40xx.c" />
-      </folder>
-    </folder>
     <configuration
       Name="Release"
       c_preprocessor_definitions="STARTUP_FROM_RESET"
@@ -341,6 +279,7 @@
       debug_initial_breakpoint_set_option="Never" />
     <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
     <folder Name="Source" exclude="" filter="" path="src" recurse="No" />
+    <folder Name="Device" exclude="" filter="" path="Device" recurse="Yes" />
   </project>
   <project Name="Kalman">
     <configuration
@@ -439,7 +378,7 @@
       linker_section_placement_file="$(StudioDir)/targets/Cortex_M/flash_placement.xml"
       macros="DeviceIncludePath=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx;DeviceHeaderFile=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx/LPC11xx.h;DeviceLoaderFile=$(TargetsDir)/LPC1100/Loader/LPC11C00_Loader.elf;DeviceMemoryMapFile=$(TargetsDir)/LPC1100/XML/LPC11C24FBD48_301_MemoryMap.xml;DeviceRegisterDefinitionFile=$(TargetsDir)/LPC1100/XML/LPC11Cxx_Registers.xml;DeviceSystemFile=$(TargetsDir)/LPC1100/CMSIS/Device/Source/system_LPC11xx.c;DeviceVectorsFile=$(TargetsDir)/LPC1100/Source/LPC11Cxx_Vectors.s;DeviceFamily=LPC1100;DeviceSubFamily=LPC11C00"
       package_dependencies="LPC1100;libctl"
-      project_directory="./11C24 Clock Slave RTOS/"
+      project_directory="./11c24 Clock Slave RTOS/"
       project_type="Executable"
       property_groups_file_path="$(TargetsDir)/LPC1100/XML/property_groups.xml"
       target_get_partname_script="GetPartName()"
