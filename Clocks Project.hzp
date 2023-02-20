@@ -421,22 +421,12 @@
         <file file_name="Device/inc/timer_11xx.h" />
         <file file_name="Device/inc/clock_11xx.h" />
         <file file_name="Device/inc/board.h" />
-        <file file_name="inc/ccan_rom.h">
-          <configuration
-            Name="THUMB Flash Debug"
-            build_exclude_from_build="Yes" />
-        </file>
         <file file_name="Device/inc/ccand_11xx.h" />
       </folder>
       <folder Name="src">
         <file file_name="Device/src/timer_11xx.c" />
         <file file_name="Device/src/clock_11xx.c" />
         <file file_name="Device/src/board.c" />
-        <file file_name="src/ccan_rom.c">
-          <configuration
-            Name="THUMB Flash Debug"
-            build_exclude_from_build="Yes" />
-        </file>
       </folder>
     </folder>
     <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />

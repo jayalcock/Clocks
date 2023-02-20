@@ -61,25 +61,7 @@ static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
 // Initialise clock matrix - 1x hour, 1x minute
 clockData clockMatrix[2] = {0};
     
-static uint16_t clockTemp;
-
-//send position data to relevant mcu over CAN
-void sendData(void)
-{
-    uint16_t remoteID = 0x200;
-    
-    CAN_MSG_T sendMsgBuff;
-    uint8_t data;
-    CAN_BUFFER_ID_T txBuff;
-   
-    sendMsgBuff.ID = remoteID;
-    sendMsgBuff.DLC = 1;
-    sendMsgBuff.Type = 0;
-    
-    sendToCAN(&sendMsgBuff);
-
-}
-    
+static uint16_t clockTemp;  
                             
 void writeClockValue(const uint8_t pos, const digitData *val)
 {
@@ -296,7 +278,7 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
 }
 
-void update_position(const uint8_t *clockNum, const uint16_t *minuteAngle, const uint16_t *hourAngle)
+void update_position(const uint8_t *clockNum, const uint16_t *minuteAngle, const uint16_t *hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -309,11 +291,13 @@ void update_position(const uint8_t *clockNum, const uint16_t *minuteAngle, const
     sendMsgBuff.Data[3] = *hourAngle >> 8;
     sendMsgBuff.Data[4] = *hourAngle & 0xFF;
 
-    sendToCAN(&sendMsgBuff);
+    ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
+    
+    startCanTx();
 }
 
 // Update speed and direction of clocks via can bus
-void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir)
+void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -326,11 +310,13 @@ void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const u
     sendMsgBuff.Data[3] = minDir;
     sendMsgBuff.Data[4] = hourDir;
 
-    sendToCAN(&sendMsgBuff);
+    ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
+    
+    startCanTx();
 }
 
 // UStart movement of clocks via can bus
-void start_movement(const uint8_t clockNum)
+void start_movement(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -338,11 +324,13 @@ void start_movement(const uint8_t clockNum)
     sendMsgBuff.DLC = 1;
     sendMsgBuff.Type = 0;
     sendMsgBuff.Data[0] = clockNum;
-
-    sendToCAN(&sendMsgBuff);
+    
+    ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
+    
+    startCanTx();
 }
 
-void clock_thread(void *p)
+void clock_thread(void *msgQueuePtr)
 {
 
     uint8_t clockNode0 = 0;
@@ -375,10 +363,14 @@ void clock_thread(void *p)
     uint16_t hour0 = 0;
     uint16_t min1 = 0;
     uint16_t hour1 = 0;
-    uint8_t speed0m = 2;
-    uint8_t speed0h = 2;
-    uint8_t speed1m = 2;
-    uint8_t speed1h = 2;
+    uint16_t min2 = 0;
+    uint16_t hour2 = 0;
+    uint16_t min3 = 0;
+    uint16_t hour3 = 0;
+    uint8_t speed0m = 3;
+    uint8_t speed0h = 3;
+    uint8_t speed1m = 3;
+    uint8_t speed1h = 3;
     uint8_t dir0m = 0;
     uint8_t dir0h = 0;
     uint8_t dir1m = 0;
@@ -388,10 +380,10 @@ void clock_thread(void *p)
     uint8_t dir3m = 0;
     uint8_t dir3h = 0;
     
-    update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h);
-    update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h);   
-    //update_speed_dir(clockNode2, speed, speed, dir2m, dir2h);
-    //update_speed_dir(clockNode3, speed, speed, dir3m, dir3h);   
+    update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
+    update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
+    update_speed_dir(clockNode2, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
+    update_speed_dir(clockNode3, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
     
  
     while(1)
@@ -403,6 +395,10 @@ void clock_thread(void *p)
         hour0 += 90;
         min1 += 90;
         hour1 += 90;
+        min2 += 90;
+        hour2 += 90;
+        min3 += 90;
+        hour3 += 90;
         
         
         //min0 = rand()/91;
@@ -421,31 +417,60 @@ void clock_thread(void *p)
         
                     
         if(min0 >= 360)
+        {
             min0 -= 360;
-        if(hour0 >= 360)
-            hour0 -= 360;
-         if(min1 >= 360);
-            min1 -= 360;
-        if(hour1 >= 360)
-            hour1 -= 360;
-            
-            
-        update_position(&clockNode0, &min0, &hour0);
-        //update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h);
-   
-        //update_position(clockNode2, minTemp, hourTemp);
+        }
         
-        start_movement(200);
+        if(hour0 >= 360)
+        {   
+            hour0 -= 360;
+        }
+        
+        if(min1 >= 360)
+        {    
+            min1 -= 360;
+        }
+        
+        if(hour1 >= 360)
+        {    
+            hour1 -= 360;
+        }
+        if(min2 >= 360)
+        {
+            min2 -= 360;
+        }
+        
+        if(hour2 >= 360)
+        {   
+            hour2 -= 360;
+        }
+        
+        if(min3 >= 360)
+        {    
+            min3 -= 360;
+        }
+        
+        if(hour3 >= 360)
+        {    
+            hour3 -= 360;
+        }
+            
+            
+        update_position(&clockNode0, &min0, &hour0, msgQueuePtr);
+        update_position(&clockNode2, &min2, &hour2, msgQueuePtr);
+
+        start_movement(ALL_CLOCKS, msgQueuePtr);
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         
-        update_position(&clockNode1, &min1, &hour1);
-         //update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h);   
-        //update_position(clockNode3, minTemp, hourTemp);
+        update_position(&clockNode1, &min1, &hour1, msgQueuePtr);
+        update_position(&clockNode3, &min3, &hour3, msgQueuePtr);
+
         
-        //start_movement(ALL_CLOCKS);
-        start_movement(200);
+        start_movement(ALL_CLOCKS, msgQueuePtr);
+
  
+        ctl_timeout_wait(ctl_get_current_time() + 2000);
         
         
     }

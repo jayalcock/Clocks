@@ -10,7 +10,7 @@ CTL_TASK_t main_task, clock0_task, clock1_task, clock2_task, clock3_task, comms_
 #define STACKSIZE 64      
 
      
-    int cnt;
+int cnt;
 
 unsigned clock0_stack[1+STACKSIZE+1], clock1_stack[1+STACKSIZE+1], clock2_stack[1+STACKSIZE+1], 
     clock3_stack[1+STACKSIZE+1], comms_stack[1+STACKSIZE+1], clock_control_stack[1+STACKSIZE+1];
@@ -27,6 +27,7 @@ int main(void)
 {
   
     unsigned int v=0;
+    
 
 
 
@@ -57,18 +58,27 @@ int main(void)
     clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&clock_control_task, 20, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
             
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO3_0, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0); 
+    Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
+    
+   
+    //0x000002FC = 0x4E697370;
+    
+    
     ctl_task_set_priority(&main_task, 0); // drop to lowest priority to start created tasks running.  
 
+      
     while (1)
     {    
-        if(Chip_GPIO_GetPinState(LPC_GPIO, 1, 4) == false)
-        //if(Chip_GPIO_ReadValue(LPC_GPIO, 1, 4) == true)
-        {
+        //if(Chip_GPIO_GetPinState(LPC_GPIO, 1, 4) == false)
+        ////if(Chip_GPIO_ReadValue(LPC_GPIO, 1, 4) == true)
+        //{
             
-            cnt++;
-            while(Chip_GPIO_GetPinState(LPC_GPIO, 1, 4) == false)
-            {};
-        }
+        //    cnt++;
+        //    while(Chip_GPIO_GetPinState(LPC_GPIO, 1, 4) == false)
+        //    {};
+        //}
         
         // power down can go here if supported      
          v++;

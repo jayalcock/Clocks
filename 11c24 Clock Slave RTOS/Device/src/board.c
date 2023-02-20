@@ -103,41 +103,41 @@ void Board_Debug_Init(void)
 static void Board_LED_Init(void)
 {
 	///* Set the PIO_7 as output */
-	//Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 7);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0);
         /* Set the PI1_11 as output */
-	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 11);
-        Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 10);
+	//Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 11);
+ //       Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 10);
 }
 
 /* Sets the state of a board LED to on or off */
 void Board_LED_Set(uint8_t LEDNumber, bool On)
 {
-	//if(LEDNumber == 0) {
-	//	Chip_GPIO_SetPinState(LPC_GPIO, 0, 7, On);
-	//}
 	if(LEDNumber == 0) {
-		Chip_GPIO_SetPinState(LPC_GPIO, 1, 11, On);
+		Chip_GPIO_SetPinState(LPC_GPIO, 3, 0, On);
 	}
-        if(LEDNumber == 1) {
-		Chip_GPIO_SetPinState(LPC_GPIO, 1, 10, On);
-	}
+	//if(LEDNumber == 0) {
+	//	Chip_GPIO_SetPinState(LPC_GPIO, 1, 11, On);
+	//}
+ //       if(LEDNumber == 1) {
+	//	Chip_GPIO_SetPinState(LPC_GPIO, 1, 10, On);
+	//}
 
 }
 
 /* Returns the current state of a board LED */
 bool Board_LED_Test(uint8_t LEDNumber)
 {
-	return Chip_GPIO_GetPinState(LPC_GPIO, 1, 11);
+	return Chip_GPIO_GetPinState(LPC_GPIO, 3, 0);
 }
 
 void Board_LED_Toggle(uint8_t LEDNumber)
 {
-	//if (LEDNumber == 0)
-	//	Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 7);
-        if (LEDNumber == 0)
-		Chip_GPIO_SetPinToggle(LPC_GPIO, 1, 11);
-        if (LEDNumber == 1)
-		Chip_GPIO_SetPinToggle(LPC_GPIO, 1, 10);
+	if (LEDNumber == 0)
+		Chip_GPIO_SetPinToggle(LPC_GPIO, 3, 0);
+  //      if (LEDNumber == 0)
+		//Chip_GPIO_SetPinToggle(LPC_GPIO, 1, 11);
+  //      if (LEDNumber == 1)
+		//Chip_GPIO_SetPinToggle(LPC_GPIO, 1, 10);
 }
 
 
