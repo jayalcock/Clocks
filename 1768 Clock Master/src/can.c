@@ -414,14 +414,14 @@ void CAN_IRQHandler(void)
 #endif /*FULL_CAN_AF_USED*/
 }
 
-
+// Start CAN Tx public function
 void startCanTx()
 {    
-    
+    // Set CAN tx event
     ctl_events_set_clear(&can_event, 1<<0, 0);
 }
 
-
+// CAN Thread
 void CAN_Thread(void *msgQueuePtr)
 {
 	CAN_BUFFER_ID_T TxBuf;
@@ -475,8 +475,4 @@ void CAN_Thread(void *msgQueuePtr)
         
         }
 }
-
-/**
- * @}
- */
 
