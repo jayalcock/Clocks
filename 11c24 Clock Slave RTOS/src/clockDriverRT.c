@@ -8,7 +8,7 @@
 #include "ccan_rom.h"
 
 
-#define NUMBEROFCLOCKS 2
+#define NUMBEROFCLOCKS 3
 #define NUMBEROFARMS 2
 #define STEPSIZE 12 // 1/12 degree per step
 #define PULSEWIDTH 3
@@ -182,50 +182,50 @@ void CT32B1_IRQHandler(void)
 }   
 
 // Interrupt handler for 32-bit timer 1 - Controlling hour arm speeds
-void CT16B0_IRQHandler(void)
-{
-    // Clock 0 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 0)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 0);
-        Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[0].hour.speed]);
+//void CT16B0_IRQHandler(void)
+//{
+//    // Clock 0 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 0)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 0);
+//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[0].hour.speed]);
         
-        if(motorData[0].hour.start == 1)
-            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
+//        if(motorData[0].hour.start == 1)
+//            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
 
-    }
-    // Clock 1 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 1)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 1);
-        Chip_TIMER_SetMatch(LPC_TIMER16_0, 1, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[1].hour.speed]);
+//    }
+//    // Clock 1 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 1)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 1);
+//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 1, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[1].hour.speed]);
         
-        if(motorData[1].hour.start == 1)
-            ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
+//        if(motorData[1].hour.start == 1)
+//            ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
 
-    }
-    // Clock 2 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 2)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 2);
-        Chip_TIMER_SetMatch(LPC_TIMER16_0, 2, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[2].hour.speed]);
+//    }
+//    // Clock 2 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 2)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 2);
+//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 2, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[2].hour.speed]);
         
-        if(motorData[2].hour.start == 1)
-            ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
+//        if(motorData[2].hour.start == 1)
+//            ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
 
-    }
-    // Clock 3 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 3)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 3);
-        Chip_TIMER_SetMatch(LPC_TIMER16_0, 3, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[3].hour.speed]);
+//    }
+//    // Clock 3 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 3)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 3);
+//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 3, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[3].hour.speed]);
         
-        if(motorData[3].hour.start == 1)
-            ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
+//        if(motorData[3].hour.start == 1)
+//            ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
 
-    }
+//    }
   
-}   
+//}   
 void pulse_generation(const uint8_t motorNum, const char arm)
 {
     // Set direction - minute arms
@@ -302,32 +302,36 @@ void clock0_func(void *p)
 
     timerFreq = Chip_Clock_GetSystemClockRate();
     Chip_TIMER_Init(LPC_TIMER32_0);
-    //Chip_TIMER_Init(LPC_TIMER32_1);
-    Chip_TIMER_Init(LPC_TIMER16_0);
+    Chip_TIMER_Init(LPC_TIMER32_1);
+    //Chip_TIMER_Init(LPC_TIMER16_0);
 
 
     Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 0);
     Chip_TIMER_SetMatch(LPC_TIMER32_0, 0, timerFreq/10);
     
-    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 0);
-    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 0);
-    //Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, timerFreq/10);
-    Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, timerFreq/10);
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 0);
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 0);
+    Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, timerFreq/10);
+    //Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, timerFreq/10);
 
     // Enable timers for stepper pulses
     Chip_TIMER_Enable(LPC_TIMER32_0);
-    //Chip_TIMER_Enable(LPC_TIMER32_1);
-    Chip_TIMER_Enable(LPC_TIMER16_0);
+    Chip_TIMER_Enable(LPC_TIMER32_1);
+    //Chip_TIMER_Enable(LPC_TIMER16_0);
     
+
     /* Enable timer interrupt */
     NVIC_ClearPendingIRQ(TIMER_32_0_IRQn);
     NVIC_EnableIRQ(TIMER_32_0_IRQn);
 
-    //NVIC_ClearPendingIRQ(TIMER_32_1_IRQn);
-    //NVIC_EnableIRQ(TIMER_32_1_IRQn);
-    NVIC_ClearPendingIRQ(TIMER_16_0_IRQn);
-    NVIC_EnableIRQ(TIMER_16_0_IRQn);
-
+    NVIC_ClearPendingIRQ(TIMER_32_1_IRQn);
+    NVIC_EnableIRQ(TIMER_32_1_IRQn);
+    //NVIC_ClearPendingIRQ(TIMER_16_0_IRQn);
+    //NVIC_EnableIRQ(TIMER_16_0_IRQn);
+    
+        // 
+    Chip_TIMER_Reset(LPC_TIMER32_0);
+    Chip_TIMER_Reset(LPC_TIMER32_1);
     
     
     while (1)
@@ -426,6 +430,7 @@ void clock1_func(void *p)
     // Initialise clock 1 events
     ctl_events_init(&clock1Event, 0);
     
+    
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
@@ -437,7 +442,7 @@ void clock1_func(void *p)
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 6);  // Dir C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 7);  // Pulse C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 8);  // Dir D
-    //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);  // Pulse D
+    //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);  // Pulse D <-- Causing memory error
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 3);   // Hall min
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 6);   // Hall hour
     

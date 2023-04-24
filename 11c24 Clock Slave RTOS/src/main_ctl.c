@@ -59,7 +59,7 @@ int main(void)
     ctl_task_run(&clock_control_task, 20, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
             
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO3_0, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0); 
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0);
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
     
    
