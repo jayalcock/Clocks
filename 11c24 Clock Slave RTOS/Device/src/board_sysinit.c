@@ -53,16 +53,16 @@ typedef struct {
 /* Pin muxing table, only items that need changing from their default pin
    state are in this table. */
 STATIC const PINMUX_GRP_T pinmuxing[] = {
-	{(uint32_t) IOCON_PIO0_1,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_1 used for CLKOUT */
-	{(uint32_t) IOCON_PIO0_2,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_2 used for SSEL */
-	{(uint32_t) IOCON_PIO0_4,  (IOCON_FUNC1 | IOCON_SFI2C_EN)},	/* PIO0_4 used for SCL */
-	{(uint32_t) IOCON_PIO0_5,  (IOCON_FUNC1 | IOCON_SFI2C_EN)},	/* PIO0_5 used for SDA */
-	{(uint32_t) IOCON_PIO0_8,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_8 used for MISO */
-	{(uint32_t) IOCON_PIO0_9,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_9 used for MOSI */
-	{(uint32_t) IOCON_PIO0_11, (IOCON_FUNC1 | IOCON_ADMODE_EN)},	/* PIO0_11 used for AD0 */
-	{(uint32_t) IOCON_PIO1_6,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO1_6 used for RXD */
-	{(uint32_t) IOCON_PIO1_7,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO1_7 used for TXD */
-	{(uint32_t) IOCON_PIO2_11, (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_6 used for SCK */
+	//{(uint32_t) IOCON_PIO0_1,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_1 used for CLKOUT */
+	//{(uint32_t) IOCON_PIO0_2,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_2 used for SSEL */
+	//{(uint32_t) IOCON_PIO0_4,  (IOCON_FUNC1 | IOCON_SFI2C_EN)},	/* PIO0_4 used for SCL */
+	//{(uint32_t) IOCON_PIO0_5,  (IOCON_FUNC1 | IOCON_SFI2C_EN)},	/* PIO0_5 used for SDA */
+	//{(uint32_t) IOCON_PIO0_8,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_8 used for MISO */
+	//{(uint32_t) IOCON_PIO0_9,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_9 used for MOSI */
+	//{(uint32_t) IOCON_PIO0_11, (IOCON_FUNC1 | IOCON_ADMODE_EN)},	/* PIO0_11 used for AD0 */
+	//{(uint32_t) IOCON_PIO1_6,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO1_6 used for RXD */
+	//{(uint32_t) IOCON_PIO1_7,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO1_7 used for TXD */
+	//{(uint32_t) IOCON_PIO2_11, (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* PIO0_6 used for SCK */
 };
 
 /*****************************************************************************

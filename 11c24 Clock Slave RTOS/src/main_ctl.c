@@ -28,12 +28,13 @@ int main(void)
   
     unsigned int v=0;
     
-
-
-
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
-
+        
+    memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
+    clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    ctl_task_run(&clock_control_task, 60, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
+    
     memset(clock0_stack, 0xcd, sizeof(clock0_stack));  // write known values into the stack
     clock0_stack[0]=clock0_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&clock0_task, 50, clock0_func, 0, "clock0_task", STACKSIZE, clock0_stack+1, 0);
@@ -54,15 +55,13 @@ int main(void)
     comms_stack[0]=comms_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&comms_task, 80, comms_func, 0, "comms_task", STACKSIZE, comms_stack+1, 0);
 
-    memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
-    clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_control_task, 20, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
             
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO3_0, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0);
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
     
    
+
     //0x000002FC = 0x4E697370;
     
     

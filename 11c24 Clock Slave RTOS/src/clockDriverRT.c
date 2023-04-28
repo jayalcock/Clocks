@@ -7,8 +7,8 @@
 #include "clock_11xx.h"
 #include "ccan_rom.h"
 
-
-#define NUMBEROFCLOCKS 3
+#define FIRSTCLOCK 0
+#define NUMBEROFCLOCKS 4
 #define NUMBEROFARMS 2
 #define STEPSIZE 12 // 1/12 degree per step
 #define PULSEWIDTH 3
@@ -84,148 +84,196 @@ motorStruct motorData[] =
         {1, 7, 1, 6, 0, 0, 1, 0, 0, 1, 2, 2}}, //hour   
                      
     {3, //clock num
-        {1, 8, 1, 10, 0, 0, 1, 0, 0, 1, 2, 2}, //min
+        {1, 10, 1, 9, 0, 0, 1, 0, 0, 1, 2, 2}, //min
         {2, 0, 1, 11, 0, 0, 1, 0, 0, 1, 2, 2}}, //hour   
           
 };
 
-// Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
-void CT32B0_IRQHandler(void)
+//// Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
+//void CT32B0_IRQHandler(void)
+//{
+//    // Clock 0 minute timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 0)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 0);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_0, 0, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK0].min.speed]);
+        
+//        if(motorData[CLOCK0].min.start == 1)
+//            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, 0);
+
+//    }
+//    // Clock 1 minute timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 1)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 1);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[1].min.speed]);
+        
+//        if(motorData[CLOCK1].min.start == 1)
+//            ctl_events_set_clear(&clock1Event, RUN_CLOCK1_MIN, 0);
+
+//    }
+//    // Clock 2 minute timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 2)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 2);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[2].min.speed]);
+        
+//        if(motorData[CLOCK2].min.start == 1)
+//            ctl_events_set_clear(&clock2Event, RUN_CLOCK2_MIN, 0);
+
+//    }
+//    // Clock 3 minute timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 3)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 3);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[3].min.speed]);
+        
+//        if(motorData[CLOCK3].min.start == 1)
+//            ctl_events_set_clear(&clock3Event, RUN_CLOCK3_MIN, 0);
+
+//    }
+  
+//} 
+
+//// Interrupt handler for 32-bit timer 1 - Controlling hour arm speeds
+//void CT32B1_IRQHandler(void)
+//{
+//    // Clock 0 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 0)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 0);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[0].hour.speed]);
+        
+//        if(motorData[CLOCK0].hour.start == 1)
+//            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
+
+//    }
+//    // Clock 1 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 1)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 1);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_1, 1, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[1].hour.speed]);
+        
+//        if(motorData[CLOCK1].hour.start == 1)
+//            ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
+
+//    }
+//    // Clock 2 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 2)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 2);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_1, 2, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[2].hour.speed]);
+        
+//        if(motorData[CLOCK2].hour.start == 1)
+//            ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
+
+//    }
+//    // Clock 3 hour timer - match clear and match value reset
+//    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 3)) 
+//    {
+//        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 3);
+//        Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[3].hour.speed]);
+        
+//        if(motorData[CLOCK3].hour.start == 1)
+//            ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
+
+//    }
+  
+//}   
+
+// Interrupt handler for 16-bit timer 1 - Controlling hour arm speeds
+void CT16B0_IRQHandler(void)
 {
     // Clock 0 minute timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 0)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, CLOCK0)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 0);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, 0, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK0].min.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK0);
+        Chip_TIMER_SetMatch(LPC_TIMER16_0, CLOCK0, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[CLOCK0].min.speed]);
         
         if(motorData[CLOCK0].min.start == 1)
             ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, 0);
 
     }
     // Clock 1 minute timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 1)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, CLOCK1)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 1);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[1].min.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK1);
+        Chip_TIMER_SetMatch(LPC_TIMER16_0, CLOCK1, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[CLOCK1].min.speed]);
         
-        if(motorData[1].min.start == 1)
+        if(motorData[CLOCK1].min.start == 1)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_MIN, 0);
 
     }
     // Clock 2 minute timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 2)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, CLOCK2)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 2);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[2].min.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK2);
+        Chip_TIMER_SetMatch(LPC_TIMER16_0, CLOCK2, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[CLOCK2].min.speed]);
         
-        if(motorData[2].min.start == 1)
+        if(motorData[CLOCK2].min.start == 1)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_MIN, 0);
 
     }
     // Clock 3 minute timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 3)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_0,CLOCK3)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, 3);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[3].min.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK3);
+        Chip_TIMER_SetMatch(LPC_TIMER16_0, CLOCK3, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[3].min.speed]);
         
-        if(motorData[3].min.start == 1)
+        if(motorData[CLOCK3].min.start == 1)
             ctl_events_set_clear(&clock3Event, RUN_CLOCK3_MIN, 0);
 
     }
   
-} 
+}  
 
-// Interrupt handler for 32-bit timer 1 - Controlling hour arm speeds
-void CT32B1_IRQHandler(void)
+// Interrupt handler for 16-bit timer 1 - Controlling hour arm speeds
+void CT16B1_IRQHandler(void)
 {
     // Clock 0 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 0)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 0)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 0);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[0].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 0);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, 0, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[0].hour.speed]);
         
-        if(motorData[0].hour.start == 1)
+        if(motorData[CLOCK0].hour.start == 1)
             ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
 
     }
     // Clock 1 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 1)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 1)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 1);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 1, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[1].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 1);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, 1, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[1].hour.speed]);
         
-        if(motorData[1].hour.start == 1)
+        if(motorData[CLOCK1].hour.start == 1)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
 
     }
     // Clock 2 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 2)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 2)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 2);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 2, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[2].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 2);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, 2, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[2].hour.speed]);
         
-        if(motorData[2].hour.start == 1)
+        if(motorData[CLOCK2].hour.start == 1)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
 
     }
     // Clock 3 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 3)) 
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 3)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, 3);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[3].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 3);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, 3, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[3].hour.speed]);
         
-        if(motorData[3].hour.start == 1)
+        if(motorData[CLOCK3].hour.start == 1)
             ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
 
     }
   
 }   
 
-// Interrupt handler for 32-bit timer 1 - Controlling hour arm speeds
-//void CT16B0_IRQHandler(void)
-//{
-//    // Clock 0 hour timer - match clear and match value reset
-//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 0)) 
-//    {
-//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 0);
-//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[0].hour.speed]);
-        
-//        if(motorData[0].hour.start == 1)
-//            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
 
-//    }
-//    // Clock 1 hour timer - match clear and match value reset
-//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 1)) 
-//    {
-//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 1);
-//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 1, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[1].hour.speed]);
-        
-//        if(motorData[1].hour.start == 1)
-//            ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
-
-//    }
-//    // Clock 2 hour timer - match clear and match value reset
-//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 2)) 
-//    {
-//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 2);
-//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 2, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[2].hour.speed]);
-        
-//        if(motorData[2].hour.start == 1)
-//            ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
-
-//    }
-//    // Clock 3 hour timer - match clear and match value reset
-//    if (Chip_TIMER_MatchPending(LPC_TIMER16_0, 3)) 
-//    {
-//        Chip_TIMER_ClearMatch(LPC_TIMER16_0, 3);
-//        Chip_TIMER_SetMatch(LPC_TIMER16_0, 3, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[3].hour.speed]);
-        
-//        if(motorData[3].hour.start == 1)
-//            ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
-
-//    }
-  
-//}   
 void pulse_generation(const uint8_t motorNum, const char arm)
 {
     // Set direction - minute arms
@@ -274,7 +322,20 @@ void clock0_func(void *p)
     
     // Initialise clock 0 events
     ctl_events_init(&clock0Event, 0);
-      
+    
+    // Set up clock 0 timers  
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 0);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_0, 0, timerFreq/10);
+    
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 0);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, timerFreq/10);
+
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 0);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 0);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 0, timerFreq/10);
+    
     
     // Set up GPIO
     // Driver 1
@@ -299,40 +360,6 @@ void clock0_func(void *p)
     
     //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 11);
     //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 10);
-
-    timerFreq = Chip_Clock_GetSystemClockRate();
-    Chip_TIMER_Init(LPC_TIMER32_0);
-    Chip_TIMER_Init(LPC_TIMER32_1);
-    //Chip_TIMER_Init(LPC_TIMER16_0);
-
-
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 0);
-    Chip_TIMER_SetMatch(LPC_TIMER32_0, 0, timerFreq/10);
-    
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 0);
-    //Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 0);
-    Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, timerFreq/10);
-    //Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, timerFreq/10);
-
-    // Enable timers for stepper pulses
-    Chip_TIMER_Enable(LPC_TIMER32_0);
-    Chip_TIMER_Enable(LPC_TIMER32_1);
-    //Chip_TIMER_Enable(LPC_TIMER16_0);
-    
-
-    /* Enable timer interrupt */
-    NVIC_ClearPendingIRQ(TIMER_32_0_IRQn);
-    NVIC_EnableIRQ(TIMER_32_0_IRQn);
-
-    NVIC_ClearPendingIRQ(TIMER_32_1_IRQn);
-    NVIC_EnableIRQ(TIMER_32_1_IRQn);
-    //NVIC_ClearPendingIRQ(TIMER_16_0_IRQn);
-    //NVIC_EnableIRQ(TIMER_16_0_IRQn);
-    
-        // 
-    Chip_TIMER_Reset(LPC_TIMER32_0);
-    Chip_TIMER_Reset(LPC_TIMER32_1);
-    
     
     while (1)
     {      
@@ -446,11 +473,17 @@ void clock1_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 3);   // Hall min
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 6);   // Hall hour
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 1);
-    Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, timerFreq/10);
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 1);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, timerFreq/10);
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 1);
-    Chip_TIMER_SetMatch(LPC_TIMER32_1, 1, timerFreq/10);
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 1);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_1, 1, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 1);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 1, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 1);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 1, timerFreq/10);
    
     
     while (1)
@@ -565,11 +598,17 @@ void clock2_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 7);   // Hall min
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 8);   // Hall hour
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 2);
-    Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, timerFreq/10);
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 2);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, timerFreq/10);
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 2);
-    Chip_TIMER_SetMatch(LPC_TIMER32_1, 2, timerFreq/10);
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 2);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_1, 2, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 2);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 2, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 2);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 2, timerFreq/10);
     
     while (1)
     {      
@@ -684,12 +723,17 @@ void clock3_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 11);  // Hall hour
     
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 3);
-    Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, timerFreq/10);
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 3);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, timerFreq/10);
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 3);
-    Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, timerFreq/10);
-
+    //Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 3);
+    //Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 3);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 3, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 3);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 3, timerFreq/10);
     
     while (1)
     {      
@@ -799,10 +843,38 @@ void clock_control(void *p)
 {
     unsigned int v = 0;  
     
+    timerFreq = Chip_Clock_GetSystemClockRate();
+    
+    //Chip_TIMER_Init(LPC_TIMER32_0);
+    //Chip_TIMER_Init(LPC_TIMER32_1);
+    Chip_TIMER_Init(LPC_TIMER16_0);
+    Chip_TIMER_Init(LPC_TIMER16_1);
+     
+    //NVIC_ClearPendingIRQ(TIMER_32_0_IRQn);
+    //NVIC_ClearPendingIRQ(TIMER_32_1_IRQn);
+    NVIC_ClearPendingIRQ(TIMER_16_0_IRQn);
+    NVIC_ClearPendingIRQ(TIMER_16_1_IRQn);
+       
+    
+    /* Enable timer interrupt */
+    //NVIC_EnableIRQ(TIMER_32_0_IRQn);    
+    //NVIC_EnableIRQ(TIMER_32_1_IRQn);       
+    NVIC_EnableIRQ(TIMER_16_0_IRQn);    
+    NVIC_EnableIRQ(TIMER_16_1_IRQn);     
+
+    
+    // Initialise clock event
     ctl_events_init(&clockControlEvent, 0);
     
     // Initialise CAN driver
     can_init();
+    
+    // Enable timers for stepper pulses
+    //Chip_TIMER_Enable(LPC_TIMER32_0);
+    //Chip_TIMER_Enable(LPC_TIMER32_1);   
+    Chip_TIMER_Enable(LPC_TIMER16_0);
+    Chip_TIMER_Enable(LPC_TIMER16_1);   
+    
     
     // Trigger an update to all clocks on startup
     ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
@@ -885,7 +957,7 @@ void clock_control(void *p)
             // position update
             if(can_RX_data.mode_id == 0x200)
             {
-                for(int i = 0; i < NUMBEROFCLOCKS; i++)
+                for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
                 {
                     if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
                     {
@@ -900,7 +972,7 @@ void clock_control(void *p)
             // speed and direction update
             if (can_RX_data.mode_id == 0x201)
             {
-                for(int i = 0; i < NUMBEROFCLOCKS; i++)
+                for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
                 {
                     if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
                     {
