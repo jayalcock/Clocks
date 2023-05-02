@@ -367,23 +367,27 @@ void clock_thread(void *msgQueuePtr)
     uint16_t hour2 = 0;
     uint16_t min3 = 0;
     uint16_t hour3 = 0;
-    uint8_t speed0m = 3;
+    uint8_t speed0m = 2;
     uint8_t speed0h = 3;
-    uint8_t speed1m = 3;
-    uint8_t speed1h = 3;
+    uint8_t speed1m = 4;
+    uint8_t speed1h = 2;
+    uint8_t speed2m = 4;
+    uint8_t speed2h = 3;
+    uint8_t speed3m = 2;
+    uint8_t speed3h = 3;
     uint8_t dir0m = 0;
-    uint8_t dir0h = 0;
-    uint8_t dir1m = 0;
+    uint8_t dir0h = 1;
+    uint8_t dir1m = 1;
     uint8_t dir1h = 0;
-    uint8_t dir2m = 0;
+    uint8_t dir2m = 1;
     uint8_t dir2h = 0;
     uint8_t dir3m = 0;
-    uint8_t dir3h = 0;
+    uint8_t dir3h = 1;
     
     update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
     update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
-    update_speed_dir(clockNode2, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
-    update_speed_dir(clockNode3, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
+    update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
+    update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
     
  
     while(1)
@@ -392,13 +396,13 @@ void clock_thread(void *msgQueuePtr)
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         
         min0 += 90;
-        hour0 += 90;
+        hour0 += 45;
         min1 += 90;
-        hour1 += 90;
+        hour1 += 45;
         min2 += 90;
-        hour2 += 90;
+        hour2 += 45;
         min3 += 90;
-        hour3 += 90;
+        hour3 += 45;
         
         
         //min0 = rand()/91;

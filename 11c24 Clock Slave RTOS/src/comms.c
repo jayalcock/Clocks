@@ -11,7 +11,9 @@ void comms_func(void *p)
     unsigned int v=0;
     
 
-
+    // Initialise CAN driver
+    can_init();
+       
     
     while (1)
     {      

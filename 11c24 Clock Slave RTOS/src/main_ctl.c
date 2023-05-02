@@ -9,19 +9,17 @@ CTL_TASK_t main_task, clock0_task, clock1_task, clock2_task, clock3_task, comms_
 
 #define STACKSIZE 64      
 
-     
-int cnt;
 
+// Stack memory allocation
 unsigned clock0_stack[1+STACKSIZE+1], clock1_stack[1+STACKSIZE+1], clock2_stack[1+STACKSIZE+1], 
     clock3_stack[1+STACKSIZE+1], comms_stack[1+STACKSIZE+1], clock_control_stack[1+STACKSIZE+1];
 
 
+// Error handler
 void ctl_handle_error(CTL_ERROR_CODE_t e)
 {
     while (1);
 }
-
-
 
 int main(void)
 {
@@ -30,7 +28,12 @@ int main(void)
     
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
-        
+    
+    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_IOCON);
+    //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
+    //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);
+    //Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 9);
+ 
     memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
     clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&clock_control_task, 60, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
@@ -55,12 +58,15 @@ int main(void)
     comms_stack[0]=comms_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&comms_task, 80, comms_func, 0, "comms_task", STACKSIZE, comms_stack+1, 0);
 
-            
+    // Set test LED high
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO3_0, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0);
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
     
-   
+    
+    // Teset 32bit timer 1
+    //char* TEST = 0x40018004;
+    //*TEST = 0;
 
     //0x000002FC = 0x4E697370;
     
