@@ -15,6 +15,8 @@ struct clockArmData
     uint8_t atPosition;    
     uint8_t speed;
     uint8_t accel;
+    uint8_t hallPort;
+    uint8_t hallPin;
 };
 
 typedef struct
@@ -37,5 +39,10 @@ uint16_t calculate_steps(uint16_t newAngle , uint16_t angle);
 void clock_control(void *p);
 
 void update_from_CAN(CCAN_MSG_OBJ_T *CANdata);
+
+void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps);
+
+// Home clock position
+void home_clocks(void);
 
 #endif /* _CLOCKDRIVERRT_H_ */

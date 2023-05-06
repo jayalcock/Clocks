@@ -7,12 +7,14 @@
 #include "clock_11xx.h"
 #include "ccan_rom.h"
 
+
+#define TESTING 0
 #define FIRSTCLOCK 0
 #define NUMBEROFCLOCKS 4
 #define NUMBEROFARMS 2
 #define STEPSIZE 12 // 1/12 degree per step
 #define PULSEWIDTH 3
-#define HIRESTIMER 1
+#define HIRESTIMER 0
 
 #define CLOCK0          0
 #define CLOCK1          1
@@ -69,7 +71,8 @@ motorStruct motorData[] =
           0,    // remaining steps
           1,    // at position
           2,    // speed
-          2 },  // accel
+          2,    // accel
+          2, 1 }, // hall port/pin 
         //hour
         { 0, 5, // pulse port/pin
           0, 4, // direction port/pin
@@ -80,22 +83,42 @@ motorStruct motorData[] =
           0,    // remaining steps
           1,    // at position
           3,    // speed
-          2 }}, // accel
+          2,    // accel
+          2, 2 }}, // hall port/pin
                 
     {1, //clock num
-        {0, 7, 0, 6, 0, 0, 1, 0, 0, 1, 2, 2}, //min
-        {0, 9, 0, 8, 0, 0, 1, 0, 0, 1, 2, 2}}, //hour         
+        {0, 7, 0, 6, 0, 0, 1, 0, 0, 1, 2, 2, 2, 3}, //min
+        {0, 9, 0, 8, 0, 0, 1, 0, 0, 1, 2, 2, 2, 6}}, //hour         
                             
     {2, //clock num
-        {1, 5, 1, 4, 0, 0, 1, 0, 0, 1, 2, 2}, //min
-        {1, 7, 1, 6, 0, 0, 1, 0, 0, 1, 2, 2}}, //hour   
+        {1, 5, 1, 4, 0, 0, 1, 0, 0, 1, 2, 2, 2, 7}, //min
+        {1, 7, 1, 6, 0, 0, 1, 0, 0, 1, 2, 2, 2, 8}}, //hour   
                      
     {3, //clock num
-        {1, 10, 1, 8, 0, 0, 1, 0, 0, 1, 2, 2}, //min
-        {2, 0, 1, 11, 0, 0, 1, 0, 0, 1, 2, 2}}, //hour   
+        {1, 10, 1, 8, 0, 0, 1, 0, 0, 1, 2, 2, 2, 10}, //min
+        {2, 0, 1, 11, 0, 0, 1, 0, 0, 1, 2, 2, 2, 11}}, //hour   
           
 };
 
+void clock_testing(void)
+{
+    commsActive = 0;
+    uint8_t clockNum = 2;
+    char* arm = "min";
+    uint16_t M1angle = 400;
+    
+    home_clocks();
+    
+    //motorData[2].min.speed = 3;
+    //motorData[2].min.angle = 400;
+    
+    //motorData[2].min.start = 1;
+    
+    //motorData[2].hour.speed = 3;
+    //motorData[2].hour.angle = 400;
+    
+    //motorData[2].hour.start = 1;
+}
       
 #if HIRESTIMER
 // Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
@@ -115,7 +138,7 @@ void CT32B0_IRQHandler(void)
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 1)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 1);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[1].min.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK1].min.speed]);
         
         if(motorData[CLOCK1].min.start == 1)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_MIN, 0);
@@ -125,7 +148,7 @@ void CT32B0_IRQHandler(void)
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 2)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 2);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[2].min.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK2].min.speed]);
         
         if(motorData[CLOCK2].min.start == 1)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_MIN, 0);
@@ -135,7 +158,7 @@ void CT32B0_IRQHandler(void)
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 3)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 3);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[3].min.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK3].min.speed]);
         
         if(motorData[CLOCK3].min.start == 1)
             ctl_events_set_clear(&clock3Event, RUN_CLOCK3_MIN, 0);
@@ -151,7 +174,7 @@ void CT32B1_IRQHandler(void)
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 0)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 0);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[0].hour.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK0].hour.speed]);
         
         if(motorData[CLOCK0].hour.start == 1)
             ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
@@ -161,7 +184,7 @@ void CT32B1_IRQHandler(void)
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 1)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 1);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 1, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[1].hour.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER32_1, 1, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK1].hour.speed]);
         
         if(motorData[CLOCK1].hour.start == 1)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
@@ -171,7 +194,7 @@ void CT32B1_IRQHandler(void)
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 2)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 2);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 2, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[2].hour.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER32_1, 2, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK2].hour.speed]);
         
         if(motorData[CLOCK2].hour.start == 1)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
@@ -181,7 +204,7 @@ void CT32B1_IRQHandler(void)
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 3)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 3);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[3].hour.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK3].hour.speed]);
         
         if(motorData[CLOCK3].hour.start == 1)
             ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
@@ -327,7 +350,6 @@ void pulse_generation(const uint8_t motorNum, const char arm)
 void clock0_func(void *p)
 {  
     unsigned int v=0;
-    const uint8_t clockNum = 0;
     uint8_t mSteps, hSteps;
     
     // Initialise clock 0 events
@@ -350,9 +372,7 @@ void clock0_func(void *p)
     
     #endif
     
-    // Set up GPIO
-    // Driver 1
-    
+    // Set up GPIO    
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_2, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, (IOCON_FUNC0 | IOCON_STDI2C_EN)); 
@@ -365,8 +385,8 @@ void clock0_func(void *p)
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK0].min.port, motorData[CLOCK0].min.pin);  // Pulse A
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK0].hour.dirPort, motorData[CLOCK0].hour.dirPin);  // Dir B
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK0].hour.port, motorData[CLOCK0].hour.pin);  // Pulse B
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 1);   // Hall min
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 2);   // Hall hour
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK0].hour.hallPort, motorData[CLOCK0].hour.hallPin);   // Hall hour
     
     while (1)
     {      
@@ -376,37 +396,7 @@ void clock0_func(void *p)
         if(clock0Event & RUN_CLOCK0_HOUR)
         {
        
-            if(motorData[clockNum].hour.remainingSteps != 0)
-            {
-                motorData[clockNum].hour.atPosition = 0;
-            }
-        
-            if(!motorData[clockNum].hour.atPosition)
-            {
-                pulse_generation(clockNum, 'h');
-            
-                --motorData[clockNum].hour.remainingSteps;
-                
-                hSteps++;
-                
-                if(hSteps == STEPSIZE)
-                {
-                    motorData[clockNum].hour.angle++;
-                    
-                    if(motorData[clockNum].hour.angle == 360)
-                    {
-                        motorData[clockNum].hour.angle = 0;
-                    }
-                    hSteps = 0;
-                }
-            
-                if(motorData[clockNum].hour.remainingSteps <= 0)
-                {
-                    motorData[clockNum].hour.atPosition = 1;
-                    motorData[clockNum].hour.start == 0;
-                }
-
-            }
+            drive_to_pos(CLOCK0, 'h', &hSteps);
             
             ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_HOUR); // clear event when at position
         }
@@ -414,39 +404,7 @@ void clock0_func(void *p)
         // Drive clock 0 minute arm until at desired position
         if(clock0Event & RUN_CLOCK0_MIN)
         {
-                       
-            if(motorData[clockNum].min.remainingSteps != 0)
-            {
-                motorData[clockNum].min.atPosition = 0;
-            }
-            
-            if(!motorData[clockNum].min.atPosition)
-            {
-                pulse_generation(clockNum, 'm');
-            
-                --motorData[clockNum].min.remainingSteps;
-                
-                mSteps++;
-                
-                if(mSteps == STEPSIZE)
-                {
-                    motorData[clockNum].min.angle++;
-                    
-                    if(motorData[clockNum].min.angle == 360)
-                    {
-                        motorData[clockNum].min.angle = 0;
-                    }
-                    
-                    mSteps = 0;
-                }
-            
-                if(motorData[clockNum].min.remainingSteps <= 0)
-                {
-                    motorData[clockNum].min.atPosition = 1;
-                    motorData[clockNum].min.start == 0;
-                }
-
-            }
+            drive_to_pos(CLOCK0, 'm', &mSteps);           
             
             ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_MIN);  // clear event when at position
         }
@@ -458,13 +416,12 @@ void clock0_func(void *p)
 void clock1_func(void *p)
 {  
     unsigned int v=0;
-    const uint8_t clockNum = 1;
     uint8_t mSteps, hSteps;
      
     // Initialise clock 1 events
     ctl_events_init(&clock1Event, 0);
     
-    
+    // Set up GPIO
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
@@ -477,8 +434,8 @@ void clock1_func(void *p)
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].min.port, motorData[CLOCK1].min.pin);  // Pulse C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].hour.dirPort, motorData[CLOCK1].hour.dirPin);  // Dir D 
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].hour.port, motorData[CLOCK1].hour.pin);  // Pulse D
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 3);   // Hall min
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 6);   // Hall hour
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK1].min.hallPort, motorData[CLOCK1].min.hallPin);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK1].hour.hallPort, motorData[CLOCK1].hour.hallPin);   // Hall hour
     
     
     // Set up clock 1 timers
@@ -506,37 +463,7 @@ void clock1_func(void *p)
         // Drive clock 1 hour arm until at desired position
         if(clock1Event & RUN_CLOCK1_HOUR)
         {
-            if(motorData[clockNum].hour.remainingSteps != 0)
-            {
-                motorData[clockNum].hour.atPosition = 0;
-            }
-        
-            if(!motorData[clockNum].hour.atPosition)
-            {
-                pulse_generation(clockNum, 'h');
-            
-                --motorData[clockNum].hour.remainingSteps;
-                
-                hSteps++;
-                
-                if(hSteps == STEPSIZE)
-                {
-                    motorData[clockNum].hour.angle++;
-                    
-                    if(motorData[clockNum].hour.angle == 360)
-                    {
-                        motorData[clockNum].hour.angle = 0;
-                    }
-                    hSteps = 0;
-                }
-            
-                if(motorData[clockNum].hour.remainingSteps <= 0)
-                {
-                    motorData[clockNum].hour.atPosition = 1;
-                    motorData[clockNum].hour.start == 0;
-                }
-            
-            }
+            drive_to_pos(CLOCK1, 'h', &hSteps);
             
             ctl_events_set_clear(&clock1Event, 0, RUN_CLOCK1_HOUR); // clear event when at position
         }
@@ -544,39 +471,7 @@ void clock1_func(void *p)
         // Drive clock 1 minute arm until at desired position
         if(clock1Event & RUN_CLOCK1_MIN)
         {
-                       
-            if(motorData[clockNum].min.remainingSteps != 0)
-            {
-                motorData[clockNum].min.atPosition = 0;
-            }
-            
-            if(!motorData[clockNum].min.atPosition)
-            {
-                pulse_generation(clockNum, 'm');
-            
-                --motorData[clockNum].min.remainingSteps;
-                
-                mSteps++;
-                
-                if(mSteps == STEPSIZE)
-                {
-                    motorData[clockNum].min.angle++;
-                    
-                    if(motorData[clockNum].min.angle == 360)
-                    {
-                        motorData[clockNum].min.angle = 0;
-                    }
-                    
-                    mSteps = 0;
-                }
-            
-                if(motorData[clockNum].min.remainingSteps <= 0)
-                {
-                    motorData[clockNum].min.atPosition = 1;
-                    motorData[clockNum].min.start == 0;
-                }
-
-            }
+            drive_to_pos(CLOCK1, 'm', &mSteps); 
             
             ctl_events_set_clear(&clock1Event, 0, RUN_CLOCK1_MIN);  // clear event when at position
         }
@@ -589,13 +484,12 @@ void clock1_func(void *p)
 void clock2_func(void *p)
 {  
     unsigned int v=0;
-    const uint8_t clockNum = 2;
     uint8_t mSteps, hSteps;
 
     // Initialise clock 2 events
     ctl_events_init(&clock2Event, 0);
     
-    // Driver 2
+    // Set up GPIO
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_4, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_5, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
@@ -608,8 +502,8 @@ void clock2_func(void *p)
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK2].min.port, motorData[CLOCK2].min.pin);  // Pulse A
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK2].hour.dirPort, motorData[CLOCK2].hour.dirPin);  // Dir B 
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK2].hour.port, motorData[CLOCK2].hour.pin);  // Pulse B
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 7);   // Hall min
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 8);   // Hall hour
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK2].min.hallPort, motorData[CLOCK2].min.hallPin);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK2].hour.hallPort, motorData[CLOCK2].hour.hallPin);   // Hall hour
     
     // Set up clock 2 timers
     #if HIRESTIMER
@@ -634,77 +528,15 @@ void clock2_func(void *p)
         // Drive clock 2 hour arm until at desired position
         if(clock2Event & RUN_CLOCK2_HOUR)
         {
-            if(motorData[clockNum].hour.remainingSteps != 0)
-            {
-                motorData[clockNum].hour.atPosition = 0;
-            }
-        
-            if(!motorData[clockNum].hour.atPosition)
-            {
-                pulse_generation(clockNum, 'h');
-            
-                --motorData[clockNum].hour.remainingSteps;
-                
-                hSteps++;
-                
-                if(hSteps == STEPSIZE)
-                {
-                    motorData[clockNum].hour.angle++;
-                    
-                    if(motorData[clockNum].hour.angle == 360)
-                    {
-                        motorData[clockNum].hour.angle = 0;
-                    }
-                    hSteps = 0;
-                }
-            
-                if(motorData[clockNum].hour.remainingSteps <= 0)
-                {
-                    motorData[clockNum].hour.atPosition = 1;
-                    motorData[clockNum].hour.start == 0;
-                }
-            
-            }
-            
+            drive_to_pos(CLOCK2, 'h', &hSteps);
+
             ctl_events_set_clear(&clock2Event, 0, RUN_CLOCK2_HOUR); // clear event when at position
         }
         
         // Drive clock 2 minute arm until at desired position
         if(clock2Event & RUN_CLOCK2_MIN)
         {
-                       
-            if(motorData[clockNum].min.remainingSteps != 0)
-            {
-                motorData[clockNum].min.atPosition = 0;
-            }
-            
-            if(!motorData[clockNum].min.atPosition)
-            {
-                pulse_generation(clockNum, 'm');
-            
-                --motorData[clockNum].min.remainingSteps;
-                
-                mSteps++;
-                
-                if(mSteps == STEPSIZE)
-                {
-                    motorData[clockNum].min.angle++;
-                    
-                    if(motorData[clockNum].min.angle == 360)
-                    {
-                        motorData[clockNum].min.angle = 0;
-                    }
-                    
-                    mSteps = 0;
-                }
-            
-                if(motorData[clockNum].min.remainingSteps <= 0)
-                {
-                    motorData[clockNum].min.atPosition = 1;
-                    motorData[clockNum].min.start == 0;
-                }
-
-            }
+            drive_to_pos(CLOCK2, 'm', &mSteps);        
             
             ctl_events_set_clear(&clock2Event, 0, RUN_CLOCK2_MIN);  // clear event when at position
         }
@@ -718,12 +550,12 @@ void clock2_func(void *p)
 void clock3_func(void *p)
 {  
     unsigned int v=0;
-    const uint8_t clockNum = 3;
     uint8_t mSteps, hSteps;
     
     // Initialise clock 3 events
     ctl_events_init(&clock3Event, 0);
     
+    // Set up GPIO
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
@@ -736,8 +568,8 @@ void clock3_func(void *p)
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].min.port, motorData[CLOCK3].min.pin);  // Pulse C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.dirPort, motorData[CLOCK3].hour.dirPin);  // Dir D 
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.port, motorData[CLOCK3].hour.pin);  // Pulse D
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 10);  // Hall min
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 11);  // Hall hour
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin);  // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPort);  // Hall hour
     
     // Set up clock 3 timers
     #if HIRESTIMER
@@ -764,78 +596,16 @@ void clock3_func(void *p)
         // Drive clock 3 hour arm until at desired position
         if(clock3Event & RUN_CLOCK3_HOUR)
         {
-            if(motorData[clockNum].hour.remainingSteps != 0)
-            {
-                motorData[clockNum].hour.atPosition = 0;
-            }
-        
-            if(!motorData[clockNum].hour.atPosition)
-            {
-                pulse_generation(clockNum, 'h');
-            
-                --motorData[clockNum].hour.remainingSteps;
-                
-                hSteps++;
-                
-                if(hSteps == STEPSIZE)
-                {
-                    motorData[clockNum].hour.angle++;
-                    
-                    if(motorData[clockNum].hour.angle == 360)
-                    {
-                        motorData[clockNum].hour.angle = 0;
-                    }
-                    hSteps = 0;
-                }
-            
-                if(motorData[clockNum].hour.remainingSteps <= 0)
-                {
-                    motorData[clockNum].hour.atPosition = 1;
-                    motorData[clockNum].hour.start == 0;
-                }
-            
-            }
-            
+            drive_to_pos(CLOCK3, 'h', &hSteps);
+
             ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_HOUR); // clear event when at position
         }
         
         // Drive clock 3 minute arm until at desired position
         if(clock3Event & RUN_CLOCK3_MIN)
         {
-                       
-            if(motorData[clockNum].min.remainingSteps != 0)
-            {
-                motorData[clockNum].min.atPosition = 0;
-            }
-            
-            if(!motorData[clockNum].min.atPosition)
-            {
-                pulse_generation(clockNum, 'm');
-            
-                --motorData[clockNum].min.remainingSteps;
-                
-                mSteps++;
-                
-                if(mSteps == STEPSIZE)
-                {
-                    motorData[clockNum].min.angle++;
-                    
-                    if(motorData[clockNum].min.angle == 360)
-                    {
-                        motorData[clockNum].min.angle = 0;
-                    }
-                    
-                    mSteps = 0;
-                }
-            
-                if(motorData[clockNum].min.remainingSteps <= 0)
-                {
-                    motorData[clockNum].min.atPosition = 1;
-                    motorData[clockNum].min.start == 0;
-                }
-
-            }
-            
+            drive_to_pos(CLOCK3, 'm', &mSteps);
+                                   
             ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_MIN);  // clear event when at position
         }
 
@@ -871,39 +641,38 @@ void clock_control(void *p)
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 1);  // Reset
      
     #if HIRESTIMER
-    // Initialise timers
-    Chip_TIMER_Init(LPC_TIMER32_0);
-    Chip_TIMER_Init(LPC_TIMER32_1);
+        // Initialise timers
+        Chip_TIMER_Init(LPC_TIMER32_0);
+        Chip_TIMER_Init(LPC_TIMER32_1);
     
-    // Clear pending interrupts   
-    NVIC_ClearPendingIRQ(TIMER_32_0_IRQn);
-    NVIC_ClearPendingIRQ(TIMER_32_1_IRQn);
+        // Clear pending interrupts   
+        NVIC_ClearPendingIRQ(TIMER_32_0_IRQn);
+        NVIC_ClearPendingIRQ(TIMER_32_1_IRQn);
     
-    // Enable timer interrupts
-    NVIC_EnableIRQ(TIMER_32_0_IRQn);    
-    NVIC_EnableIRQ(TIMER_32_1_IRQn);   
+        // Enable timer interrupts
+        NVIC_EnableIRQ(TIMER_32_0_IRQn);    
+        NVIC_EnableIRQ(TIMER_32_1_IRQn);   
     
-    // Enable timers for stepper pulses
-    Chip_TIMER_Enable(LPC_TIMER32_0);
-    Chip_TIMER_Enable(LPC_TIMER32_1); 
+        // Enable timers for stepper pulses
+        Chip_TIMER_Enable(LPC_TIMER32_0);
+        Chip_TIMER_Enable(LPC_TIMER32_1); 
 
     #else
-    // Initialise timers
-    Chip_TIMER_Init(LPC_TIMER16_0);
-    Chip_TIMER_Init(LPC_TIMER16_1);
+        // Initialise timers
+        Chip_TIMER_Init(LPC_TIMER16_0);
+        Chip_TIMER_Init(LPC_TIMER16_1);
     
-    // Clear pending interrupts   
-    NVIC_ClearPendingIRQ(TIMER_16_0_IRQn);
-    NVIC_ClearPendingIRQ(TIMER_16_1_IRQn);
+        // Clear pending interrupts   
+        NVIC_ClearPendingIRQ(TIMER_16_0_IRQn);
+        NVIC_ClearPendingIRQ(TIMER_16_1_IRQn);
        
-    // Enable timer interrupts
-    NVIC_EnableIRQ(TIMER_16_0_IRQn);    
-    NVIC_EnableIRQ(TIMER_16_1_IRQn);  
+        // Enable timer interrupts
+        NVIC_EnableIRQ(TIMER_16_0_IRQn);    
+        NVIC_EnableIRQ(TIMER_16_1_IRQn);  
     
-    // Enable timers for stepper pulses
-    Chip_TIMER_Enable(LPC_TIMER16_0);
-    Chip_TIMER_Enable(LPC_TIMER16_1);     
-
+        // Enable timers for stepper pulses
+        Chip_TIMER_Enable(LPC_TIMER16_0);
+        Chip_TIMER_Enable(LPC_TIMER16_1);     
     #endif
    
     // Initialise clock event
@@ -911,6 +680,10 @@ void clock_control(void *p)
     
     // Set reset pin high 
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 1); 
+    
+    #if TESTING
+        clock_testing();
+    #endif
 
     // Trigger an update to all clocks on startup
     ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
@@ -1064,19 +837,132 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 
 }
 
+// Drive clock to specific position
+void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
+{
+    
+    if(arm == 'h')
+    {
+        if(motorData[clockNum].hour.remainingSteps != 0)
+        {
+            motorData[clockNum].hour.atPosition = 0;
+        }
+
+        if(!motorData[clockNum].hour.atPosition)
+        {
+            pulse_generation(clockNum, 'h');
+
+            --motorData[clockNum].hour.remainingSteps;
+    
+            (*steps)++;
+    
+            if(*steps == STEPSIZE)
+            {
+                motorData[clockNum].hour.angle++;
+        
+                if(motorData[clockNum].hour.angle == 360)
+                {
+                    motorData[clockNum].hour.angle = 0;
+                }
+                *steps = 0;
+            }
+
+            if(motorData[clockNum].hour.remainingSteps <= 0)
+            {
+                motorData[clockNum].hour.atPosition = 1;
+                motorData[clockNum].hour.start == 0;
+            }
+
+        }   
+    }
+    
+    if(arm == 'm')
+    {
+        if(motorData[clockNum].min.remainingSteps != 0)
+        {
+            motorData[clockNum].min.atPosition = 0;
+        }
+    
+        if(!motorData[clockNum].min.atPosition)
+        {
+            pulse_generation(clockNum, 'm');
+    
+            --motorData[clockNum].min.remainingSteps;
+        
+            (*steps)++;
+        
+            if(*steps == STEPSIZE)
+            {
+                motorData[clockNum].min.angle++;
+            
+                if(motorData[clockNum].min.angle == 360)
+                {
+                    motorData[clockNum].min.angle = 0;
+                }
+            
+                *steps = 0;
+            }
+    
+            if(motorData[clockNum].min.remainingSteps <= 0)
+            {
+                motorData[clockNum].min.atPosition = 1;
+                motorData[clockNum].min.start == 0;
+            }
+        }
+
+    }
+    
+}
+
+
 // Drive clock at constant speed
-void drive_clock(const uint8_t clockNum, const uint8_t speed, const Bool dir)
+void drive_continuous(const uint8_t clockNum, const uint8_t speed, const Bool dir)
 {
  
  
 }
 // Homing Procedure
-void home_clocks()
+void home_clocks(void)
 {
- 
-    
-    
-    
+        uint8_t hallBit = 1;
+        
+        //while(hallBit){
+            hallBit = Chip_GPIO_ReadPortBit(LPC_GPIO, motorData[2].min.hallPort, motorData[2].min.hallPin);
+
+        //while(motorData[2].hour
+            motorData[0].hour.speed = 3;
+            motorData[0].hour.angle = 400;
+            motorData[0].hour.start = 1;
+            
+            motorData[0].min.speed = 2;
+            motorData[0].min.angle = 400;
+            motorData[0].min.start = 1;
+            
+            motorData[1].hour.speed = 3;
+            motorData[1].hour.angle = 400;
+            motorData[1].hour.start = 1;
+            
+            motorData[1].min.speed = 2;
+            motorData[1].min.angle = 400;
+            motorData[1].min.start = 1;
+        
+            motorData[2].hour.speed = 3;
+            motorData[2].hour.angle = 400;
+            motorData[2].hour.start = 1;
+            
+            motorData[2].min.speed = 2;
+            motorData[2].min.angle = 400;
+            motorData[2].min.start = 1;
+            
+            motorData[3].hour.speed = 3;
+            motorData[3].hour.angle = 400;
+            motorData[3].hour.start = 1;
+            
+            motorData[3].min.speed = 2;
+            motorData[3].min.angle = 400;
+            motorData[3].min.start = 1;
+        //}
+        
 }
 
 // Receive updates from can bus and apply to motor setpoints

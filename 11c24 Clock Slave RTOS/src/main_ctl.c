@@ -29,7 +29,8 @@ int main(void)
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
     
-    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_IOCON);
+    Chip_GPIO_Init(LPC_GPIO);
+    
     //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
     //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);
     //Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 9);
@@ -64,7 +65,7 @@ int main(void)
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
     
     
-    // Teset 32bit timer 1
+    // Reset 32bit timer 1
     //char* TEST = 0x40018004;
     //*TEST = 0;
 
