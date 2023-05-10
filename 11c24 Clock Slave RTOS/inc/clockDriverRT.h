@@ -42,6 +42,8 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata);
 
 void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps);
 
+void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir);
+
 // Home clock position
 void home_clocks(void);
 

@@ -44,7 +44,7 @@ extern "C" {
  * @{
  */
 
-#if defined(CHIP_LPC11CXX) || defined(CHIP_LPC110X) || defined(CHIP_LPC11XXLV) || defined(CHIP_LPC1125)
+//#if defined(CHIP_LPC11CXX) || defined(CHIP_LPC110X) || defined(CHIP_LPC11XXLV) || defined(CHIP_LPC1125)
 
 /**
  * @brief  GPIO port register block structure
@@ -637,6 +637,6 @@ void Chip_GPIO_SetupPinInt(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pin, GPIO_IN
 
 #ifdef __cplusplus
 }
-#endif
+//#endif
 
 #endif /* __GPIO_11XX_2_H_ */

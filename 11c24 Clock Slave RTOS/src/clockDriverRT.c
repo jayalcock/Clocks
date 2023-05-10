@@ -6,21 +6,24 @@
 #include "timer_11xx.h"
 #include "clock_11xx.h"
 #include "ccan_rom.h"
+#include "gpio_11xx_2.h"
 
-
-#define TESTING 0
+// Test variables
+#define TESTING 1
 #define FIRSTCLOCK 0
 #define NUMBEROFCLOCKS 4
 #define NUMBEROFARMS 2
 #define STEPSIZE 12 // 1/12 degree per step
 #define PULSEWIDTH 3
-#define HIRESTIMER 0
+#define HIRESTIMER 1
 
+// Clock numbers
 #define CLOCK0          0
 #define CLOCK1          1
 #define CLOCK2          2
 #define CLOCK3          3
 
+// Clock specific trigger constants
 #define RUN_ALL_CLOCKS  1<<0
 #define RUN_CLOCK0_MIN  1<<1
 #define RUN_CLOCK0_HOUR 1<<2
@@ -31,6 +34,7 @@
 #define RUN_CLOCK3_MIN  1<<7
 #define RUN_CLOCK3_HOUR 1<<8
 
+// Clock control event trigger constsnts
 #define UPDATE_ALL_CLOCKS   1<<0
 #define UPDATE_CLOCK0_MIN   1<<1
 #define UPDATE_CLOCK0_HOUR  1<<2
@@ -41,12 +45,13 @@
 #define UPDATE_CLOCK3_MIN   1<<7
 #define UPDATE_CLOCK3_HOUR  1<<8
 #define CAN_UPDATE          1<<9
+#define HOME_CLOCKS         1<<10
 
 // Can message types
- #define POSITION       0x200 
- #define SPEED          0x201 
- #define ACCELERATION   0x202 
- #define STARTMOTION    0x203 
+#define POSITION       0x200 
+#define SPEED          0x201 
+#define ACCELERATION   0x202 
+#define STARTMOTION    0x203 
 
 // Initialise objects
 CTL_EVENT_SET_t clock0Event, clock1Event, clock2Event, clock3Event, clockControlEvent;
@@ -56,7 +61,10 @@ CCAN_MSG_OBJ_T can_RX_data;
 // File scope variables
 const uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
 uint32_t timerFreq;
-Bool commsActive = TRUE;
+uint8_t localControl = 0;
+
+uint8_t homingSpeed = 2;
+uint8_t homingDir = 0;
 
 motorStruct motorData[] =
 {
@@ -100,12 +108,13 @@ motorStruct motorData[] =
           
 };
 
+#if TESTING
 void clock_testing(void)
 {
-    commsActive = 0;
-    uint8_t clockNum = 2;
-    char* arm = "min";
-    uint16_t M1angle = 400;
+    //localControl = 1;
+    //uint8_t clockNum = 2;
+    //char* arm = "min";
+    //uint16_t M1angle = 400;
     
     home_clocks();
     
@@ -119,12 +128,13 @@ void clock_testing(void)
     
     //motorData[2].hour.start = 1;
 }
+#endif
       
 #if HIRESTIMER
 // Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
 void CT32B0_IRQHandler(void)
 {
-    // Clock 0 minute timer - match clear and match value reset
+    // Clock 0 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 0)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 0);
@@ -134,7 +144,7 @@ void CT32B0_IRQHandler(void)
             ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, 0);
 
     }
-    // Clock 1 minute timer - match clear and match value reset
+    // Clock 1 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 1)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 1);
@@ -144,7 +154,7 @@ void CT32B0_IRQHandler(void)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_MIN, 0);
 
     }
-    // Clock 2 minute timer - match clear and match value reset
+    // Clock 2 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 2)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 2);
@@ -154,7 +164,7 @@ void CT32B0_IRQHandler(void)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_MIN, 0);
 
     }
-    // Clock 3 minute timer - match clear and match value reset
+    // Clock 3 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, 3)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_0, 3);
@@ -170,7 +180,7 @@ void CT32B0_IRQHandler(void)
 // Interrupt handler for 32-bit timer 1 - Controlling hour arm speeds
 void CT32B1_IRQHandler(void)
 {
-    // Clock 0 hour timer - match clear and match value reset
+    // Clock 0 hour timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 0)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 0);
@@ -180,7 +190,7 @@ void CT32B1_IRQHandler(void)
             ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
 
     }
-    // Clock 1 hour timer - match clear and match value reset
+    // Clock 1 hour timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 1)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 1);
@@ -190,7 +200,7 @@ void CT32B1_IRQHandler(void)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
 
     }
-    // Clock 2 hour timer - match clear and match value reset
+    // Clock 2 hour timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 2)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 2);
@@ -200,7 +210,7 @@ void CT32B1_IRQHandler(void)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
 
     }
-    // Clock 3 hour timer - match clear and match value reset
+    // Clock 3 hour timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, 3)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER32_1, 3);
@@ -217,7 +227,7 @@ void CT32B1_IRQHandler(void)
 // Interrupt handler for 16-bit timer 1 - Controlling hour arm speeds
 void CT16B0_IRQHandler(void)
 {
-    // Clock 0 minute timer - match clear and match value reset
+    // Clock 0 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER16_0, CLOCK0)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK0);
@@ -227,7 +237,7 @@ void CT16B0_IRQHandler(void)
             ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, 0);
 
     }
-    // Clock 1 minute timer - match clear and match value reset
+    // Clock 1 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER16_0, CLOCK1)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK1);
@@ -237,7 +247,7 @@ void CT16B0_IRQHandler(void)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_MIN, 0);
 
     }
-    // Clock 2 minute timer - match clear and match value reset
+    // Clock 2 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER16_0, CLOCK2)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK2);
@@ -247,11 +257,11 @@ void CT16B0_IRQHandler(void)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_MIN, 0);
 
     }
-    // Clock 3 minute timer - match clear and match value reset
+    // Clock 3 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER16_0,CLOCK3)) 
     {
         Chip_TIMER_ClearMatch(LPC_TIMER16_0, CLOCK3);
-        Chip_TIMER_SetMatch(LPC_TIMER16_0, CLOCK3, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[3].min.speed]);
+        Chip_TIMER_SetMatch(LPC_TIMER16_0, CLOCK3, Chip_TIMER_ReadCount(LPC_TIMER16_0) + timerFreq/speed[motorData[CLOCK3].min.speed]);
         
         if(motorData[CLOCK3].min.start == 1)
             ctl_events_set_clear(&clock3Event, RUN_CLOCK3_MIN, 0);
@@ -263,41 +273,41 @@ void CT16B0_IRQHandler(void)
 // Interrupt handler for 16-bit timer 1 - Controlling hour arm speeds
 void CT16B1_IRQHandler(void)
 {
-    // Clock 0 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 0)) 
+    // Clock 0 hour timer - match interrupt clear and match value reset
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, CLOCK0)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 0);
-        Chip_TIMER_SetMatch(LPC_TIMER16_1, 0, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[0].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, CLOCK0);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, CLOCK0, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[CLOCK0].hour.speed]);
         
         if(motorData[CLOCK0].hour.start == 1)
             ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
 
     }
-    // Clock 1 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 1)) 
+    // Clock 1 hour timer - match interrupt clear and match value reset
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, CLOCK1)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 1);
-        Chip_TIMER_SetMatch(LPC_TIMER16_1, 1, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[1].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, CLOCK1);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, CLOCK1, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[CLOCK1].hour.speed]);
         
         if(motorData[CLOCK1].hour.start == 1)
             ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
 
     }
-    // Clock 2 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 2)) 
+    // Clock 2 hour timer - match interrupt clear and match value reset
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, CLOCK2)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 2);
-        Chip_TIMER_SetMatch(LPC_TIMER16_1, 2, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[2].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, CLOCK2);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, CLOCK2, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[CLOCK2].hour.speed]);
         
         if(motorData[CLOCK2].hour.start == 1)
             ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
 
     }
-    // Clock 3 hour timer - match clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, 3)) 
+    // Clock 3 hour timer - match interrupt clear and match value reset
+    if (Chip_TIMER_MatchPending(LPC_TIMER16_1, CLOCK3)) 
     {
-        Chip_TIMER_ClearMatch(LPC_TIMER16_1, 3);
-        Chip_TIMER_SetMatch(LPC_TIMER16_1, 3, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[3].hour.speed]);
+        Chip_TIMER_ClearMatch(LPC_TIMER16_1, CLOCK3);
+        Chip_TIMER_SetMatch(LPC_TIMER16_1, CLOCK3, Chip_TIMER_ReadCount(LPC_TIMER16_1) + timerFreq/speed[motorData[CLOCK3].hour.speed]);
         
         if(motorData[CLOCK3].hour.start == 1)
             ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
@@ -306,6 +316,38 @@ void CT16B1_IRQHandler(void)
   
 }   
 #endif
+
+// GPIO IRQ handler for handling hall effect triggers 
+void GPIO2_IRQHandler(void)
+{
+    uint16_t triggeredPins;
+    
+    // Determine which halls have been triggered
+    triggeredPins = Chip_GPIO_GetMaskedInts(LPC_GPIO, motorData[CLOCK0].min.hallPort); 
+    
+    if(triggeredPins && motorData[CLOCK0].min.hallPin)
+        motorData[CLOCK0].min.start = 0;
+    if(triggeredPins && motorData[CLOCK0].hour.hallPin)
+        motorData[CLOCK0].hour.start = 0;
+    //if(triggeredPins && motorData[CLOCK1].min.hallPin)
+    //    motorData[CLOCK1].min.start = 0;
+    //if(triggeredPins && motorData[CLOCK1].hour.hallPin)
+    //    motorData[CLOCK1].hour.start = 0;
+    //if(triggeredPins && motorData[CLOCK2].min.hallPin)
+    //    motorData[CLOCK2].min.start = 0;
+    //if(triggeredPins && motorData[CLOCK2].hour.hallPin)
+    //    motorData[CLOCK2].hour.start = 0;
+    //if(triggeredPins && motorData[CLOCK3].min.hallPin)
+    //    motorData[CLOCK3].min.start = 0;
+    //if(triggeredPins && motorData[CLOCK3].hour.hallPin)
+    //    motorData[CLOCK3].hour.start = 0;
+    
+    
+    // Clear interrupts 
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, triggeredPins);
+
+    
+}
 
 void pulse_generation(const uint8_t motorNum, const char arm)
 {
@@ -388,23 +430,51 @@ void clock0_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);   // Hall min
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK0].hour.hallPort, motorData[CLOCK0].hour.hallPin);   // Hall hour
     
+    // Set up interrupts
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, motorData[CLOCK0].hour.hallPin, GPIO_INT_FALLING_EDGE);
+
+    
+    //Chip_GPIO_SetPinModeEdge(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
+    //Chip_GPIO_SetPinModeEdge(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
+    
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
+    
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
+    
+
+
     while (1)
     {      
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clock0Event, RUN_ALL_CLOCKS|RUN_CLOCK0_HOUR|RUN_CLOCK0_MIN, CTL_TIMEOUT_NONE, 0);  
                 
         // Drive clock 0 hour arm until at desired position
-        if(clock0Event & RUN_CLOCK0_HOUR)
+        if(clock0Event & RUN_CLOCK0_HOUR|RUN_ALL_CLOCKS)
         {
-       
-            drive_to_pos(CLOCK0, 'h', &hSteps);
-            
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK0, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK0, 'h', &hSteps);
+            }
             ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_HOUR); // clear event when at position
         }
         
         // Drive clock 0 minute arm until at desired position
-        if(clock0Event & RUN_CLOCK0_MIN)
+        if(clock0Event & RUN_CLOCK0_MIN|RUN_ALL_CLOCKS)
         {
-            drive_to_pos(CLOCK0, 'm', &mSteps);           
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK0, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK0, 'm', &mSteps);
+            }           
             
             ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_MIN);  // clear event when at position
         }
@@ -437,6 +507,10 @@ void clock1_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK1].min.hallPort, motorData[CLOCK1].min.hallPin);   // Hall min
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK1].hour.hallPort, motorData[CLOCK1].hour.hallPin);   // Hall hour
     
+    // Set up interrupts
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].min.hallPort, motorData[CLOCK1].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].hour.hallPort, motorData[CLOCK1].hour.hallPin, GPIO_INT_FALLING_EDGE);
+    
     
     // Set up clock 1 timers
     #if HIRESTIMER
@@ -463,16 +537,29 @@ void clock1_func(void *p)
         // Drive clock 1 hour arm until at desired position
         if(clock1Event & RUN_CLOCK1_HOUR)
         {
-            drive_to_pos(CLOCK1, 'h', &hSteps);
-            
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK1, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK1, 'h', &hSteps);
+            }            
             ctl_events_set_clear(&clock1Event, 0, RUN_CLOCK1_HOUR); // clear event when at position
         }
         
         // Drive clock 1 minute arm until at desired position
         if(clock1Event & RUN_CLOCK1_MIN)
         {
-            drive_to_pos(CLOCK1, 'm', &mSteps); 
-            
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK1, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK1, 'm', &mSteps);
+            }           
+
             ctl_events_set_clear(&clock1Event, 0, RUN_CLOCK1_MIN);  // clear event when at position
         }
 
@@ -505,6 +592,10 @@ void clock2_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK2].min.hallPort, motorData[CLOCK2].min.hallPin);   // Hall min
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK2].hour.hallPort, motorData[CLOCK2].hour.hallPin);   // Hall hour
     
+    // Set up interrupts
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].min.hallPort, motorData[CLOCK2].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].hour.hallPort, motorData[CLOCK2].hour.hallPin, GPIO_INT_FALLING_EDGE);
+    
     // Set up clock 2 timers
     #if HIRESTIMER
     Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 2);
@@ -528,7 +619,14 @@ void clock2_func(void *p)
         // Drive clock 2 hour arm until at desired position
         if(clock2Event & RUN_CLOCK2_HOUR)
         {
-            drive_to_pos(CLOCK2, 'h', &hSteps);
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK2, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK2, 'h', &hSteps);
+            }            
 
             ctl_events_set_clear(&clock2Event, 0, RUN_CLOCK2_HOUR); // clear event when at position
         }
@@ -536,7 +634,14 @@ void clock2_func(void *p)
         // Drive clock 2 minute arm until at desired position
         if(clock2Event & RUN_CLOCK2_MIN)
         {
-            drive_to_pos(CLOCK2, 'm', &mSteps);        
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK2, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK2, 'm', &mSteps);
+            }           
             
             ctl_events_set_clear(&clock2Event, 0, RUN_CLOCK2_MIN);  // clear event when at position
         }
@@ -571,6 +676,10 @@ void clock3_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin);  // Hall min
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPort);  // Hall hour
     
+    // Set up interrupts
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPin, GPIO_INT_FALLING_EDGE);
+    
     // Set up clock 3 timers
     #if HIRESTIMER
     Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 3);
@@ -596,7 +705,14 @@ void clock3_func(void *p)
         // Drive clock 3 hour arm until at desired position
         if(clock3Event & RUN_CLOCK3_HOUR)
         {
-            drive_to_pos(CLOCK3, 'h', &hSteps);
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK3, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK3, 'h', &hSteps);
+            }     
 
             ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_HOUR); // clear event when at position
         }
@@ -604,7 +720,14 @@ void clock3_func(void *p)
         // Drive clock 3 minute arm until at desired position
         if(clock3Event & RUN_CLOCK3_MIN)
         {
-            drive_to_pos(CLOCK3, 'm', &mSteps);
+            if(clockControlEvent & HOME_CLOCKS)
+            {
+                drive_continuous(CLOCK3, homingSpeed, homingDir);
+            }
+            else
+            {
+                drive_to_pos(CLOCK3, 'm', &mSteps);
+            }      
                                    
             ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_MIN);  // clear event when at position
         }
@@ -636,7 +759,10 @@ void clock_control(void *p)
     
     timerFreq = Chip_Clock_GetSystemClockRate();
     
-    // Set up stepper driver GPIO
+    // Enable IRQs for GPIO port 2
+    NVIC_EnableIRQ(EINT2_IRQn);
+    
+    // Set up stepper driver GPIO - stepper reset control 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_1, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN)); // Pulldown per VID6606 datasheet 
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 1);  // Reset
      
@@ -681,12 +807,15 @@ void clock_control(void *p)
     // Set reset pin high 
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 1); 
     
+    
     #if TESTING
         clock_testing();
     #endif
-
+    
     // Trigger an update to all clocks on startup
-    ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
+    //ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
+    
+
     
     while(1)
     {
@@ -749,12 +878,13 @@ void clock_control(void *p)
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK3_HOUR);
         }
         
+        // Update position of all clocks
         if(clockControlEvent & UPDATE_ALL_CLOCKS)
         {
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_ALL_CLOCKS);
         }
         
-        
+        // Update with data received from CAN bus
         if(clockControlEvent & CAN_UPDATE)
         {
             /* Message types:
@@ -817,6 +947,23 @@ void clock_control(void *p)
         
             ctl_events_set_clear(&clockControlEvent, 0, CAN_UPDATE);
         }
+        
+        // Execute homing procedure
+        if(clockControlEvent & HOME_CLOCKS)
+        {
+            //ctl_events_set_clear(&clockControlEvent, RUN_ALL_CLOCKS, 0);
+            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_HOUR, 0);
+            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, 0);
+            ctl_events_set_clear(&clock1Event, RUN_CLOCK1_HOUR, 0);
+            ctl_events_set_clear(&clock1Event, RUN_CLOCK1_MIN, 0);
+            ctl_events_set_clear(&clock2Event, RUN_CLOCK2_HOUR, 0);
+            ctl_events_set_clear(&clock2Event, RUN_CLOCK2_MIN, 0);
+            ctl_events_set_clear(&clock3Event, RUN_CLOCK3_HOUR, 0);
+            ctl_events_set_clear(&clock3Event, RUN_CLOCK3_MIN, 0);
+
+            ctl_events_set_clear(&clockControlEvent, 0, HOME_CLOCKS);            
+        }
+            
         v++;
        
     }
@@ -829,7 +976,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 {
     can_RX_data = *CANdata;
     
-    if(commsActive)
+    if(!localControl)
     {
         ctl_events_set_clear(&clockControlEvent, CAN_UPDATE, 0);
     }
@@ -840,7 +987,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 // Drive clock to specific position
 void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 {
-    
+    // Move hour arm
     if(arm == 'h')
     {
         if(motorData[clockNum].hour.remainingSteps != 0)
@@ -850,12 +997,13 @@ void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 
         if(!motorData[clockNum].hour.atPosition)
         {
-            pulse_generation(clockNum, 'h');
+            pulse_generation(clockNum, 'h'); // Generate stepper pulse
 
             --motorData[clockNum].hour.remainingSteps;
     
             (*steps)++;
-    
+            
+            // Update angle actual calculation
             if(*steps == STEPSIZE)
             {
                 motorData[clockNum].hour.angle++;
@@ -867,6 +1015,7 @@ void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
                 *steps = 0;
             }
 
+            // At desired position 
             if(motorData[clockNum].hour.remainingSteps <= 0)
             {
                 motorData[clockNum].hour.atPosition = 1;
@@ -891,6 +1040,7 @@ void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
         
             (*steps)++;
         
+            // Update angle actual calculation
             if(*steps == STEPSIZE)
             {
                 motorData[clockNum].min.angle++;
@@ -916,55 +1066,71 @@ void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 
 
 // Drive clock at constant speed
-void drive_continuous(const uint8_t clockNum, const uint8_t speed, const Bool dir)
+void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir)
 {
- 
+     
+    pulse_generation(clockNum, 'm'); // Generate stepper pulse
+    pulse_generation(clockNum, 'h'); // Generate stepper pulse
+    
+    motorData[clockNum].min.speed = speed;
+    motorData[clockNum].hour.speed = speed;
+    
+    motorData[clockNum].min.dir = dir;
+    motorData[clockNum].hour.dir = dir;
+    
+    motorData[clockNum].min.angle++;
+    if(motorData[clockNum].min.angle == 360)
+    {
+        motorData[clockNum].min.angle = 0;
+    }
+    
+    motorData[clockNum].hour.angle++;
+    if(motorData[clockNum].hour.angle == 360)
+    {
+        motorData[clockNum].hour.angle = 0;
+    }
  
 }
+
 // Homing Procedure
 void home_clocks(void)
 {
-        uint8_t hallBit = 1;
-        
-        //while(hallBit){
-            hallBit = Chip_GPIO_ReadPortBit(LPC_GPIO, motorData[2].min.hallPort, motorData[2].min.hallPin);
+    uint8_t hallBit = 1;
+    uint8_t speed = 2;
+    uint8_t direction = 1; 
+    
+    localControl = 1; 
+    
+    // Drive clocks CW until hall is hit
+    //drive_continuous(CLOCK0, speed, direction);
+    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
+    motorData[0].min.start = 1;
+    motorData[1].min.start = 1;
+    motorData[2].min.start = 1;
+    motorData[3].min.start = 1;
+    motorData[0].hour.start = 1;
+    motorData[1].hour.start = 1;
+    motorData[2].hour.start = 1;
+    motorData[3].hour.start = 1;
 
-        //while(motorData[2].hour
-            motorData[0].hour.speed = 3;
-            motorData[0].hour.angle = 400;
-            motorData[0].hour.start = 1;
-            
-            motorData[0].min.speed = 2;
-            motorData[0].min.angle = 400;
-            motorData[0].min.start = 1;
-            
-            motorData[1].hour.speed = 3;
-            motorData[1].hour.angle = 400;
-            motorData[1].hour.start = 1;
-            
-            motorData[1].min.speed = 2;
-            motorData[1].min.angle = 400;
-            motorData[1].min.start = 1;
-        
-            motorData[2].hour.speed = 3;
-            motorData[2].hour.angle = 400;
-            motorData[2].hour.start = 1;
-            
-            motorData[2].min.speed = 2;
-            motorData[2].min.angle = 400;
-            motorData[2].min.start = 1;
-            
-            motorData[3].hour.speed = 3;
-            motorData[3].hour.angle = 400;
-            motorData[3].hour.start = 1;
-            
-            motorData[3].min.speed = 2;
-            motorData[3].min.angle = 400;
-            motorData[3].min.start = 1;
-        //}
-        
+    // Save position/angle
+    
+    // Drive past hall
+    
+    
+    
+    // Drive CCW until hall is hit
+    
+    // Save position/angle
+    
+    
+    // Calculate home position
+    
+    
+    // Drive to home
+    
 }
-
+    
 // Receive updates from can bus and apply to motor setpoints
 //void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 //{
