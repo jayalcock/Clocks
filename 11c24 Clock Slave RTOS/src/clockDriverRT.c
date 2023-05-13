@@ -65,6 +65,7 @@ uint8_t localControl = 0;
 
 uint8_t homingSpeed = 2;
 uint8_t homingDir = 0;
+uint8_t homingBit = 0;
 
 motorStruct motorData[] =
 {
@@ -326,9 +327,18 @@ void GPIO2_IRQHandler(void)
     triggeredPins = Chip_GPIO_GetMaskedInts(LPC_GPIO, motorData[CLOCK0].min.hallPort); 
     
     if(triggeredPins && motorData[CLOCK0].min.hallPin)
+<<<<<<< HEAD
         motorData[CLOCK0].min.start = 0;
     //if(triggeredPins && motorData[CLOCK0].hour.hallPin)
     //    motorData[CLOCK0].hour.start = 0;
+=======
+    {
+        //motorData[CLOCK0].min.start = 0;
+        homingBit = 1;
+    }
+    //if(triggeredPins && motorData[CLOCK0].hour.hallPin)
+        //motorData[CLOCK0].hour.start = 0;
+>>>>>>> origin/dev
     //if(triggeredPins && motorData[CLOCK1].min.hallPin)
     //    motorData[CLOCK1].min.start = 0;
     //if(triggeredPins && motorData[CLOCK1].hour.hallPin)
