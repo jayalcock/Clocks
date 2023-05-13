@@ -327,8 +327,8 @@ void GPIO2_IRQHandler(void)
     
     if(triggeredPins && motorData[CLOCK0].min.hallPin)
         motorData[CLOCK0].min.start = 0;
-    if(triggeredPins && motorData[CLOCK0].hour.hallPin)
-        motorData[CLOCK0].hour.start = 0;
+    //if(triggeredPins && motorData[CLOCK0].hour.hallPin)
+    //    motorData[CLOCK0].hour.start = 0;
     //if(triggeredPins && motorData[CLOCK1].min.hallPin)
     //    motorData[CLOCK1].min.start = 0;
     //if(triggeredPins && motorData[CLOCK1].hour.hallPin)
@@ -431,18 +431,21 @@ void clock0_func(void *p)
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK0].hour.hallPort, motorData[CLOCK0].hour.hallPin);   // Hall hour
     
     // Set up interrupts
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, motorData[CLOCK0].hour.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin, GPIO_INT_RISING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, motorData[CLOCK0].hour.hallPin, GPIO_INT_RISING_EDGE);
 
     
     //Chip_GPIO_SetPinModeEdge(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
     //Chip_GPIO_SetPinModeEdge(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
     
-    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
-    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
+    //Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
+    //Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
     
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 0x48A);
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 0x944);
+    
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
     
 
 
@@ -455,6 +458,7 @@ void clock0_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
+                //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
                 drive_continuous(CLOCK0, homingSpeed, homingDir);
             }
             else
@@ -1102,7 +1106,9 @@ void home_clocks(void)
     localControl = 1; 
     
     // Drive clocks CW until hall is hit
-    //drive_continuous(CLOCK0, speed, direction);
+
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
+    //Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin); 
     ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
     motorData[0].min.start = 1;
     motorData[1].min.start = 1;
