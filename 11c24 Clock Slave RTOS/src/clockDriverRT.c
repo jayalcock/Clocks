@@ -67,6 +67,7 @@ uint8_t homingSpeed = 2;
 uint8_t homingDir = 0;
 uint8_t homingBit = 0;
 
+// Population of motor data structs with initial values
 motorStruct motorData[] =
 {
     {0, //clock num
@@ -109,6 +110,10 @@ motorStruct motorData[] =
           
 };
 
+/*
+ Testing function 
+
+ */
 #if TESTING
 void clock_testing(void)
 {
@@ -131,6 +136,13 @@ void clock_testing(void)
 }
 #endif
       
+/* 
+  32-bit timer 0 interrupt handler
+
+  Iterrupt routine is called if any of the 4 timer matches are met.
+  Each match represents one clock arm. 
+  Match value is set by the desired speed for the particular arm + timer current value. 
+*/
 #if HIRESTIMER
 // Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
 void CT32B0_IRQHandler(void)
@@ -393,7 +405,7 @@ static void pulse_generation(const uint8_t motorNum, const char arm)
     
 }
 
-// Clock 0 control function 
+// Clock 0 control function
 void clock0_func(void *p)
 {  
     unsigned int v=0;
