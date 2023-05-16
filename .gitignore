@@ -3,6 +3,8 @@ Clocks 1768/Clocks*
 11c24 Clock Slave/11c2*
 1768 Clock Master/1768*
 11c24 Clock Slave RTOS/11c24*
+11c24 Clock Slave RTOS/11C24 Clock Slave RTOS THUMB Flash Debug/
+Clocks Project.hzs
 *Kalman
 *Documentation
 *Mech*

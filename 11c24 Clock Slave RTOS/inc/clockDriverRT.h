@@ -27,6 +27,7 @@ typedef struct
     
 } motorStruct;
 
+// Generates pulses to drive steppers
 void pulse_generation(const uint8_t motorNum, const char arm);
 void clock0_func(void *p);
 void clock1_func(void *p);

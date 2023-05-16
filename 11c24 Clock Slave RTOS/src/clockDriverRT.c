@@ -353,6 +353,7 @@ void GPIO2_IRQHandler(void)
     
 }
 
+// Generates pulses to drive steppers
 void pulse_generation(const uint8_t motorNum, const char arm)
 {
     // Set direction - minute arms
@@ -757,6 +758,7 @@ uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
     }
 }
 
+// Main clock control thread
 void clock_control(void *p)
 {
     unsigned int v = 0;
