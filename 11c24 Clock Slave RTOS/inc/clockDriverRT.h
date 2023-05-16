@@ -1,6 +1,8 @@
 #ifndef _CLOCKDRIVERRT_H_
 #define _CLOCKDRIVERRT_H_
 
+
+// Structs
 struct clockArmData
 {
     uint8_t port;
@@ -27,25 +29,25 @@ typedef struct
     
 } motorStruct;
 
-// Generates pulses to drive steppers
-void pulse_generation(const uint8_t motorNum, const char arm);
+// Public functions
 void clock0_func(void *p);
 void clock1_func(void *p);
 void clock2_func(void *p);
 void clock3_func(void *p);
-
-// Calculate how many steps to get to desired angle
-uint16_t calculate_steps(uint16_t newAngle , uint16_t angle);
-
 void clock_control(void *p);
-
 void update_from_CAN(CCAN_MSG_OBJ_T *CANdata);
 
-void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps);
+// Private functions
 
-void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir);
-
+// Generates pulses to drive steppers
+static void pulse_generation(const uint8_t motorNum, const char arm);
+// Calculate how many steps to get to desired angle
+static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle);
+// Drive clock to specific angle
+static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps);
+// Drive clock at certain speed continuously 
+static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir);
 // Home clock position
-void home_clocks(void);
+static void home_clocks(void);
 
 #endif /* _CLOCKDRIVERRT_H_ */

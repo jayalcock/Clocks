@@ -354,7 +354,7 @@ void GPIO2_IRQHandler(void)
 }
 
 // Generates pulses to drive steppers
-void pulse_generation(const uint8_t motorNum, const char arm)
+static void pulse_generation(const uint8_t motorNum, const char arm)
 {
     // Set direction - minute arms
     if(motorData[motorNum].min.dir == 0)
@@ -742,7 +742,7 @@ void clock3_func(void *p)
 }
 
 // Calculate how many steps to get to desired angle
-uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
+static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
 {
     if((newAngle - angle) < 0)
     {
@@ -991,7 +991,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 }
 
 // Drive clock to specific position
-void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
+static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 {
     // Move hour arm
     if(arm == 'h')
@@ -1072,7 +1072,7 @@ void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 
 
 // Drive clock at constant speed
-void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir)
+static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir)
 {
      
     pulse_generation(clockNum, 'm'); // Generate stepper pulse
@@ -1099,7 +1099,7 @@ void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t
 }
 
 // Homing Procedure
-void home_clocks(void)
+static void home_clocks(void)
 {
     uint8_t hallBit = 1;
     uint8_t speed = 2;
