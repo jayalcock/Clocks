@@ -8,6 +8,10 @@
 #include "ccan_rom.h"
 #include "gpio_11xx_2.h"
 
+
+/*****************************************************************************
+ * Private types/enumerations/variables
+ ****************************************************************************/
 // Test variables
 #define TESTING 1
 #define FIRSTCLOCK 0
@@ -57,7 +61,6 @@
 CTL_EVENT_SET_t clock0Event, clock1Event, clock2Event, clock3Event, clockControlEvent;
 CCAN_MSG_OBJ_T can_RX_data;
 
-
 // File scope variables
 const uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
 uint32_t timerFreq;
@@ -66,6 +69,11 @@ uint8_t localControl = 0;
 uint8_t homingSpeed = 2;
 uint8_t homingDir = 0;
 uint8_t homingBit = 0;
+
+
+/*****************************************************************************
+ * Public types/enumerations/variables
+ ****************************************************************************/
 
 // Population of motor data structs with initial values
 motorStruct motorData[] =
@@ -110,6 +118,9 @@ motorStruct motorData[] =
           
 };
 
+/*****************************************************************************
+ * Private functions
+ ****************************************************************************/
 /*
  Testing function 
 
@@ -137,7 +148,7 @@ void clock_testing(void)
 #endif
       
 /* 
-  32-bit timer 0 interrupt handler
+  32-bit timer 0 interrupt handler - minute arm speed control 
 
   Iterrupt routine is called if any of the 4 timer matches are met.
   Each match represents one clock arm. 
@@ -190,7 +201,13 @@ void CT32B0_IRQHandler(void)
   
 } 
 
-// Interrupt handler for 32-bit timer 1 - Controlling hour arm speeds
+/* 
+  32-bit timer 1 interrupt handler - hour arm speed control 
+
+  Iterrupt routine is called if any of the 4 timer matches are met.
+  Each match represents one clock arm. 
+  Match value is set by the desired speed for the particular arm + timer current value. 
+*/
 void CT32B1_IRQHandler(void)
 {
     // Clock 0 hour timer - match interrupt clear and match value reset
@@ -236,8 +253,15 @@ void CT32B1_IRQHandler(void)
   
 }  
 
+
 #else 
-// Interrupt handler for 16-bit timer 1 - Controlling hour arm speeds
+/* 
+  16-bit timer 0 interrupt handler - Minute arm speed control - Backup in case of any 32-bit timer issues
+
+  Iterrupt routine is called if any of the 4 timer matches are met.
+  Each match represents one clock arm. 
+  Match value is set by the desired speed for the particular arm + timer current value. 
+*/
 void CT16B0_IRQHandler(void)
 {
     // Clock 0 minute timer - match interrupt clear and match value reset
@@ -283,7 +307,13 @@ void CT16B0_IRQHandler(void)
   
 }  
 
-// Interrupt handler for 16-bit timer 1 - Controlling hour arm speeds
+/* 
+  16-bit timer 0 interrupt handler - Hour arm speed control - Backup in case of any 32-bit timer issues
+
+  Iterrupt routine is called if any of the 4 timer matches are met.
+  Each match represents one clock arm. 
+  Match value is set by the desired speed for the particular arm + timer current value. 
+*/
 void CT16B1_IRQHandler(void)
 {
     // Clock 0 hour timer - match interrupt clear and match value reset
@@ -330,7 +360,10 @@ void CT16B1_IRQHandler(void)
 }   
 #endif
 
-// GPIO IRQ handler for handling hall effect triggers 
+/*
+    GPIO IRQ handler for handling hall effect triggers. 
+
+*/
 void GPIO2_IRQHandler(void)
 {
     uint16_t triggeredPins;
@@ -365,7 +398,17 @@ void GPIO2_IRQHandler(void)
     
 }
 
-// Generates pulses to drive steppers
+/*
+    Pulse generation function that flips output bit to drive steppers, for motion and direction. 
+    
+    Parameters:
+    motorNum - motor number to move
+    arm - hour or minute arm to move
+
+    Return:
+    None
+
+*/
 static void pulse_generation(const uint8_t motorNum, const char arm)
 {
     // Set direction - minute arms
@@ -404,6 +447,186 @@ static void pulse_generation(const uint8_t motorNum, const char arm)
     
     
 }
+
+/* 
+
+    Calculate how many steps to get to desired angle
+    
+    Parameters:
+    newAngle - desired arm angle
+    angle - current arm angle
+
+    Returns:
+    Number of steps to desired angle
+    
+
+*/
+static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
+{
+    if((newAngle - angle) < 0)
+    {
+        return (newAngle - angle + 360) * STEPSIZE;  
+    }
+    else if ((newAngle - angle) >= 360)
+    {
+        return (newAngle - angle - 360) * STEPSIZE;
+    }
+    else
+    {    
+        return (newAngle - angle) * STEPSIZE;   
+    }
+}
+
+// Drive clock to specific position
+static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
+{
+    // Move hour arm
+    if(arm == 'h')
+    {
+        if(motorData[clockNum].hour.remainingSteps != 0)
+        {
+            motorData[clockNum].hour.atPosition = 0;
+        }
+
+        if(!motorData[clockNum].hour.atPosition)
+        {
+            pulse_generation(clockNum, 'h'); // Generate stepper pulse
+
+            --motorData[clockNum].hour.remainingSteps;
+    
+            (*steps)++;
+            
+            // Update angle actual calculation
+            if(*steps == STEPSIZE)
+            {
+                motorData[clockNum].hour.angle++;
+        
+                if(motorData[clockNum].hour.angle == 360)
+                {
+                    motorData[clockNum].hour.angle = 0;
+                }
+                *steps = 0;
+            }
+
+            // At desired position 
+            if(motorData[clockNum].hour.remainingSteps <= 0)
+            {
+                motorData[clockNum].hour.atPosition = 1;
+                motorData[clockNum].hour.start == 0;
+            }
+
+        }   
+    }
+    
+    if(arm == 'm')
+    {
+        if(motorData[clockNum].min.remainingSteps != 0)
+        {
+            motorData[clockNum].min.atPosition = 0;
+        }
+    
+        if(!motorData[clockNum].min.atPosition)
+        {
+            pulse_generation(clockNum, 'm');
+    
+            --motorData[clockNum].min.remainingSteps;
+        
+            (*steps)++;
+        
+            // Update angle actual calculation
+            if(*steps == STEPSIZE)
+            {
+                motorData[clockNum].min.angle++;
+            
+                if(motorData[clockNum].min.angle == 360)
+                {
+                    motorData[clockNum].min.angle = 0;
+                }
+            
+                *steps = 0;
+            }
+    
+            if(motorData[clockNum].min.remainingSteps <= 0)
+            {
+                motorData[clockNum].min.atPosition = 1;
+                motorData[clockNum].min.start == 0;
+            }
+        }
+
+    }
+    
+}
+
+
+// Drive clock at constant speed
+static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir)
+{
+     
+    pulse_generation(clockNum, 'm'); // Generate stepper pulse
+    pulse_generation(clockNum, 'h'); // Generate stepper pulse
+    
+    motorData[clockNum].min.speed = speed;
+    motorData[clockNum].hour.speed = speed;
+    
+    motorData[clockNum].min.dir = dir;
+    motorData[clockNum].hour.dir = dir;
+    
+    motorData[clockNum].min.angle++;
+    if(motorData[clockNum].min.angle == 360)
+    {
+        motorData[clockNum].min.angle = 0;
+    }
+    
+    motorData[clockNum].hour.angle++;
+    if(motorData[clockNum].hour.angle == 360)
+    {
+        motorData[clockNum].hour.angle = 0;
+    }
+ 
+}
+
+// Homing Procedure
+static void home_clocks(void)
+{
+    uint8_t hallBit = 1;
+    uint8_t speed = 2;
+    uint8_t direction = 1; 
+    
+    localControl = 1; 
+    
+    // Drive clocks CW until hall is hit
+    //drive_continuous(CLOCK0, speed, direction);
+    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
+    motorData[0].min.start = 1;
+    motorData[1].min.start = 1;
+    motorData[2].min.start = 1;
+    motorData[3].min.start = 1;
+    motorData[0].hour.start = 1;
+    motorData[1].hour.start = 1;
+    motorData[2].hour.start = 1;
+    motorData[3].hour.start = 1;
+
+    // Save position/angle
+    
+    // Drive past hall
+    
+    
+    
+    // Drive CCW until hall is hit
+    
+    // Save position/angle
+    
+    
+    // Calculate home position
+    
+    
+    // Drive to home
+    
+}
+
+/*****************************************************************************
+ * Public functions
+ ****************************************************************************/
 
 // Clock 0 control function
 void clock0_func(void *p)
@@ -753,22 +976,7 @@ void clock3_func(void *p)
     }  
 }
 
-// Calculate how many steps to get to desired angle
-static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
-{
-    if((newAngle - angle) < 0)
-    {
-        return (newAngle - angle + 360) * STEPSIZE;  
-    }
-    else if ((newAngle - angle) >= 360)
-    {
-        return (newAngle - angle - 360) * STEPSIZE;
-    }
-    else
-    {    
-        return (newAngle - angle) * STEPSIZE;   
-    }
-}
+
 
 // Main clock control thread
 void clock_control(void *p)
@@ -1002,152 +1210,8 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 
 }
 
-// Drive clock to specific position
-static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
-{
-    // Move hour arm
-    if(arm == 'h')
-    {
-        if(motorData[clockNum].hour.remainingSteps != 0)
-        {
-            motorData[clockNum].hour.atPosition = 0;
-        }
-
-        if(!motorData[clockNum].hour.atPosition)
-        {
-            pulse_generation(clockNum, 'h'); // Generate stepper pulse
-
-            --motorData[clockNum].hour.remainingSteps;
-    
-            (*steps)++;
-            
-            // Update angle actual calculation
-            if(*steps == STEPSIZE)
-            {
-                motorData[clockNum].hour.angle++;
-        
-                if(motorData[clockNum].hour.angle == 360)
-                {
-                    motorData[clockNum].hour.angle = 0;
-                }
-                *steps = 0;
-            }
-
-            // At desired position 
-            if(motorData[clockNum].hour.remainingSteps <= 0)
-            {
-                motorData[clockNum].hour.atPosition = 1;
-                motorData[clockNum].hour.start == 0;
-            }
-
-        }   
-    }
-    
-    if(arm == 'm')
-    {
-        if(motorData[clockNum].min.remainingSteps != 0)
-        {
-            motorData[clockNum].min.atPosition = 0;
-        }
-    
-        if(!motorData[clockNum].min.atPosition)
-        {
-            pulse_generation(clockNum, 'm');
-    
-            --motorData[clockNum].min.remainingSteps;
-        
-            (*steps)++;
-        
-            // Update angle actual calculation
-            if(*steps == STEPSIZE)
-            {
-                motorData[clockNum].min.angle++;
-            
-                if(motorData[clockNum].min.angle == 360)
-                {
-                    motorData[clockNum].min.angle = 0;
-                }
-            
-                *steps = 0;
-            }
-    
-            if(motorData[clockNum].min.remainingSteps <= 0)
-            {
-                motorData[clockNum].min.atPosition = 1;
-                motorData[clockNum].min.start == 0;
-            }
-        }
-
-    }
-    
-}
 
 
-// Drive clock at constant speed
-static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir)
-{
-     
-    pulse_generation(clockNum, 'm'); // Generate stepper pulse
-    pulse_generation(clockNum, 'h'); // Generate stepper pulse
-    
-    motorData[clockNum].min.speed = speed;
-    motorData[clockNum].hour.speed = speed;
-    
-    motorData[clockNum].min.dir = dir;
-    motorData[clockNum].hour.dir = dir;
-    
-    motorData[clockNum].min.angle++;
-    if(motorData[clockNum].min.angle == 360)
-    {
-        motorData[clockNum].min.angle = 0;
-    }
-    
-    motorData[clockNum].hour.angle++;
-    if(motorData[clockNum].hour.angle == 360)
-    {
-        motorData[clockNum].hour.angle = 0;
-    }
- 
-}
-
-// Homing Procedure
-static void home_clocks(void)
-{
-    uint8_t hallBit = 1;
-    uint8_t speed = 2;
-    uint8_t direction = 1; 
-    
-    localControl = 1; 
-    
-    // Drive clocks CW until hall is hit
-    //drive_continuous(CLOCK0, speed, direction);
-    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
-    motorData[0].min.start = 1;
-    motorData[1].min.start = 1;
-    motorData[2].min.start = 1;
-    motorData[3].min.start = 1;
-    motorData[0].hour.start = 1;
-    motorData[1].hour.start = 1;
-    motorData[2].hour.start = 1;
-    motorData[3].hour.start = 1;
-
-    // Save position/angle
-    
-    // Drive past hall
-    
-    
-    
-    // Drive CCW until hall is hit
-    
-    // Save position/angle
-    
-    
-    // Calculate home position
-    
-    
-    // Drive to home
-    
-}
     
 // Receive updates from can bus and apply to motor setpoints
 //void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
