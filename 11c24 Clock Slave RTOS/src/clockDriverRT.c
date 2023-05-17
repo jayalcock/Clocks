@@ -147,12 +147,15 @@ void clock_testing(void)
 }
 #endif
       
-/* 
-  32-bit timer 0 interrupt handler - minute arm speed control 
 
-  Iterrupt routine is called if any of the 4 timer matches are met.
-  Each match represents one clock arm. 
-  Match value is set by the desired speed for the particular arm + timer current value. 
+/* 
+  @brief    32-bit timer 0 interrupt handler - minutre arm speed control 
+  
+  @return   Nothing
+
+  @note     Iterrupt routine is called if any of the 4 timer matches are met.
+            Each match represents one clock arm. 
+            Match value is set by the desired speed for the particular arm + timer current value. 
 */
 #if HIRESTIMER
 // Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
@@ -201,12 +204,15 @@ void CT32B0_IRQHandler(void)
   
 } 
 
-/* 
-  32-bit timer 1 interrupt handler - hour arm speed control 
 
-  Iterrupt routine is called if any of the 4 timer matches are met.
-  Each match represents one clock arm. 
-  Match value is set by the desired speed for the particular arm + timer current value. 
+/* 
+  @brief    32-bit timer 1 interrupt handler - hour arm speed control 
+  
+  @return   Nothing
+
+  @note     Iterrupt routine is called if any of the 4 timer matches are met.
+            Each match represents one clock arm. 
+            Match value is set by the desired speed for the particular arm + timer current value. 
 */
 void CT32B1_IRQHandler(void)
 {
@@ -361,7 +367,9 @@ void CT16B1_IRQHandler(void)
 #endif
 
 /*
-    GPIO IRQ handler for handling hall effect triggers. 
+    @brief    GPIO IRQ handler for handling hall effect triggers. 
+    
+    @return   Nothing
 
 */
 void GPIO2_IRQHandler(void)
@@ -399,14 +407,12 @@ void GPIO2_IRQHandler(void)
 }
 
 /*
-    Pulse generation function that flips output bit to drive steppers, for motion and direction. 
+    @brief    Pulse generation function that flips output bit to drive steppers, for motion and direction. 
     
-    Parameters:
-    motorNum - motor number to move
-    arm - hour or minute arm to move
+    @param    motorNum - motor number to move
+              arm - hour or minute arm to move
 
-    Return:
-    None
+    @return   Nothing
 
 */
 static void pulse_generation(const uint8_t motorNum, const char arm)
@@ -450,15 +456,12 @@ static void pulse_generation(const uint8_t motorNum, const char arm)
 
 /* 
 
-    Calculate how many steps to get to desired angle
+    @brief    Calculate how many steps to get to desired angle
     
-    Parameters:
-    newAngle - desired arm angle
-    angle - current arm angle
+    @param    newAngle - desired arm angle
+              angle - current arm angle
 
-    Returns:
-    Number of steps to desired angle
-    
+    @return   Number of steps to desired angle
 
 */
 static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
@@ -477,7 +480,17 @@ static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
     }
 }
 
-// Drive clock to specific position
+/*
+
+    @brief    Drive clock to specific position
+
+    @param    clockNum: clock number to drive
+    @param    arm:  arm to drive
+    @param    steps:  how many steps to drive
+
+    @return
+
+*/
 static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 {
     // Move hour arm
