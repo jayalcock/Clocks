@@ -40,8 +40,6 @@ typedef struct
 } motorStruct;
 
 
-// Public functions
-
 // Clock n control threads
 void clock0_func(void *p);
 void clock1_func(void *p);

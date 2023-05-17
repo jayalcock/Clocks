@@ -450,12 +450,12 @@ void GPIO2_IRQHandler(void)
 }
 
 /*
-    @brief    Pulse generation function that flips output bit to drive steppers, for motion and direction. 
+    @brief      Pulse generation function that flips output bit to drive steppers, for motion and direction. 
     
-    @param    motorNum - motor number to move
-              arm - hour or minute arm to move
+    @param      motorNum: motor number to move
+    @param      arm: hour or minute arm to move
 
-    @return   Nothing
+    @return     Nothing
 
 */
 static void pulse_generation(const uint8_t motorNum, const char arm)
@@ -499,12 +499,12 @@ static void pulse_generation(const uint8_t motorNum, const char arm)
 
 /* 
 
-    @brief    Calculate how many steps to get to desired angle
+    @brief      Calculate how many steps to get to desired angle
     
-    @param    newAngle - desired arm angle
-              angle - current arm angle
+    @param      newAngle - desired arm angle
+                angle - current arm angle
 
-    @return   Number of steps to desired angle
+    @return     Number of steps to desired angle
 
 */
 static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
@@ -524,15 +524,13 @@ static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
 }
 
 /*
+    @brief      Drive clock to specific position
 
-    @brief    Drive clock to specific position
+    @param      clockNum: clock number to drive
+    @param      arm:  arm to drive
+    @param      steps:  how many steps to drive
 
-    @param    clockNum: clock number to drive
-    @param    arm:  arm to drive
-    @param    steps:  how many steps to drive
-
-    @return
-
+    @return     Nothing
 */
 static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 {
@@ -613,8 +611,15 @@ static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
     
 }
 
+/*
+    @brief      Drive clock at specific speed
 
-// Drive clock at constant speed
+    @param      clockNum: clock number to drive
+    @param      speed:  rotation speed
+    @param      dir:  rotation direction
+
+    @return     Nothing
+*/
 static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir)
 {
      
