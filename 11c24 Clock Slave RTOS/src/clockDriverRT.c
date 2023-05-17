@@ -121,7 +121,48 @@ motorStruct motorData[] =
 /*****************************************************************************
  * Private functions
  ****************************************************************************/
-/*
+ // Homing Procedure
+void home_clocks(void)
+{
+    uint8_t hallBit = 1;
+    uint8_t speed = 2;
+    uint8_t direction = 1; 
+    
+    localControl = 1; 
+    
+    // Drive clocks CW until hall is hit
+
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
+    //Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin); 
+    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
+    motorData[0].min.start = 1;
+    motorData[1].min.start = 1;
+    motorData[2].min.start = 1;
+    motorData[3].min.start = 1;
+    motorData[0].hour.start = 1;
+    motorData[1].hour.start = 1;
+    motorData[2].hour.start = 1;
+    motorData[3].hour.start = 1;
+
+    // Save position/angle
+    
+    // Drive past hall
+    
+    
+    
+    // Drive CCW until hall is hit
+    
+    // Save position/angle
+    
+    
+    // Calculate home position
+    
+    
+    // Drive to home
+    
+}
+ 
+ /*
  Testing function 
 
  */
@@ -600,44 +641,6 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const 
  
 }
 
-// Homing Procedure
-static void home_clocks(void)
-{
-    uint8_t hallBit = 1;
-    uint8_t speed = 2;
-    uint8_t direction = 1; 
-    
-    localControl = 1; 
-    
-    // Drive clocks CW until hall is hit
-    //drive_continuous(CLOCK0, speed, direction);
-    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
-    motorData[0].min.start = 1;
-    motorData[1].min.start = 1;
-    motorData[2].min.start = 1;
-    motorData[3].min.start = 1;
-    motorData[0].hour.start = 1;
-    motorData[1].hour.start = 1;
-    motorData[2].hour.start = 1;
-    motorData[3].hour.start = 1;
-
-    // Save position/angle
-    
-    // Drive past hall
-    
-    
-    
-    // Drive CCW until hall is hit
-    
-    // Save position/angle
-    
-    
-    // Calculate home position
-    
-    
-    // Drive to home
-    
-}
 
 /*****************************************************************************
  * Public functions
@@ -1231,76 +1234,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 
 
 
-<<<<<<< HEAD
-// Drive clock at constant speed
-void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir)
-{
-     
-    pulse_generation(clockNum, 'm'); // Generate stepper pulse
-    pulse_generation(clockNum, 'h'); // Generate stepper pulse
-    
-    motorData[clockNum].min.speed = speed;
-    motorData[clockNum].hour.speed = speed;
-    
-    motorData[clockNum].min.dir = dir;
-    motorData[clockNum].hour.dir = dir;
-    
-    motorData[clockNum].min.angle++;
-    if(motorData[clockNum].min.angle == 360)
-    {
-        motorData[clockNum].min.angle = 0;
-    }
-    
-    motorData[clockNum].hour.angle++;
-    if(motorData[clockNum].hour.angle == 360)
-    {
-        motorData[clockNum].hour.angle = 0;
-    }
- 
-}
 
-// Homing Procedure
-void home_clocks(void)
-{
-    uint8_t hallBit = 1;
-    uint8_t speed = 2;
-    uint8_t direction = 1; 
-    
-    localControl = 1; 
-    
-    // Drive clocks CW until hall is hit
-
-    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
-    //Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin); 
-    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
-    motorData[0].min.start = 1;
-    motorData[1].min.start = 1;
-    motorData[2].min.start = 1;
-    motorData[3].min.start = 1;
-    motorData[0].hour.start = 1;
-    motorData[1].hour.start = 1;
-    motorData[2].hour.start = 1;
-    motorData[3].hour.start = 1;
-
-    // Save position/angle
-    
-    // Drive past hall
-    
-    
-    
-    // Drive CCW until hall is hit
-    
-    // Save position/angle
-    
-    
-    // Calculate home position
-    
-    
-    // Drive to home
-    
-}
-=======
->>>>>>> refs/remotes/origin/dev
     
 // Receive updates from can bus and apply to motor setpoints
 //void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
