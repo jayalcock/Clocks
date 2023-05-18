@@ -34,13 +34,7 @@ int main(void)
     //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
     //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);
     //Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 9);
-    
-    
-    // Main clock control thread initialization
-    memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
-    clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_control_task, 60, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
-    
+        
     // Clock0 control thread initialization
     memset(clock0_stack, 0xcd, sizeof(clock0_stack));  // write known values into the stack
     clock0_stack[0]=clock0_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
@@ -65,6 +59,11 @@ int main(void)
     memset(comms_stack, 0xcd, sizeof(comms_stack));  // write known values into the stack
     comms_stack[0]=comms_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&comms_task, 80, comms_func, 0, "comms_task", STACKSIZE, comms_stack+1, 0);
+    
+    // Main clock control thread initialization
+    memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
+    clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    ctl_task_run(&clock_control_task, 60, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
 
     // Set test LED high
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO3_0, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
@@ -73,8 +72,8 @@ int main(void)
     
     
     // Reset 32bit timer 1
-    //char* TEST = 0x40018004;
-    //*TEST = 0;
+    char* TEST = 0x40018004;
+    *TEST = 0;
 
     //0x000002FC = 0x4E697370;
     
