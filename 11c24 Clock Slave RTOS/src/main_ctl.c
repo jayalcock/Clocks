@@ -1,20 +1,24 @@
 #include <string.h>
 #include <ctl_api.h>
 #include "board.h"
-
 #include "clockDriverRT.h"
 #include "comms.h"
 
-CTL_TASK_t main_task, clock0_task, clock1_task, clock2_task, clock3_task, comms_task, clock_control_task;
-
+/*****************************************************************************
+ * Private types/enumerations/variables
+ ****************************************************************************/
 #define STACKSIZE 64      
 
+CTL_TASK_t main_task, clock0_task, clock1_task, clock2_task, clock3_task, comms_task, clock_control_task;
 
 // Stack memory allocation
 unsigned clock0_stack[1+STACKSIZE+1], clock1_stack[1+STACKSIZE+1], clock2_stack[1+STACKSIZE+1], 
     clock3_stack[1+STACKSIZE+1], comms_stack[1+STACKSIZE+1], clock_control_stack[1+STACKSIZE+1];
 
 
+/*****************************************************************************
+ * Public functions
+ ****************************************************************************/
 // Error handler
 void ctl_handle_error(CTL_ERROR_CODE_t e)
 {
@@ -29,12 +33,8 @@ int main(void)
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
     
-    Chip_GPIO_Init(LPC_GPIO);
-    
-    //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); 
-    //Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 9);
-    //Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 9);
-        
+    Chip_GPIO_Init(LPC_GPIO); // TODO is this needed?
+            
     // Clock0 control thread initialization
     memset(clock0_stack, 0xcd, sizeof(clock0_stack));  // write known values into the stack
     clock0_stack[0]=clock0_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
@@ -71,11 +71,12 @@ int main(void)
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
     
     
-    // Reset 32bit timer 1
-    char* TEST = 0x40018004;
-    *TEST = 0;
-
-    //0x000002FC = 0x4E697370;
+    /* Reset 32bit timer 1 -
+        Timer has an issue that sets the reset bit on startup 
+        and has to be reset once to function correctly */
+    int test = 0x40018004;
+    int *TESTptr = &test;
+    *TESTptr = 0;
     
     
     ctl_task_set_priority(&main_task, 0); // drop to lowest priority to start created tasks running.  
