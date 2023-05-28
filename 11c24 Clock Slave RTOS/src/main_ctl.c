@@ -74,8 +74,11 @@ int main(void)
     /* Reset 32bit timer 1 -
         Timer has an issue that sets the reset bit on startup 
         and has to be reset once to function correctly */
-    int test = 0x40018004;
-    int *TESTptr = &test;
+    //int test = 0x40018004;
+    //int *TESTptr = &test;
+    //*TESTptr = 0;
+    
+    int *TESTptr = 0x40018004;
     *TESTptr = 0;
     
     
