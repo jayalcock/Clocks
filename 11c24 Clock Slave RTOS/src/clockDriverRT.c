@@ -13,7 +13,7 @@
  * Private types/enumerations/variables
  ****************************************************************************/
 // Test variables
-#define TESTING 1
+#define TESTING 0
 #define FIRSTCLOCK 0
 #define NUMBEROFCLOCKS 4
 #define HIRESTIMER 1
@@ -86,7 +86,7 @@ uint32_t timerFreq;
 uint8_t localControl = 0;
 
 uint8_t homingSpeed = 2;
-uint8_t homingDir = 0;
+volatile uint8_t homingDir = 0;
 uint8_t homingBit = 0;
 
 
@@ -145,7 +145,7 @@ void home_clocks(void)
 {
     uint8_t hallBit = 1;
     uint8_t speed = 2;
-    uint8_t direction = 1; 
+    //uint8_t direction = 1; 
     uint8_t clock0MinAngle, clock0HourAngle, clock1MinAngle, clock1HourAngle, clock2MinAngle, clock2HourAngle,
         clock3MinAngle, clock3HourAngle;
     
@@ -180,28 +180,30 @@ void home_clocks(void)
     clock3MinAngle  = motorData[CLOCK3].min.angle;
     clock3HourAngle = motorData[CLOCK3].hour.angle;
     
+    motorData[CLOCK0].min.angle = 0;
+    motorData[CLOCK0].hour.angle = 0;
+    motorData[CLOCK1].min.angle = 0;
+    motorData[CLOCK1].hour.angle = 0;
+    motorData[CLOCK2].min.angle = 0;
+    motorData[CLOCK2].hour.angle = 0;
+    motorData[CLOCK3].min.angle = 0;
+    motorData[CLOCK3].hour.angle = 0;
+    
+    
     // Drive past hall
-    motorData[0].min.start = 1;
-    motorData[0].hour.start = 1;
-    motorData[1].min.start = 1;
-    motorData[1].hour.start = 1;
-    motorData[2].min.start = 1;
-    motorData[2].hour.start = 1;
-    motorData[3].min.start = 1;
-    motorData[3].hour.start = 1;
-    ctl_timeout_wait(ctl_get_current_time() + 1000);
+    motorData[CLOCK0].min.start = 1;
+    motorData[CLOCK0].hour.start = 1;
+    motorData[CLOCK1].min.start = 1;
+    motorData[CLOCK1].hour.start = 1;
+    motorData[CLOCK2].min.start = 1;
+    motorData[CLOCK2].hour.start = 1;
+    motorData[CLOCK3].min.start = 1;
+    motorData[CLOCK3].hour.start = 1;
+    ctl_timeout_wait(ctl_get_current_time() + 2000);
     
     
     // Drive CCW until hall is hit
-    direction = 0;
-    //motorData[0].min.dir = 0;
-    //motorData[0].hour.dir = 0;
-    //motorData[1].min.dir = 0;
-    //motorData[1].hour.dir = 0;
-    //motorData[2].min.dir = 0;
-    //motorData[2].hour.dir = 0;
-    //motorData[3].min.dir = 0;
-    //motorData[3].hour.dir = 0;
+    homingDir = 1;
 
     
     ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
@@ -210,13 +212,50 @@ void home_clocks(void)
         CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
     
     
-    // Save position/angle
+    
     
     
     // Calculate home position
-    
+    motorData[CLOCK0].min.angle = (motorData[CLOCK0].min.angle / 2) + 180;
+    motorData[CLOCK0].hour.angle = motorData[CLOCK0].hour.angle / 2;
+    motorData[CLOCK1].min.angle = (motorData[CLOCK1].min.angle / 2) + 180;
+    motorData[CLOCK1].hour.angle = motorData[CLOCK1].hour.angle / 2;
+    motorData[CLOCK2].min.angle = (motorData[CLOCK2].min.angle / 2) + 180;
+    motorData[CLOCK2].hour.angle = motorData[CLOCK2].hour.angle / 2;
+    motorData[CLOCK3].min.angle = (motorData[CLOCK3].min.angle / 2) + 180;
+    motorData[CLOCK3].hour.angle = motorData[CLOCK3].hour.angle / 2;
     
     // Drive to home
+    motorData[CLOCK0].min.angleDesired = 0;
+    motorData[CLOCK0].hour.angleDesired = 0;
+    motorData[CLOCK1].min.angleDesired = 0;
+    motorData[CLOCK1].hour.angleDesired = 0;
+    motorData[CLOCK2].min.angleDesired = 0;
+    motorData[CLOCK2].hour.angleDesired = 0;
+    motorData[CLOCK3].min.angleDesired = 0;
+    motorData[CLOCK3].hour.angleDesired = 0;
+    
+    homingDir = 0;
+    motorData[CLOCK0].min.dir = 0;
+    motorData[CLOCK0].hour.dir = 0;
+    motorData[CLOCK1].min.dir = 0;
+    motorData[CLOCK1].hour.dir = 0;
+    motorData[CLOCK2].min.dir = 0;
+    motorData[CLOCK2].hour.dir = 0;
+    motorData[CLOCK3].min.dir = 0;
+    motorData[CLOCK3].hour.dir = 0;
+    
+    ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
+    
+    motorData[CLOCK0].min.start = 1;
+    motorData[CLOCK0].hour.start = 1;
+    motorData[CLOCK1].min.start = 1;
+    motorData[CLOCK1].hour.start = 1;
+    motorData[CLOCK2].min.start = 1;
+    motorData[CLOCK2].hour.start = 1;
+    motorData[CLOCK3].min.start = 1;
+    motorData[CLOCK3].hour.start = 1;
+    
     
 }
  
@@ -227,22 +266,26 @@ void home_clocks(void)
 #if TESTING
 void clock_testing(void)
 {
-    //localControl = 1;
-    //uint8_t clockNum = 2;
-    //char* arm = "min";
-    //uint16_t M1angle = 400;
+    localControl = 1;
     
-    home_clocks();
+    motorData[CLOCK0].min.angle = 0;
+    motorData[CLOCK0].hour.angle = 0;
+    motorData[CLOCK1].min.angle = 0;
+    motorData[CLOCK1].hour.angle = 0;
+    motorData[CLOCK2].min.angle = 0;
+    motorData[CLOCK2].hour.angle = 0;
+    motorData[CLOCK3].min.angle = 0;
+    motorData[CLOCK3].hour.angle = 0;
     
-    //motorData[2].min.speed = 3;
-    //motorData[2].min.angle = 400;
-    
-    //motorData[2].min.start = 1;
-    
-    //motorData[2].hour.speed = 3;
-    //motorData[2].hour.angle = 400;
-    
-    //motorData[2].hour.start = 1;
+    motorData[CLOCK0].min.angleDesired = 45;
+    motorData[CLOCK0].hour.angleDesired = 45;
+    motorData[CLOCK1].min.angleDesired = 45;
+    motorData[CLOCK1].hour.angleDesired = 45;
+    motorData[CLOCK2].min.angleDesired = 45;
+    motorData[CLOCK2].hour.angleDesired = 45;
+    motorData[CLOCK3].min.angleDesired = 45;
+    motorData[CLOCK3].hour.angleDesired = 45;
+
 }
 #endif
       
@@ -535,6 +578,7 @@ void pulse_delay(const uint16_t delay)
         __NOP();
     }
 }
+
 /*
     @brief      Pulse generation function that flips output bit to drive steppers, for motion and direction. 
     
@@ -706,7 +750,7 @@ static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
 
     @return     Nothing
 */
-static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir, const char arm)
+static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir, const char arm, uint8_t *steps)
 {   
     pulse_generation(clockNum, arm); // Generate stepper pulse
     
@@ -716,17 +760,68 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const 
     motorData[clockNum].min.dir = dir;
     motorData[clockNum].hour.dir = dir;
     
-    motorData[clockNum].min.angle++;
-    if(motorData[clockNum].min.angle == 360)
+    (*steps)++;
+    
+    if (arm == 'm')
+    {        
+        if(*steps == STEPSIZE)
+        {
+            if(motorData[clockNum].min.dir == 0)
+            {
+                motorData[clockNum].min.angle++; 
+                if(motorData[clockNum].min.angle == 360)
+                {
+                    motorData[clockNum].min.angle = 0;
+                }
+            }
+            else
+            {
+                motorData[clockNum].min.angle--;   
+                if(motorData[clockNum].min.angle == 0)
+                {
+                    motorData[clockNum].min.angle = 360;
+                }
+            }
+        
+
+            *steps = 0;
+        }
+    }
+    else if (arm == 'h')
     {
-        motorData[clockNum].min.angle = 0;
+        if(*steps == STEPSIZE)
+        {
+            if(motorData[clockNum].hour.dir == 0)
+            {
+                motorData[clockNum].hour.angle++; 
+                
+                if(motorData[clockNum].hour.angle == 360)
+                {
+                    motorData[clockNum].hour.angle = 0;
+                }
+            }
+            else
+            {
+                motorData[clockNum].hour.angle--;   
+                if(motorData[clockNum].hour.angle == 0)
+                {
+                    motorData[clockNum].hour.angle = 360;
+                }
+            }
+        
+            if(motorData[clockNum].hour.angle == 360)
+            {
+                motorData[clockNum].hour.angle = 0;
+            }
+            *steps = 0;
+        }
     }
     
-    motorData[clockNum].hour.angle++;
-    if(motorData[clockNum].hour.angle == 360)
-    {
-        motorData[clockNum].hour.angle = 0;
-    }
+    
+    
+    
+    
+
  
 }
 
@@ -739,7 +834,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const 
 void clock0_func(void *p)
 {  
     unsigned int v=0;
-    uint8_t mSteps, hSteps;
+    uint8_t mSteps = 0, hSteps = 0;
     
     // Initialise clock 0 events
     ctl_events_init(&clock0Event, 0);
@@ -800,7 +895,7 @@ void clock0_func(void *p)
             if(clockControlEvent & HOME_CLOCKS)
             {
                 //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
-                drive_continuous(CLOCK0, homingSpeed, homingDir, HOURARM);
+                drive_continuous(CLOCK0, homingSpeed, homingDir, HOURARM, &hSteps);
             }
             else
             {
@@ -815,7 +910,7 @@ void clock0_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK0, homingSpeed, homingDir, MINUTEARM);
+                drive_continuous(CLOCK0, homingSpeed, homingDir, MINUTEARM, &mSteps);
             }
             else
             {
@@ -895,7 +990,7 @@ void clock1_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK1, homingSpeed, homingDir, HOURARM);
+                drive_continuous(CLOCK1, homingSpeed, homingDir, HOURARM, &hSteps);
             }
             else
             {
@@ -909,7 +1004,7 @@ void clock1_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK1, homingSpeed, homingDir, MINUTEARM);
+                drive_continuous(CLOCK1, homingSpeed, homingDir, MINUTEARM, &mSteps);
             }
             else
             {
@@ -988,7 +1083,7 @@ void clock2_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK2, homingSpeed, homingDir, HOURARM);
+                drive_continuous(CLOCK2, homingSpeed, homingDir, HOURARM, &hSteps);
             }
             else
             {
@@ -1003,7 +1098,7 @@ void clock2_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK2, homingSpeed, homingDir, MINUTEARM);
+                drive_continuous(CLOCK2, homingSpeed, homingDir, MINUTEARM, &mSteps);
             }
             else
             {
@@ -1083,7 +1178,7 @@ void clock3_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK3, homingSpeed, homingDir, HOURARM);
+                drive_continuous(CLOCK3, homingSpeed, homingDir, HOURARM, &hSteps);
             }
             else
             {
@@ -1098,7 +1193,7 @@ void clock3_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK3, homingSpeed, homingDir, MINUTEARM);
+                drive_continuous(CLOCK3, homingSpeed, homingDir, MINUTEARM, &mSteps);
             }
             else
             {
@@ -1168,6 +1263,9 @@ void clock_control(void *p)
     
     // Set reset pin high 
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, RESETPORT, RESETPIN); 
+
+    home_clocks();
+
 
     
     #if TESTING
