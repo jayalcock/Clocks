@@ -237,15 +237,22 @@ void home_clocks(void)
     
     homingDir = 0;
     motorData[CLOCK0].min.dir = 0;
-    motorData[CLOCK0].hour.dir = 0;
+    motorData[CLOCK0].hour.dir = 1;
     motorData[CLOCK1].min.dir = 0;
-    motorData[CLOCK1].hour.dir = 0;
+    motorData[CLOCK1].hour.dir = 1;
     motorData[CLOCK2].min.dir = 0;
-    motorData[CLOCK2].hour.dir = 0;
+    motorData[CLOCK2].hour.dir = 1;
     motorData[CLOCK3].min.dir = 0;
-    motorData[CLOCK3].hour.dir = 0;
+    motorData[CLOCK3].hour.dir = 1;
     
     ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
+    
+    // Disable GPIO interrupts
+    Chip_GPIO_DisableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
+        1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
+        1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
+        1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
+    
     
     motorData[CLOCK0].min.start = 1;
     motorData[CLOCK0].hour.start = 1;
@@ -637,19 +644,37 @@ static void pulse_generation(const uint8_t motorNum, const char arm)
     @return     Number of steps to desired angle
 
 */
-static uint16_t calculate_steps(uint16_t newAngle , uint16_t angle)
+static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, const uint8_t dir)
 {
-    if((newAngle - angle) < 0)
+    if (dir == 0)
     {
-        return (newAngle - angle + 360) * STEPSIZE;  
-    }
-    else if ((newAngle - angle) >= 360)
-    {
-        return (newAngle - angle - 360) * STEPSIZE;
+        if((newAngle - angle) < 0)
+        {
+            return (newAngle - angle + 360) * STEPSIZE;  
+        }
+        else if ((newAngle - angle) >= 360)
+        {
+            return (newAngle - angle - 360) * STEPSIZE;
+        }
+        else
+        {    
+            return (newAngle - angle) * STEPSIZE;   
+        }
     }
     else
-    {    
-        return (newAngle - angle) * STEPSIZE;   
+    {
+        if((angle - newAngle) < 0)
+        {
+            return (angle - newAngle + 360) * STEPSIZE;  
+        }
+        else if ((newAngle - angle) >= 360)
+        {
+            return (angle - newAngle- 360) * STEPSIZE;
+        }
+        else
+        {    
+            return (angle - newAngle) * STEPSIZE;   
+        }
     }
 }
 
@@ -683,12 +708,24 @@ static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
             // Update angle actual calculation
             if(*steps == STEPSIZE)
             {
-                motorData[clockNum].hour.angle++;
-        
-                if(motorData[clockNum].hour.angle == 360)
+                
+                if(motorData[clockNum].hour.dir == 0)
                 {
-                    motorData[clockNum].hour.angle = 0;
+                    motorData[clockNum].hour.angle++; 
+                    if(motorData[clockNum].hour.angle == 360)
+                    {
+                        motorData[clockNum].hour.angle = 0;
+                    }
                 }
+                else
+                {
+                    motorData[clockNum].hour.angle--;   
+                    if(motorData[clockNum].hour.angle == 0)
+                    {
+                        motorData[clockNum].hour.angle = 360;
+                    }
+                }
+                            
                 *steps = 0;
             }
 
@@ -720,11 +757,21 @@ static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
             // Update angle actual calculation
             if(*steps == STEPSIZE)
             {
-                motorData[clockNum].min.angle++;
-            
-                if(motorData[clockNum].min.angle == 360)
+                if(motorData[clockNum].min.dir == 0)
                 {
-                    motorData[clockNum].min.angle = 0;
+                    motorData[clockNum].min.angle++; 
+                    if(motorData[clockNum].min.angle == 360)
+                    {
+                        motorData[clockNum].min.angle = 0;
+                    }
+                }
+                else
+                {
+                    motorData[clockNum].min.angle--;   
+                    if(motorData[clockNum].min.angle == 0)
+                    {
+                        motorData[clockNum].min.angle = 360;
+                    }
                 }
             
                 *steps = 0;
@@ -769,7 +816,8 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const 
             if(motorData[clockNum].min.dir == 0)
             {
                 motorData[clockNum].min.angle++; 
-                if(motorData[clockNum].min.angle == 360)
+                
+                if(motorData[clockNum].min.angle >= 360)
                 {
                     motorData[clockNum].min.angle = 0;
                 }
@@ -777,7 +825,8 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const 
             else
             {
                 motorData[clockNum].min.angle--;   
-                if(motorData[clockNum].min.angle == 0)
+                
+                if(motorData[clockNum].min.angle <= 0)
                 {
                     motorData[clockNum].min.angle = 360;
                 }
@@ -795,7 +844,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const 
             {
                 motorData[clockNum].hour.angle++; 
                 
-                if(motorData[clockNum].hour.angle == 360)
+                if(motorData[clockNum].hour.angle >= 360)
                 {
                     motorData[clockNum].hour.angle = 0;
                 }
@@ -803,16 +852,14 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const 
             else
             {
                 motorData[clockNum].hour.angle--;   
-                if(motorData[clockNum].hour.angle == 0)
+                
+                if(motorData[clockNum].hour.angle <= 0)
                 {
                     motorData[clockNum].hour.angle = 360;
                 }
             }
         
-            if(motorData[clockNum].hour.angle == 360)
-            {
-                motorData[clockNum].hour.angle = 0;
-            }
+    
             *steps = 0;
         }
     }
@@ -1286,55 +1333,55 @@ void clock_control(void *p)
         // Update clock 0 minute remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK0_MIN | UPDATE_ALL_CLOCKS))
         {
-            motorData[CLOCK0].min.remainingSteps = calculate_steps(motorData[CLOCK0].min.angleDesired, motorData[CLOCK0].min.angle);
+            motorData[CLOCK0].min.remainingSteps = calculate_steps(motorData[CLOCK0].min.angleDesired, motorData[CLOCK0].min.angle, motorData[CLOCK0].min.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK0_MIN);
         }
         
         // Update clock 0 hour remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK0_HOUR | UPDATE_ALL_CLOCKS))
         {
-            motorData[CLOCK0].hour.remainingSteps = calculate_steps(motorData[CLOCK0].hour.angleDesired, motorData[CLOCK0].hour.angle);
+            motorData[CLOCK0].hour.remainingSteps = calculate_steps(motorData[CLOCK0].hour.angleDesired, motorData[CLOCK0].hour.angle, motorData[CLOCK0].hour.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK0_HOUR);
         }
         
         // Update clock 1 minute remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK1_MIN | UPDATE_ALL_CLOCKS))
         {
-            motorData[CLOCK1].min.remainingSteps = calculate_steps(motorData[CLOCK1].min.angleDesired, motorData[CLOCK1].min.angle);
+            motorData[CLOCK1].min.remainingSteps = calculate_steps(motorData[CLOCK1].min.angleDesired, motorData[CLOCK1].min.angle, motorData[CLOCK1].min.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK1_MIN);  
         }
         
         // Update clock 1 hour remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK1_HOUR | UPDATE_ALL_CLOCKS))
         {
-            motorData[CLOCK1].hour.remainingSteps = calculate_steps(motorData[CLOCK1].hour.angleDesired, motorData[CLOCK1].hour.angle);
+            motorData[CLOCK1].hour.remainingSteps = calculate_steps(motorData[CLOCK1].hour.angleDesired, motorData[CLOCK1].hour.angle, motorData[CLOCK1].hour.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK1_HOUR);
         }
         // Update clock 2 minute remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK2_MIN | UPDATE_ALL_CLOCKS))
         {
-            motorData[CLOCK2].min.remainingSteps = calculate_steps(motorData[CLOCK2].min.angleDesired, motorData[CLOCK2].min.angle);
+            motorData[CLOCK2].min.remainingSteps = calculate_steps(motorData[CLOCK2].min.angleDesired, motorData[CLOCK2].min.angle, motorData[CLOCK2].min.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK2_MIN);
         }
         
         // Update clock 2 hour remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK2_HOUR | UPDATE_ALL_CLOCKS))
         {
-            motorData[CLOCK2].hour.remainingSteps = calculate_steps(motorData[CLOCK2].hour.angleDesired, motorData[CLOCK2].hour.angle);
+            motorData[CLOCK2].hour.remainingSteps = calculate_steps(motorData[CLOCK2].hour.angleDesired, motorData[CLOCK2].hour.angle, motorData[CLOCK2].hour.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK2_HOUR);
         }
         
         // Update clock 3 minute remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK3_MIN | UPDATE_ALL_CLOCKS))
         {
-            motorData[CLOCK3].min.remainingSteps = calculate_steps(motorData[CLOCK3].min.angleDesired, motorData[CLOCK3].min.angle);
+            motorData[CLOCK3].min.remainingSteps = calculate_steps(motorData[CLOCK3].min.angleDesired, motorData[CLOCK3].min.angle, motorData[CLOCK3].min.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK3_MIN);  
         }
         
         // Update clock 3 hour remaining steps 
         if(clockControlEvent & (UPDATE_CLOCK3_HOUR | UPDATE_ALL_CLOCKS))    
         {
-            motorData[CLOCK3].hour.remainingSteps = calculate_steps(motorData[CLOCK3].hour.angleDesired, motorData[CLOCK3].hour.angle);
+            motorData[CLOCK3].hour.remainingSteps = calculate_steps(motorData[CLOCK3].hour.angleDesired, motorData[CLOCK3].hour.angle, motorData[CLOCK3].hour.dir);
             ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK3_HOUR);
         }
         
