@@ -30,8 +30,12 @@
 #define CLOCK1          1
 #define CLOCK2          2
 #define CLOCK3          3
+#define ALLCLOCKS       4
 #define MINUTEARM       'm'
 #define HOURARM         'h'
+#define BOTHARMS        'b'
+#define CW              0
+#define CCW             1
 
 // Clock specific trigger constants
 #define RUN_ALL_CLOCKS  1<<0
@@ -140,118 +144,6 @@ motorStruct motorData[] =
 /*****************************************************************************
  * Private functions
  ****************************************************************************/
- // Homing Procedure
-void home_clocks(void)
-{
-    uint8_t hallBit = 1;
-    uint8_t speed = 2;
-    
-    localControl = 1; 
-    
-    // Drive clocks CW until hall is hit
-    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
-    motorData[0].min.start = 1;
-    motorData[0].hour.start = 1;
-    motorData[1].min.start = 1;
-    motorData[1].hour.start = 1;
-    motorData[2].min.start = 1;
-    motorData[2].hour.start = 1;
-    motorData[3].min.start = 1;
-    motorData[3].hour.start = 1;
-    
-    // Wait for all clocks to be at home pos
-    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
-        CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
-        CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
-        CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
-    
-    // Set current angle to 0
-    motorData[CLOCK0].min.angle = 0;
-    motorData[CLOCK0].hour.angle = 0;
-    motorData[CLOCK1].min.angle = 0;
-    motorData[CLOCK1].hour.angle = 0;
-    motorData[CLOCK2].min.angle = 0;
-    motorData[CLOCK2].hour.angle = 0;
-    motorData[CLOCK3].min.angle = 0;
-    motorData[CLOCK3].hour.angle = 0;
-    
-    
-    // Start motion and run CW for 2 seconds
-    motorData[CLOCK0].min.start = 1;
-    motorData[CLOCK0].hour.start = 1;
-    motorData[CLOCK1].min.start = 1;
-    motorData[CLOCK1].hour.start = 1;
-    motorData[CLOCK2].min.start = 1;
-    motorData[CLOCK2].hour.start = 1;
-    motorData[CLOCK3].min.start = 1;
-    motorData[CLOCK3].hour.start = 1;
-    ctl_timeout_wait(ctl_get_current_time() + 2000);
-    
-    
-    // Drive CCW until hall is hit
-    homingDir = 1;
-
-    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
-        CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
-        CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
-        CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
-    
-    
-    // Calculate home position
-    motorData[CLOCK0].min.angle = (motorData[CLOCK0].min.angle / 2) + 180;
-    motorData[CLOCK0].hour.angle = motorData[CLOCK0].hour.angle / 2;
-    motorData[CLOCK1].min.angle = (motorData[CLOCK1].min.angle / 2) + 180;
-    motorData[CLOCK1].hour.angle = motorData[CLOCK1].hour.angle / 2;
-    motorData[CLOCK2].min.angle = (motorData[CLOCK2].min.angle / 2) + 180;
-    motorData[CLOCK2].hour.angle = motorData[CLOCK2].hour.angle / 2;
-    motorData[CLOCK3].min.angle = (motorData[CLOCK3].min.angle / 2) + 180;
-    motorData[CLOCK3].hour.angle = motorData[CLOCK3].hour.angle / 2;
-    
-    // Set desired angle for all arms to 0/12 oclock
-    motorData[CLOCK0].min.angleDesired = 0;
-    motorData[CLOCK0].hour.angleDesired = 0;
-    motorData[CLOCK1].min.angleDesired = 0;
-    motorData[CLOCK1].hour.angleDesired = 0;
-    motorData[CLOCK2].min.angleDesired = 0;
-    motorData[CLOCK2].hour.angleDesired = 0;
-    motorData[CLOCK3].min.angleDesired = 0;
-    motorData[CLOCK3].hour.angleDesired = 0;
-    
-    // Set direction of arms
-    homingDir = 0;
-    motorData[CLOCK0].min.dir = 0;
-    motorData[CLOCK0].hour.dir = 1;
-    motorData[CLOCK1].min.dir = 0;
-    motorData[CLOCK1].hour.dir = 1;
-    motorData[CLOCK2].min.dir = 0;
-    motorData[CLOCK2].hour.dir = 1;
-    motorData[CLOCK3].min.dir = 0;
-    motorData[CLOCK3].hour.dir = 1;
-    
-    // Calculate number of pulses
-    ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
-    
-    // Disable GPIO interrupts
-    Chip_GPIO_DisableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
-        1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
-        1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
-        1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
-    
-    // Start motion 
-    motorData[CLOCK0].min.start = 1;
-    motorData[CLOCK0].hour.start = 1;
-    motorData[CLOCK1].min.start = 1;
-    motorData[CLOCK1].hour.start = 1;
-    motorData[CLOCK2].min.start = 1;
-    motorData[CLOCK2].hour.start = 1;
-    motorData[CLOCK3].min.start = 1;
-    motorData[CLOCK3].hour.start = 1;
-    
-    
-    // Enable can comms
-    localControl = 0;
-    
-}
  
  /*
  Testing function 
@@ -666,6 +558,40 @@ static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, c
 }
 
 /*
+    @brief      Set clock arm direction
+
+    @param      clockNum: clock number to modify
+    @param      arm:  arm to modify
+    @param      dir:  arm direction
+
+    @return     Nothing
+*/
+void set_arm_direction(const uint8_t clockNum, const char arm, const char direction)
+{
+    if(clockNum == ALLCLOCKS)
+    {
+        motorData[CLOCK0].min.dir = direction;
+        motorData[CLOCK0].hour.dir = direction;
+        motorData[CLOCK1].min.dir = direction;
+        motorData[CLOCK1].hour.dir = direction;
+        motorData[CLOCK2].min.dir = direction;
+        motorData[CLOCK2].hour.dir = direction;
+        motorData[CLOCK3].min.dir = direction;
+        motorData[CLOCK3].hour.dir = direction;    
+    }
+    
+    else if(arm == MINUTEARM)
+    {
+        motorData[clockNum].min.dir = direction;
+    }
+    else if(arm == HOURARM)
+    {
+        motorData[clockNum].min.dir = direction;
+    }
+    
+}
+
+/*
     @brief      Drive clock to specific position
 
     @param      clockNum: clock number to drive
@@ -674,7 +600,7 @@ static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, c
 
     @return     Nothing
 */
-static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
+static void drive_to_pos(const uint8_t clockNum, const char arm, uint8_t *steps)
 {
     // Move hour arm
     if(arm == 'h')
@@ -779,20 +705,18 @@ static void drive_to_pos(const uint8_t clockNum, char arm, uint8_t *steps)
     @brief      Drive clock at specific speed
 
     @param      clockNum: clock number to drive
-    @param      speed:  rotation speed
-    @param      dir:  rotation direction
 
     @return     Nothing
 */
-static void drive_continuous(const uint8_t clockNum, const uint8_t speed, const uint8_t dir, const char arm, uint8_t *steps)
+static void drive_continuous(const uint8_t clockNum, const char arm, uint8_t *steps)
 {   
     pulse_generation(clockNum, arm); // Generate stepper pulse
     
-    motorData[clockNum].min.speed = speed;
-    motorData[clockNum].hour.speed = speed;
+    //motorData[clockNum].min.speed = speed;
+    //motorData[clockNum].hour.speed = speed;
     
-    motorData[clockNum].min.dir = dir;
-    motorData[clockNum].hour.dir = dir;
+    //motorData[clockNum].min.dir = dir;
+    //motorData[clockNum].hour.dir = dir;
     
     (*steps)++;
     
@@ -913,7 +837,7 @@ void clock0_func(void *p)
     // Clear interrupts
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin);
     
-    // Enable interrupts
+    // Enablterrupts
     Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin);
 
 
@@ -929,7 +853,7 @@ void clock0_func(void *p)
             if(clockControlEvent & HOME_CLOCKS)
             {
                 //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
-                drive_continuous(CLOCK0, homingSpeed, homingDir, HOURARM, &hSteps);
+                drive_continuous(CLOCK0, HOURARM, &hSteps);
             }
             else
             {
@@ -944,7 +868,7 @@ void clock0_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK0, homingSpeed, homingDir, MINUTEARM, &mSteps);
+                drive_continuous(CLOCK0, MINUTEARM, &mSteps);
             }
             else
             {
@@ -1024,7 +948,7 @@ void clock1_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK1, homingSpeed, homingDir, HOURARM, &hSteps);
+                drive_continuous(CLOCK1, HOURARM, &hSteps);
             }
             else
             {
@@ -1038,7 +962,7 @@ void clock1_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK1, homingSpeed, homingDir, MINUTEARM, &mSteps);
+                drive_continuous(CLOCK1, MINUTEARM, &mSteps);
             }
             else
             {
@@ -1117,7 +1041,7 @@ void clock2_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK2, homingSpeed, homingDir, HOURARM, &hSteps);
+                drive_continuous(CLOCK2, HOURARM, &hSteps);
             }
             else
             {
@@ -1132,7 +1056,7 @@ void clock2_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK2, homingSpeed, homingDir, MINUTEARM, &mSteps);
+                drive_continuous(CLOCK2, MINUTEARM, &mSteps);
             }
             else
             {
@@ -1212,7 +1136,7 @@ void clock3_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK3, homingSpeed, homingDir, HOURARM, &hSteps);
+                drive_continuous(CLOCK3, HOURARM, &hSteps);
             }
             else
             {
@@ -1227,7 +1151,7 @@ void clock3_func(void *p)
         {
             if(clockControlEvent & HOME_CLOCKS)
             {
-                drive_continuous(CLOCK3, homingSpeed, homingDir, MINUTEARM, &mSteps);
+                drive_continuous(CLOCK3, MINUTEARM, &mSteps);
             }
             else
             {
@@ -1241,6 +1165,113 @@ void clock3_func(void *p)
     }  
 }
 
+// Homing Procedure
+void home_clocks(void)
+{
+    uint8_t hallBit = 1;
+    uint8_t speed = 2;
+    
+    localControl = 1; 
+    
+    // Set direction CW
+    set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
+    
+    
+    // Drive clocks CW until hall is hit
+    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
+    motorData[0].min.start = 1;
+    motorData[0].hour.start = 1;
+    motorData[1].min.start = 1;
+    motorData[1].hour.start = 1;
+    motorData[2].min.start = 1;
+    motorData[2].hour.start = 1;
+    motorData[3].min.start = 1;
+    motorData[3].hour.start = 1;
+    
+    // Wait for all clocks to be at home pos
+    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
+        CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
+        CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
+        CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
+    
+    // Set current angle to 0
+    motorData[CLOCK0].min.angle = 0;
+    motorData[CLOCK0].hour.angle = 0;
+    motorData[CLOCK1].min.angle = 0;
+    motorData[CLOCK1].hour.angle = 0;
+    motorData[CLOCK2].min.angle = 0;
+    motorData[CLOCK2].hour.angle = 0;
+    motorData[CLOCK3].min.angle = 0;
+    motorData[CLOCK3].hour.angle = 0;
+    
+    
+    // Start motion and run CW for 2 seconds
+    motorData[CLOCK0].min.start = 1;
+    motorData[CLOCK0].hour.start = 1;
+    motorData[CLOCK1].min.start = 1;
+    motorData[CLOCK1].hour.start = 1;
+    motorData[CLOCK2].min.start = 1;
+    motorData[CLOCK2].hour.start = 1;
+    motorData[CLOCK3].min.start = 1;
+    motorData[CLOCK3].hour.start = 1;
+    ctl_timeout_wait(ctl_get_current_time() + 2000);
+    
+    
+    // Set direction CCW
+    set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
+    
+    // Drive CCW until hall is hit
+    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
+        CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
+        CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
+        CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
+    
+    
+    // Calculate home position
+    motorData[CLOCK0].min.angle = (motorData[CLOCK0].min.angle / 2) + 180;
+    motorData[CLOCK0].hour.angle = motorData[CLOCK0].hour.angle / 2;
+    motorData[CLOCK1].min.angle = (motorData[CLOCK1].min.angle / 2) + 180;
+    motorData[CLOCK1].hour.angle = motorData[CLOCK1].hour.angle / 2;
+    motorData[CLOCK2].min.angle = (motorData[CLOCK2].min.angle / 2) + 180;
+    motorData[CLOCK2].hour.angle = motorData[CLOCK2].hour.angle / 2;
+    motorData[CLOCK3].min.angle = (motorData[CLOCK3].min.angle / 2) + 180;
+    motorData[CLOCK3].hour.angle = motorData[CLOCK3].hour.angle / 2;
+    
+    // Set desired angle for all arms to 0/12 oclock
+    motorData[CLOCK0].min.angleDesired = 180;
+    motorData[CLOCK0].hour.angleDesired = 0;
+    motorData[CLOCK1].min.angleDesired = 180;
+    motorData[CLOCK1].hour.angleDesired = 0;
+    motorData[CLOCK2].min.angleDesired = 180;
+    motorData[CLOCK2].hour.angleDesired = 0;
+    motorData[CLOCK3].min.angleDesired = 180;
+    motorData[CLOCK3].hour.angleDesired = 0;
+    
+    // Set direction of arms
+    set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
+    
+    // Calculate number of pulses
+    ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
+    
+    // Disable GPIO interrupts
+    Chip_GPIO_DisableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
+        1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
+        1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
+        1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
+    
+    // Start motion 
+    motorData[CLOCK0].min.start = 1;
+    motorData[CLOCK0].hour.start = 1;
+    motorData[CLOCK1].min.start = 1;
+    motorData[CLOCK1].hour.start = 1;
+    motorData[CLOCK2].min.start = 1;
+    motorData[CLOCK2].hour.start = 1;
+    motorData[CLOCK3].min.start = 1;
+    motorData[CLOCK3].hour.start = 1;
+    
+    
+}
+ 
 
 
 // Main clock control thread
@@ -1299,9 +1330,7 @@ void clock_control(void *p)
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, RESETPORT, RESETPIN); 
 
     home_clocks();
-
-
-    
+        
     #if TESTING
         clock_testing();
     #endif

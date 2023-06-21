@@ -288,7 +288,6 @@
         <file file_name="Device/src/clock_11xx.c" />
         <file file_name="../11C24 Clock Slave RTOS/Device/src/gpio_11xx_2.c" />
         <file file_name="../11C24 Clock Slave RTOS/Device/src/sysctl_11xx.c" />
-        <file file_name="../11C24 Clock Slave RTOS/src/testFile.c" />
         <file file_name="Device/src/timer_11xx.c" />
       </folder>
     </folder>
