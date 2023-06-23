@@ -36,6 +36,8 @@
 #define BOTHARMS        'b'
 #define CW              0
 #define CCW             1
+#define START           1
+#define STOP            0
 
 // Clock specific trigger constants
 #define RUN_ALL_CLOCKS  1<<0
@@ -558,6 +560,43 @@ static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, c
 }
 
 /*
+    @brief      Start/stop clock
+
+    @param      clockNum: clock number to modify
+    @param      arm:  arm to modify
+    @param      start:  arm direction
+
+    @return     Nothing
+*/
+
+void clock_start_stop(const uint8_t clockNum, const char arm, const uint8_t start)
+{
+    if(clockNum == ALLCLOCKS)
+    {
+        motorData[CLOCK0].min.start = start;
+        motorData[CLOCK0].hour.start = start;
+        motorData[CLOCK1].min.start = start;
+        motorData[CLOCK1].hour.start = start;
+        motorData[CLOCK2].min.start = start;
+        motorData[CLOCK2].hour.start = start;
+        motorData[CLOCK3].min.start = start;
+        motorData[CLOCK3].hour.start = start;    
+    }
+    
+    else 
+    {
+        if(arm == MINUTEARM | BOTHARMS)
+        {
+            motorData[clockNum].min.start = start;
+        }
+        else if(arm == HOURARM | BOTHARMS)
+        {
+            motorData[clockNum].hour.start = start;
+        }
+    }
+    
+}
+/*
     @brief      Set clock arm direction
 
     @param      clockNum: clock number to modify
@@ -580,13 +619,89 @@ void set_arm_direction(const uint8_t clockNum, const char arm, const char direct
         motorData[CLOCK3].hour.dir = direction;    
     }
     
-    else if(arm == MINUTEARM)
+    else 
     {
-        motorData[clockNum].min.dir = direction;
+        if(arm == MINUTEARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].min.dir = direction;
+        }
+        else if(arm == HOURARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].hour.dir = direction;
+        }
     }
-    else if(arm == HOURARM)
+    
+}
+
+/*
+    @brief      Set clock arm angle setpoint
+
+    @param      clockNum: clock number to modify
+    @param      arm:  arm to modify
+    @param      angle:  desired arm angle in degrees
+
+    @return     Nothing
+*/
+void set_arm_angle(const uint8_t clockNum, const char arm, const uint16_t angle)
+{
+    if(clockNum == ALLCLOCKS)
     {
-        motorData[clockNum].min.dir = direction;
+        motorData[CLOCK0].min.angleDesired = angle;
+        motorData[CLOCK0].hour.angleDesired = angle;
+        motorData[CLOCK1].min.angleDesired = angle;
+        motorData[CLOCK1].hour.angleDesired = angle;
+        motorData[CLOCK2].min.angleDesired = angle;
+        motorData[CLOCK2].hour.angleDesired = angle;
+        motorData[CLOCK3].min.angleDesired = angle;
+        motorData[CLOCK3].hour.angleDesired = angle;    
+    }
+    
+    else
+    { 
+        if(arm == MINUTEARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].min.angleDesired = angle;
+        }
+        if(arm == HOURARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].hour.angleDesired = angle;
+        }
+    }
+}
+
+/*
+    @brief      Set clock arm speed setpoint
+
+    @param      clockNum: clock number to modify
+    @param      arm:  arm to modify
+    @param      speed:  desired arm speed 1-5
+
+    @return     Nothing
+*/
+void set_arm_speed(const uint8_t clockNum, const char arm, const uint16_t speed)
+{
+    if(clockNum == ALLCLOCKS)
+    {
+        motorData[CLOCK0].min.speed = speed;
+        motorData[CLOCK0].hour.speed = speed;
+        motorData[CLOCK1].min.speed = speed;
+        motorData[CLOCK1].hour.speed = speed;
+        motorData[CLOCK2].min.speed = speed;
+        motorData[CLOCK2].hour.speed = speed;
+        motorData[CLOCK3].min.speed = speed;
+        motorData[CLOCK3].hour.speed = speed;    
+    }
+    
+    else 
+    {
+        if(arm == MINUTEARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].min.speed = speed;
+        }
+        else if(arm == HOURARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].hour.speed = speed;
+        }
     }
     
 }
@@ -1168,25 +1283,19 @@ void clock3_func(void *p)
 // Homing Procedure
 void home_clocks(void)
 {
-    uint8_t hallBit = 1;
-    uint8_t speed = 2;
-    
     localControl = 1; 
     
     // Set direction CW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
     
+    // Set speed 
+    set_arm_speed(ALLCLOCKS, BOTHARMS, 3);
+    
     
     // Drive clocks CW until hall is hit
     ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
-    motorData[0].min.start = 1;
-    motorData[0].hour.start = 1;
-    motorData[1].min.start = 1;
-    motorData[1].hour.start = 1;
-    motorData[2].min.start = 1;
-    motorData[2].hour.start = 1;
-    motorData[3].min.start = 1;
-    motorData[3].hour.start = 1;
+    clock_start_stop(ALLCLOCKS, BOTHARMS, START);    
+
     
     // Wait for all clocks to be at home pos
     ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
@@ -1205,16 +1314,10 @@ void home_clocks(void)
     motorData[CLOCK3].hour.angle = 0;
     
     
-    // Start motion and run CW for 2 seconds
-    motorData[CLOCK0].min.start = 1;
-    motorData[CLOCK0].hour.start = 1;
-    motorData[CLOCK1].min.start = 1;
-    motorData[CLOCK1].hour.start = 1;
-    motorData[CLOCK2].min.start = 1;
-    motorData[CLOCK2].hour.start = 1;
-    motorData[CLOCK3].min.start = 1;
-    motorData[CLOCK3].hour.start = 1;
-    ctl_timeout_wait(ctl_get_current_time() + 2000);
+    // Start motion and run CW for 1 seconds
+    clock_start_stop(ALLCLOCKS, BOTHARMS, START);
+    //set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
+    ctl_timeout_wait(ctl_get_current_time() + 1000);
     
     
     // Set direction CCW
@@ -1238,14 +1341,15 @@ void home_clocks(void)
     motorData[CLOCK3].hour.angle = motorData[CLOCK3].hour.angle / 2;
     
     // Set desired angle for all arms to 0/12 oclock
-    motorData[CLOCK0].min.angleDesired = 180;
-    motorData[CLOCK0].hour.angleDesired = 0;
-    motorData[CLOCK1].min.angleDesired = 180;
-    motorData[CLOCK1].hour.angleDesired = 0;
-    motorData[CLOCK2].min.angleDesired = 180;
-    motorData[CLOCK2].hour.angleDesired = 0;
-    motorData[CLOCK3].min.angleDesired = 180;
-    motorData[CLOCK3].hour.angleDesired = 0;
+    set_arm_angle(CLOCK0, MINUTEARM, 180);
+    set_arm_angle(CLOCK0, HOURARM, 0);
+    set_arm_angle(CLOCK1, MINUTEARM, 180);
+    set_arm_angle(CLOCK1, HOURARM, 0);
+    set_arm_angle(CLOCK2, MINUTEARM, 180);
+    set_arm_angle(CLOCK2, HOURARM, 0);
+    set_arm_angle(CLOCK3, MINUTEARM, 180);
+    set_arm_angle(CLOCK3, HOURARM, 0);
+    
     
     // Set direction of arms
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
@@ -1260,14 +1364,7 @@ void home_clocks(void)
         1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
     
     // Start motion 
-    motorData[CLOCK0].min.start = 1;
-    motorData[CLOCK0].hour.start = 1;
-    motorData[CLOCK1].min.start = 1;
-    motorData[CLOCK1].hour.start = 1;
-    motorData[CLOCK2].min.start = 1;
-    motorData[CLOCK2].hour.start = 1;
-    motorData[CLOCK3].min.start = 1;
-    motorData[CLOCK3].hour.start = 1;
+    clock_start_stop(ALLCLOCKS, BOTHARMS, START);
     
     
 }
