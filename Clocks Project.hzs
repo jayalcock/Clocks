@@ -207,15 +207,15 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="28" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="24" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="32" y="1184" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" selected="1" top="1156" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="114" y="49" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="23" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="53" y="355" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" selected="1" top="326" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="2" y="17" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/clockDriverRT.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="58" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" top="25" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="150" useTextEdit="1" path="1768 Clock Master/src/Clocks-1768.c" left="0" top="138" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="466" useTextEdit="1" path="1768 Clock Master/src/clockEngine.c" left="0" top="430" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="150" useTextEdit="1" path="1768 Clock Master/src/Clocks-1768.c" left="0" top="104" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="8" y="466" useTextEdit="1" path="1768 Clock Master/src/clockEngine.c" left="0" top="395" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="22" y="32" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" path="1768 Clock Master/inc/clockEngine.h" left="0" top="20" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="477" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" path="1768 Clock Master/src/can.c" left="0" top="428" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="477" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" path="1768 Clock Master/src/can.c" left="0" top="393" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="21" y="10" useTextEdit="1" path="1768 Clock Master/inc/can.h" left="0" top="1" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="10" y="117" useTextEdit="1" path="1768 Clock Master/src/uart_rb.c" left="0" top="105" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="10" useTextEdit="1" path="11c24 Clock Slave RTOS/src/testFile.c" left="0" top="0" codecName="Default"/>
