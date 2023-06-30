@@ -39,6 +39,8 @@ typedef struct
     
 } motorStruct;
 
+// Update motor parameters from received can bus data
+void update_from_CAN(CCAN_MSG_OBJ_T *CANdata);
 
 // Clock n control threads
 void clock0_func(void *p);
@@ -49,8 +51,7 @@ void clock3_func(void *p);
 // Master clock control thread
 void clock_control(void *p);
 
-// Update motor parameters from received can bus data
-void update_from_CAN(CCAN_MSG_OBJ_T *CANdata);
+
 
 
 #endif /* _CLOCKDRIVERRT_H_ */

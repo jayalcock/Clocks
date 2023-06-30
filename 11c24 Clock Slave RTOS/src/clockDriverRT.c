@@ -458,9 +458,17 @@ void GPIO2_IRQHandler(void)
     
     // Clear interrupts 
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, triggeredPins);
-
     
 }
+
+/*
+    @brief      Basid delay function. 
+    
+    @param      delay: cycles to delay for
+
+    @return     Nothing
+
+*/
 void pulse_delay(const uint16_t delay)
 {
     for(uint16_t i = 0; i < delay; i++)
@@ -829,12 +837,6 @@ static void drive_continuous(const uint8_t clockNum, const char arm, uint8_t *st
 {   
     pulse_generation(clockNum, arm); // Generate stepper pulse
     
-    //motorData[clockNum].min.speed = speed;
-    //motorData[clockNum].hour.speed = speed;
-    
-    //motorData[clockNum].min.dir = dir;
-    //motorData[clockNum].hour.dir = dir;
-    
     (*steps)++;
     
     if (arm == 'm')
@@ -892,13 +894,8 @@ static void drive_continuous(const uint8_t clockNum, const char arm, uint8_t *st
         }
     }
     
-    
-    
-    
-    
-
- 
 }
+
 /*
     @brief      Homes clocks and drives to preset position
 
@@ -915,7 +912,6 @@ void home_clocks(void)
     
     // Set speed 
     set_arm_speed(ALLCLOCKS, BOTHARMS, 3);
-    
     
     // Drive clocks CW until hall is hit
     ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
@@ -940,9 +936,12 @@ void home_clocks(void)
     
     
     // Start motion and run CW for 1 seconds
+    
+    set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
     clock_start_stop(ALLCLOCKS, BOTHARMS, START);
-    //set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
-    ctl_timeout_wait(ctl_get_current_time() + 1000);
+    
+    
+    //ctl_timeout_wait(ctl_get_current_time() + 1000);
     
     
     // Set direction CCW
@@ -993,6 +992,10 @@ void home_clocks(void)
     
 }
 
+
+/*****************************************************************************
+ * Public Functions
+ ****************************************************************************/
 /*
     @brief      Updates local data with data from CAN bus
 
