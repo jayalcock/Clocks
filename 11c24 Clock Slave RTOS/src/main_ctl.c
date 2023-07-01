@@ -1,13 +1,14 @@
 #include <string.h>
 #include <ctl_api.h>
 #include "board.h"
+#include "ccan_rom.h"
 #include "clockDriverRT.h"
-#include "comms.h"
+
 
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
-#define STACKSIZE 64      
+#define STACKSIZE 128      
 
 CTL_TASK_t main_task, clock0_task, clock1_task, clock2_task, clock3_task, comms_task, clock_control_task;
 

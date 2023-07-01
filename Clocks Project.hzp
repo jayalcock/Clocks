@@ -279,6 +279,7 @@
         <file file_name="../11C24 Clock Slave RTOS/Device/inc/board_api.h" />
         <file file_name="Device/inc/clock_11xx.h" />
         <file file_name="../11C24 Clock Slave RTOS/Device/inc/gpio_11xx_2.h" />
+        <file file_name="../11C24 Clock Slave RTOS/Device/inc/ring_buffer.h" />
         <file file_name="../11C24 Clock Slave RTOS/Device/inc/sysctl_11xx.h" />
         <file file_name="Device/inc/timer_11xx.h" />
       </folder>
@@ -287,6 +288,7 @@
         <file file_name="../11C24 Clock Slave RTOS/Device/src/board_sysinit.c" />
         <file file_name="Device/src/clock_11xx.c" />
         <file file_name="../11C24 Clock Slave RTOS/Device/src/gpio_11xx_2.c" />
+        <file file_name="../11C24 Clock Slave RTOS/Device/src/ring_buffer.c" />
         <file file_name="../11C24 Clock Slave RTOS/Device/src/sysctl_11xx.c" />
         <file file_name="Device/src/timer_11xx.c" />
       </folder>

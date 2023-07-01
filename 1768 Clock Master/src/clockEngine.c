@@ -367,22 +367,22 @@ void clock_thread(void *msgQueuePtr)
     uint16_t hour2 = 0;
     uint16_t min3 = 0;
     uint16_t hour3 = 0;
-    uint8_t speed0m = 2;
+    uint8_t speed0m = 3;
     uint8_t speed0h = 3;
-    uint8_t speed1m = 4;
-    uint8_t speed1h = 2;
-    uint8_t speed2m = 4;
+    uint8_t speed1m = 3;
+    uint8_t speed1h = 3;
+    uint8_t speed2m = 3;
     uint8_t speed2h = 3;
-    uint8_t speed3m = 2;
+    uint8_t speed3m = 3;
     uint8_t speed3h = 3;
     uint8_t dir0m = 0;
-    uint8_t dir0h = 1;
-    uint8_t dir1m = 1;
+    uint8_t dir0h = 0;
+    uint8_t dir1m = 0;
     uint8_t dir1h = 0;
-    uint8_t dir2m = 1;
+    uint8_t dir2m = 0;
     uint8_t dir2h = 0;
     uint8_t dir3m = 0;
-    uint8_t dir3h = 1;
+    uint8_t dir3h = 0;
     
     update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
     update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
@@ -395,13 +395,13 @@ void clock_thread(void *msgQueuePtr)
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         
-        min0 += 90;
+        min0 += 45;
         hour0 += 45;
-        min1 += 90;
+        min1 += 45;
         hour1 += 45;
-        min2 += 90;
+        min2 += 45;
         hour2 += 45;
-        min3 += 90;
+        min3 += 45;
         hour3 += 45;
         
         
@@ -424,41 +424,77 @@ void clock_thread(void *msgQueuePtr)
         {
             min0 -= 360;
         }
-        
+        if(min0 <=0)
+        {
+            min0 += 360;
+        }
         if(hour0 >= 360)
         {   
             hour0 -= 360;
+        }
+        if(hour0 <=0)
+        {
+            hour0 += 360;
         }
         
         if(min1 >= 360)
         {    
             min1 -= 360;
         }
+        if(min1 <= 0)
+        {
+            min1 += 360;
+        }
         
         if(hour1 >= 360)
         {    
             hour1 -= 360;
         }
+        if(hour1 <= 0)
+        {
+            hour1 += 360;
+        }
+        
         if(min2 >= 360)
         {
             min2 -= 360;
+        }
+        if(min2 <= 0)
+        {
+            min2 += 360;
         }
         
         if(hour2 >= 360)
         {   
             hour2 -= 360;
         }
+        if(hour2 <= 0)
+        {
+            hour2 += 360;
+        }
         
         if(min3 >= 360)
         {    
             min3 -= 360;
+        }
+        if(min3 <= 0)
+        {
+            min3 += 360;
         }
         
         if(hour3 >= 360)
         {    
             hour3 -= 360;
         }
+        if(hour3 <= 0)
+        {
+            hour3 += 360;
+        }
             
+        update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
+        update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
+        update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
+        update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
             
         update_position(&clockNode0, &min0, &hour0, msgQueuePtr);
         update_position(&clockNode2, &min2, &hour2, msgQueuePtr);

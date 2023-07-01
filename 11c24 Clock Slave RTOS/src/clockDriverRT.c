@@ -7,6 +7,7 @@
 #include "clock_11xx.h"
 #include "ccan_rom.h"
 #include "gpio_11xx_2.h"
+#include "ring_buffer.h"
 
 
 /*****************************************************************************
@@ -87,6 +88,12 @@
 CTL_EVENT_SET_t clock0Event, clock1Event, clock2Event, clock3Event, clockControlEvent, clockHomeEvent;
 // Messages
 CCAN_MSG_OBJ_T can_RX_data;
+
+// Buffer
+#define RXBUFFSIZE 5
+RINGBUFF_T rxBuffer;
+CCAN_MSG_OBJ_T rx_buffer[RXBUFFSIZE];
+
 
 // File scope variables
 const uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
@@ -200,7 +207,7 @@ void CT32B0_IRQHandler(void)
         Chip_TIMER_SetMatch(LPC_TIMER32_0, CLOCK0, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK0].min.speed]);
         
         if(motorData[CLOCK0].min.start == 1)
-            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, CLOCK0);
+            ctl_events_set_clear(&clock0Event, RUN_CLOCK0_MIN, 0);
 
     }
     // Clock 1 minute timer - match interrupt clear and match value reset
@@ -937,11 +944,9 @@ void home_clocks(void)
     
     // Start motion and run CW for 1 seconds
     
-    set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
+    //set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
     clock_start_stop(ALLCLOCKS, BOTHARMS, START);
-    
-    
-    //ctl_timeout_wait(ctl_get_current_time() + 1000);
+    ctl_timeout_wait(ctl_get_current_time() + 1000);
     
     
     // Set direction CCW
@@ -990,6 +995,8 @@ void home_clocks(void)
     // Start motion 
     clock_start_stop(ALLCLOCKS, BOTHARMS, START);
     
+    localControl = 0;
+    
 }
 
 
@@ -1005,7 +1012,9 @@ void home_clocks(void)
 */
 void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 {
-    can_RX_data = *CANdata;
+    RingBuffer_Insert(&rxBuffer, CANdata);
+    
+    //can_RX_data = *CANdata;
     
     if(!localControl)
     {
@@ -1398,8 +1407,15 @@ void clock3_func(void *p)
     }  
 }
 
-
- 
+//void update_clocks(void)
+//{
+//     for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
+//     {
+//        motorData[i].min.remainingSteps = calculate_steps(motorData[i].min.angleDesired, motorData[i].min.angle, motorData[i].min.dir);
+//        motorData[i].hour.remainingSteps = calculate_steps(motorData[i].hour.angleDesired, motorData[i].hour.angle, motorData[i].hour.dir);
+        
+//    }
+//}
 
 
 // Main clock control thread
@@ -1454,6 +1470,9 @@ void clock_control(void *p)
     // Initialise clock event
     ctl_events_init(&clockControlEvent, 0);
     
+    // Initialise ring buffer
+    RingBuffer_Init(&rxBuffer, &rx_buffer, sizeof(can_RX_data), RXBUFFSIZE);
+    
     // Set reset pin high 
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, RESETPORT, RESETPIN); 
 
@@ -1470,70 +1489,74 @@ void clock_control(void *p)
     
     while(1)
     {
+            
+        
         // Wait for any clock event to be triggered
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, UPDATE_ALL_CLOCKS|UPDATE_CLOCK0_MIN|UPDATE_CLOCK0_HOUR|UPDATE_CLOCK1_MIN|UPDATE_CLOCK1_HOUR|
-            UPDATE_CLOCK2_MIN|UPDATE_CLOCK2_HOUR|UPDATE_CLOCK3_MIN|UPDATE_CLOCK3_HOUR|CAN_UPDATE, CTL_TIMEOUT_NONE, 0);
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, CAN_UPDATE|HOME_CLOCKS, CTL_TIMEOUT_NONE, 0);
+        
+        //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, UPDATE_ALL_CLOCKS|UPDATE_CLOCK0_MIN|UPDATE_CLOCK0_HOUR|UPDATE_CLOCK1_MIN|UPDATE_CLOCK1_HOUR|
+        //    UPDATE_CLOCK2_MIN|UPDATE_CLOCK2_HOUR|UPDATE_CLOCK3_MIN|UPDATE_CLOCK3_HOUR|CAN_UPDATE, CTL_TIMEOUT_NONE, 0);
          
-        // Update clock 0 minute remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK0_MIN | UPDATE_ALL_CLOCKS))
-        {
-            motorData[CLOCK0].min.remainingSteps = calculate_steps(motorData[CLOCK0].min.angleDesired, motorData[CLOCK0].min.angle, motorData[CLOCK0].min.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK0_MIN);
-        }
+        //// Update clock 0 minute remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK0_MIN | UPDATE_ALL_CLOCKS))
+        //{
+        //    motorData[CLOCK0].min.remainingSteps = calculate_steps(motorData[CLOCK0].min.angleDesired, motorData[CLOCK0].min.angle, motorData[CLOCK0].min.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK0_MIN);
+        //}
         
-        // Update clock 0 hour remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK0_HOUR | UPDATE_ALL_CLOCKS))
-        {
-            motorData[CLOCK0].hour.remainingSteps = calculate_steps(motorData[CLOCK0].hour.angleDesired, motorData[CLOCK0].hour.angle, motorData[CLOCK0].hour.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK0_HOUR);
-        }
+        //// Update clock 0 hour remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK0_HOUR | UPDATE_ALL_CLOCKS))
+        //{
+        //    motorData[CLOCK0].hour.remainingSteps = calculate_steps(motorData[CLOCK0].hour.angleDesired, motorData[CLOCK0].hour.angle, motorData[CLOCK0].hour.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK0_HOUR);
+        //}
         
-        // Update clock 1 minute remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK1_MIN | UPDATE_ALL_CLOCKS))
-        {
-            motorData[CLOCK1].min.remainingSteps = calculate_steps(motorData[CLOCK1].min.angleDesired, motorData[CLOCK1].min.angle, motorData[CLOCK1].min.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK1_MIN);  
-        }
+        //// Update clock 1 minute remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK1_MIN | UPDATE_ALL_CLOCKS))
+        //{
+        //    motorData[CLOCK1].min.remainingSteps = calculate_steps(motorData[CLOCK1].min.angleDesired, motorData[CLOCK1].min.angle, motorData[CLOCK1].min.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK1_MIN);  
+        //}
         
-        // Update clock 1 hour remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK1_HOUR | UPDATE_ALL_CLOCKS))
-        {
-            motorData[CLOCK1].hour.remainingSteps = calculate_steps(motorData[CLOCK1].hour.angleDesired, motorData[CLOCK1].hour.angle, motorData[CLOCK1].hour.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK1_HOUR);
-        }
-        // Update clock 2 minute remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK2_MIN | UPDATE_ALL_CLOCKS))
-        {
-            motorData[CLOCK2].min.remainingSteps = calculate_steps(motorData[CLOCK2].min.angleDesired, motorData[CLOCK2].min.angle, motorData[CLOCK2].min.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK2_MIN);
-        }
+        //// Update clock 1 hour remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK1_HOUR | UPDATE_ALL_CLOCKS))
+        //{
+        //    motorData[CLOCK1].hour.remainingSteps = calculate_steps(motorData[CLOCK1].hour.angleDesired, motorData[CLOCK1].hour.angle, motorData[CLOCK1].hour.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK1_HOUR);
+        //}
+        //// Update clock 2 minute remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK2_MIN | UPDATE_ALL_CLOCKS))
+        //{
+        //    motorData[CLOCK2].min.remainingSteps = calculate_steps(motorData[CLOCK2].min.angleDesired, motorData[CLOCK2].min.angle, motorData[CLOCK2].min.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK2_MIN);
+        //}
         
-        // Update clock 2 hour remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK2_HOUR | UPDATE_ALL_CLOCKS))
-        {
-            motorData[CLOCK2].hour.remainingSteps = calculate_steps(motorData[CLOCK2].hour.angleDesired, motorData[CLOCK2].hour.angle, motorData[CLOCK2].hour.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK2_HOUR);
-        }
+        //// Update clock 2 hour remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK2_HOUR | UPDATE_ALL_CLOCKS))
+        //{
+        //    motorData[CLOCK2].hour.remainingSteps = calculate_steps(motorData[CLOCK2].hour.angleDesired, motorData[CLOCK2].hour.angle, motorData[CLOCK2].hour.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK2_HOUR);
+        //}
         
-        // Update clock 3 minute remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK3_MIN | UPDATE_ALL_CLOCKS))
-        {
-            motorData[CLOCK3].min.remainingSteps = calculate_steps(motorData[CLOCK3].min.angleDesired, motorData[CLOCK3].min.angle, motorData[CLOCK3].min.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK3_MIN);  
-        }
+        //// Update clock 3 minute remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK3_MIN | UPDATE_ALL_CLOCKS))
+        //{
+        //    motorData[CLOCK3].min.remainingSteps = calculate_steps(motorData[CLOCK3].min.angleDesired, motorData[CLOCK3].min.angle, motorData[CLOCK3].min.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK3_MIN);  
+        //}
         
-        // Update clock 3 hour remaining steps 
-        if(clockControlEvent & (UPDATE_CLOCK3_HOUR | UPDATE_ALL_CLOCKS))    
-        {
-            motorData[CLOCK3].hour.remainingSteps = calculate_steps(motorData[CLOCK3].hour.angleDesired, motorData[CLOCK3].hour.angle, motorData[CLOCK3].hour.dir);
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK3_HOUR);
-        }
+        //// Update clock 3 hour remaining steps 
+        //if(clockControlEvent & (UPDATE_CLOCK3_HOUR | UPDATE_ALL_CLOCKS))    
+        //{
+        //    motorData[CLOCK3].hour.remainingSteps = calculate_steps(motorData[CLOCK3].hour.angleDesired, motorData[CLOCK3].hour.angle, motorData[CLOCK3].hour.dir);
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_CLOCK3_HOUR);
+        //}
         
-        // Update position of all clocks
-        if(clockControlEvent & UPDATE_ALL_CLOCKS)
-        {
-            ctl_events_set_clear(&clockControlEvent, 0, UPDATE_ALL_CLOCKS);
-        }
+        //// Update position of all clocks
+        //if(clockControlEvent & UPDATE_ALL_CLOCKS)
+        //{
+        //    ctl_events_set_clear(&clockControlEvent, 0, UPDATE_ALL_CLOCKS);
+        //}
         
         // Update with data received from CAN bus
         if(clockControlEvent & CAN_UPDATE)
@@ -1543,55 +1566,66 @@ void clock_control(void *p)
             0x201 - speed
             0x202 - acceleration
             0x203 - start motion */
-            
-            // position update
-            if(can_RX_data.mode_id == POSITION)
+
+            while(!RingBuffer_IsEmpty(&rxBuffer))
             {
-                for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
+                RingBuffer_Pop(&rxBuffer, &can_RX_data);
+            
+                // position update
+                if(can_RX_data.mode_id == POSITION)
                 {
-                    if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
+                 
+    
+                    for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
                     {
-                        motorData[i].min.angleDesired = ((can_RX_data.data[1] << 8) | (can_RX_data.data[2])); // minute
-                        motorData[i].hour.angleDesired = ((can_RX_data.data[3] << 8) | (can_RX_data.data[4])); // hour
-                        ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);
-                    }  
+                        if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
+                        {
+                            motorData[i].min.angleDesired = ((can_RX_data.data[1] << 8) | (can_RX_data.data[2])); // minute
+                            motorData[i].hour.angleDesired = ((can_RX_data.data[3] << 8) | (can_RX_data.data[4])); // hour
+                            motorData[i].min.remainingSteps = calculate_steps(motorData[i].min.angleDesired, motorData[i].min.angle, motorData[i].min.dir);
+                            motorData[i].hour.remainingSteps = calculate_steps(motorData[i].hour.angleDesired, motorData[i].hour.angle, motorData[i].hour.dir);
+                        }  
+                    }
+                 
+                    //ctl_events_set_clear(&clockControlEvent, UPDATE_ALL_CLOCKS, 0);   
                 }
             
-            }
-        
-            // speed and direction update
-            if (can_RX_data.mode_id == SPEED)
-            {
-                for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
+ 
+                // speed and direction update
+                if (can_RX_data.mode_id == SPEED)
                 {
-                    if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
+                    for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
                     {
-                        motorData[i].min.speed = (can_RX_data.data[1]);     // minute speed
-                        motorData[i].hour.speed = (can_RX_data.data[2]);    // hour speed
-                        motorData[i].min.dir = (can_RX_data.data[3]);       // minute direction
-                        motorData[i].hour.dir = (can_RX_data.data[4]);      // hour direction
+                        if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
+                        {
+                            motorData[i].min.speed = (can_RX_data.data[1]);     // minute speed
+                            motorData[i].hour.speed = (can_RX_data.data[2]);    // hour speed
+                            motorData[i].min.dir = (can_RX_data.data[3]);       // minute direction
+                            motorData[i].hour.dir = (can_RX_data.data[4]);      // hour direction
+                        }
+                    }
+        
+                }
+            
+                // acceleration update
+                if (can_RX_data.mode_id == ACCELERATION)
+                {
+                }
+            
+                // start motion
+                if (can_RX_data.mode_id == STARTMOTION)
+                {
+                    if(can_RX_data.data[0] == 200)
+                    {
+                        clock_start_stop(ALLCLOCKS, BOTHARMS, START);
                     }
                 }
-        
-            }
             
-            // acceleration update
-            if (can_RX_data.mode_id == ACCELERATION)
-            {
             }
-            
-            // start motion
-            if (can_RX_data.mode_id == STARTMOTION)
-            {
-                if(can_RX_data.data[0] == 200)
-                {
-                    clock_start_stop(ALLCLOCKS, BOTHARMS, START);
-                }
-            }
-        
+
             ctl_events_set_clear(&clockControlEvent, 0, CAN_UPDATE);
         }
-        
+                 
         // Execute homing procedure
         if(clockControlEvent & HOME_CLOCKS)
         {
@@ -1609,10 +1643,8 @@ void clock_control(void *p)
         }
             
         v++;
-       
-    }
-    
-    
+           
+    }    
 }
 
 

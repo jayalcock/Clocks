@@ -14,8 +14,7 @@ void CAN_tx(uint8_t msg_obj_num);
 void CAN_error(uint32_t error_info);
 void C_CAN_IRQHandler(void);
 int can_init(void);
-
-
+void comms_func(void *p);
 
 
 #endif /*_CCAN_ROM_H_*/

@@ -18,8 +18,8 @@ struct clockArmData
     uint8_t pin;
     uint8_t dirPort;
     uint8_t dirPin;
-    uint16_t angle;
-    uint16_t angleDesired;
+    int16_t angle;
+    int16_t angleDesired;
     uint8_t dir;
     uint8_t start;
     uint32_t remainingSteps;
