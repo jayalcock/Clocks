@@ -393,7 +393,6 @@ void clock_thread(void *msgQueuePtr)
     while(1)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
-        ctl_timeout_wait(ctl_get_current_time() + 2000);
         
         min0 += 45;
         hour0 += 45;
@@ -491,27 +490,26 @@ void clock_thread(void *msgQueuePtr)
             hour3 += 360;
         }
             
-        update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
-        update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
-        update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
-        update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
+        //update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
+        //update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
+        //update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
+        //update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
             
         update_position(&clockNode0, &min0, &hour0, msgQueuePtr);
-        update_position(&clockNode2, &min2, &hour2, msgQueuePtr);
+        //update_position(&clockNode2, &min2, &hour2, msgQueuePtr);
 
         start_movement(ALL_CLOCKS, msgQueuePtr);
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         
         update_position(&clockNode1, &min1, &hour1, msgQueuePtr);
-        update_position(&clockNode3, &min3, &hour3, msgQueuePtr);
+        //update_position(&clockNode3, &min3, &hour3, msgQueuePtr);
 
         
         start_movement(ALL_CLOCKS, msgQueuePtr);
-
- 
-        ctl_timeout_wait(ctl_get_current_time() + 2000);
         
+        ctl_timeout_wait(ctl_get_current_time() + 2000);
+       
         
     }
 }
