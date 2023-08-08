@@ -40,6 +40,8 @@
  ****************************************************************************/
 #define LED0_GPIO_PORT_NUM                      1
 #define LED0_GPIO_BIT_NUM                       18
+#define LED1_GPIO_PORT_NUM                      1
+#define LED1_GPIO_BIT_NUM                       19
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -59,6 +61,7 @@ static void Board_LED_Init(void)
 	/* Pin PIO0_22 is configured as GPIO pin during SystemInit */
 	/* Set the PIO_22 as output */
 	Chip_GPIO_WriteDirBit(LPC_GPIO, LED0_GPIO_PORT_NUM, LED0_GPIO_BIT_NUM, true);
+        Chip_GPIO_WriteDirBit(LPC_GPIO, LED1_GPIO_PORT_NUM, LED1_GPIO_BIT_NUM, true);
 }
 
 /*****************************************************************************
@@ -119,9 +122,11 @@ void Board_UARTPutSTR(char *str)
 /* Sets the state of a board LED to on or off */
 void Board_LED_Set(uint8_t LEDNumber, bool On)
 {
-	/* There is only one LED */
 	if (LEDNumber == 0) {
 		Chip_GPIO_WritePortBit(LPC_GPIO, LED0_GPIO_PORT_NUM, LED0_GPIO_BIT_NUM, On);
+	}
+        if (LEDNumber == 1) {
+		Chip_GPIO_WritePortBit(LPC_GPIO, LED1_GPIO_PORT_NUM, LED1_GPIO_BIT_NUM, On);
 	}
 }
 
@@ -133,6 +138,9 @@ bool Board_LED_Test(uint8_t LEDNumber)
 	if (LEDNumber == 0) {
 		state = Chip_GPIO_ReadPortBit(LPC_GPIO, LED0_GPIO_PORT_NUM, LED0_GPIO_BIT_NUM);
 	}
+        if (LEDNumber == 1) {
+		state = Chip_GPIO_ReadPortBit(LPC_GPIO, LED1_GPIO_PORT_NUM, LED1_GPIO_BIT_NUM);
+	}
 
 	return state;
 }
@@ -140,6 +148,9 @@ bool Board_LED_Test(uint8_t LEDNumber)
 void Board_LED_Toggle(uint8_t LEDNumber)
 {
 	if (LEDNumber == 0) {
+		Board_LED_Set(LEDNumber, !Board_LED_Test(LEDNumber));
+	}
+        if (LEDNumber == 1) {
 		Board_LED_Set(LEDNumber, !Board_LED_Test(LEDNumber));
 	}
 }

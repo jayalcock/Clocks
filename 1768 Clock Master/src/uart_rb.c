@@ -231,10 +231,10 @@ void uart_thread(void *p)
                 bytes1 = Chip_UART_ReadRB(LPC_UART1, &rxring1, &data1, 1);
        
                 // If data was popped from ringbuffer, loop to UART0
-                if(bytes1)
-                {
-                    Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &data1, 1);
-                }
+                //if(bytes1)
+                //{
+                //    Chip_UART_SendRB(LPC_UART0, &txring0, (const uint8_t *) &data1, 1);
+                //}
                 
             }
                    

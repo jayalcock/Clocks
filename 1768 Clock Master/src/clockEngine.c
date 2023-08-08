@@ -15,7 +15,7 @@
 
 //#include "uart_17xx_40xx.h"
 
-#define RESET_WIFI      0
+#define RESET_WIFI      1
 #define UNUSED_ANGLE    45
 #define ONE_SECOND      1000U
 #define GMT             -7
@@ -39,6 +39,7 @@
 #define SPEED_DL    5
 #define ACCEL_ID    0x202
 #define START_ID    0x203
+#define FUNC_ID     0x204
 #define ALL_CLOCKS 200
 
 CTL_EVENT_SET_t clockEvent;
@@ -330,6 +331,26 @@ void start_movement(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
     startCanTx();
 }
 
+void trigger_slave_func(const uint8_t clockNum, const uint8_t funcNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+{
+    /* Function 1 - Home clocks
+       Function 2 - 
+    
+    */
+    
+    CAN_MSG_T sendMsgBuff;
+    
+    sendMsgBuff.ID = FUNC_ID;
+    sendMsgBuff.DLC = 1;
+    sendMsgBuff.Type = 0;
+    sendMsgBuff.Data[0] = funcNum;
+    
+    ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
+    
+    startCanTx();
+}
+    
+
 void clock_thread(void *msgQueuePtr)
 {
 
@@ -341,6 +362,10 @@ void clock_thread(void *msgQueuePtr)
      
     ctl_events_init(&clockEvent, 0);
     
+    
+    trigger_slave_func(ALL_CLOCKS, 1, msgQueuePtr);
+    //ctl_timeout_wait(ctl_get_current_time() + 5000);
+ 
  
     // Initialise and start the RTC
     rtcInit();
@@ -393,6 +418,7 @@ void clock_thread(void *msgQueuePtr)
     while(1)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
+        
         
         min0 += 45;
         hour0 += 45;

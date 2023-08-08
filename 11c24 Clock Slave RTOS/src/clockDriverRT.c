@@ -78,10 +78,14 @@
 
 
 // Can message types
-#define POSITION       0x200 
-#define SPEED          0x201 
-#define ACCELERATION   0x202 
-#define STARTMOTION    0x203 
+#define POSITION        0x200 
+#define SPEED           0x201 
+#define ACCELERATION    0x202 
+#define STARTMOTION     0x203 
+#define TRIGGERFUNC     0x204
+
+// Clock functions
+#define HOMECLOCKS      1
 
 // Initialise objects
 // Events
@@ -946,7 +950,10 @@ static void drive_continuous(const uint8_t clockNum, const char arm, uint8_t *st
 */
 void home_clocks(void)
 {
-    localControl = 1; 
+    //localControl = 1; 
+    
+    // Stop all motion
+    clock_start_stop(ALLCLOCKS, BOTHARMS, STOP);  
     
     // Set direction CW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
@@ -958,9 +965,24 @@ void home_clocks(void)
     ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
     clock_start_stop(ALLCLOCKS, BOTHARMS, START);    
 
+    ctl_timeout_wait(ctl_get_current_time() + 1000);
+       
+    // Enable GPIO interrupts
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
+        1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
+        1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
+        1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);  
+       
+    // Clear interrupts 
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
+        motorData[CLOCK1].hour.hallPin | motorData[CLOCK1].min.hallPin |
+        motorData[CLOCK2].hour.hallPin | motorData[CLOCK2].min.hallPin |
+        motorData[CLOCK3].hour.hallPin | motorData[CLOCK3].min.hallPin); 
+        
     
     // Wait for all clocks to be at home pos
-    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
+    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, 
+        CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
         CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
         CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
         CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
@@ -981,10 +1003,11 @@ void home_clocks(void)
     //set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
     clock_start_stop(ALLCLOCKS, BOTHARMS, START);
     ctl_timeout_wait(ctl_get_current_time() + 1000);
-    
+    clock_start_stop(ALLCLOCKS, BOTHARMS, STOP);
     
     // Set direction CCW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
+    clock_start_stop(ALLCLOCKS, BOTHARMS, START);
     
     // Drive CCW until hall is hit
     ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
@@ -1037,7 +1060,7 @@ void home_clocks(void)
     //        !motorData[2].hour.atPosition, !motorData[2].min.atPosition, !motorData[3].hour.atPosition, !motorData[3].min.atPosition)
     //    {
     //    }
-    localControl = 0;
+    //localControl = 0;
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
         
     
@@ -1521,8 +1544,6 @@ void clock_control(void *p)
     
     // Set reset pin high 
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, RESETPORT, RESETPIN); 
-
-    home_clocks();
         
     #if TESTING
         clock_testing();
@@ -1540,7 +1561,7 @@ void clock_control(void *p)
        
         
         // Wait for any clock event to be triggered
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, CAN_UPDATE|HOME_CLOCKS, CTL_TIMEOUT_NONE, 0);
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, CAN_UPDATE, CTL_TIMEOUT_NONE, 0);
         
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, UPDATE_ALL_CLOCKS|UPDATE_CLOCK0_MIN|UPDATE_CLOCK0_HOUR|UPDATE_CLOCK1_MIN|UPDATE_CLOCK1_HOUR|
         //    UPDATE_CLOCK2_MIN|UPDATE_CLOCK2_HOUR|UPDATE_CLOCK3_MIN|UPDATE_CLOCK3_HOUR|CAN_UPDATE, CTL_TIMEOUT_NONE, 0);
@@ -1613,7 +1634,9 @@ void clock_control(void *p)
             0x200 - position
             0x201 - speed
             0x202 - acceleration
-            0x203 - start motion */
+            0x203 - start motion 
+            0x204 - trigger function
+            */
 
             while(!RingBuffer_IsEmpty(&rxBuffer))
             {
@@ -1665,6 +1688,16 @@ void clock_control(void *p)
                     if(can_RX_data.data[0] == 200)
                     {
                         clock_start_stop(ALLCLOCKS, BOTHARMS, START);
+                    }
+                }
+                
+                // trigger specific clock functions 
+                if (can_RX_data.mode_id == TRIGGERFUNC)
+                {
+                    // Trigger homing procedure
+                    if(can_RX_data.data[0] == HOMECLOCKS)
+                    {
+                        home_clocks();
                     }
                 }
             
