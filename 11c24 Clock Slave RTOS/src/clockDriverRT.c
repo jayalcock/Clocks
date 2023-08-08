@@ -89,7 +89,7 @@
 
 // Initialise objects
 // Events
-CTL_EVENT_SET_t clock0Event, clock1Event, clock2Event, clock3Event, clockControlEvent, clockHomeEvent;
+CTL_EVENT_SET_t clock0Event, clock1Event, clock2Event, clock3Event, clockControlEvent, clockHomeEvent, clockEvent;
 // Messages
 CCAN_MSG_OBJ_T can_RX_data;
 
@@ -406,6 +406,148 @@ void CT16B1_IRQHandler(void)
   
 }   
 #endif
+
+
+void gpio_init(void)
+{
+    // Set up GPIO - Clock 0   
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_2, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, (IOCON_FUNC0 | IOCON_STDI2C_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, (IOCON_FUNC0 | IOCON_STDI2C_EN)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+
+    // Set required pin direction - Clcok 0 
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK0].min.dirPort, motorData[CLOCK0].min.dirPin);  // Dir A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK0].min.port, motorData[CLOCK0].min.pin);  // Pulse A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK0].hour.dirPort, motorData[CLOCK0].hour.dirPin);  // Dir B
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK0].hour.port, motorData[CLOCK0].hour.pin);  // Pulse B
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK0].hour.hallPort, motorData[CLOCK0].hour.hallPin);   // Hall hour
+
+    // Set up GPIO - Clock 1
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+
+    // Set required pin direction - Clock 1
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].min.dirPort, motorData[CLOCK1].min.dirPin);  // Dir C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].min.port, motorData[CLOCK1].min.pin);  // Pulse C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].hour.dirPort, motorData[CLOCK1].hour.dirPin);  // Dir D 
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].hour.port, motorData[CLOCK1].hour.pin);  // Pulse D
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK1].min.hallPort, motorData[CLOCK1].min.hallPin);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK1].hour.hallPort, motorData[CLOCK1].hour.hallPin);   // Hall hour
+
+    // Set up GPIO - Clock 2
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_4, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_5, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_7, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+
+    // Set required pin direction - Clock 2
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK2].min.dirPort, motorData[CLOCK2].min.dirPin);  // Dir A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK2].min.port, motorData[CLOCK2].min.pin);  // Pulse A
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK2].hour.dirPort, motorData[CLOCK2].hour.dirPin);  // Dir B 
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK2].hour.port, motorData[CLOCK2].hour.pin);  // Pulse B
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK2].min.hallPort, motorData[CLOCK2].min.hallPin);   // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK2].hour.hallPort, motorData[CLOCK2].hour.hallPin);   // Hall hour
+
+    // Set up GPIO - Clock 3
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_0, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+
+    // Set required pin direction - Clock 3
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].min.dirPort, motorData[CLOCK3].min.dirPin);  // Dir C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].min.port, motorData[CLOCK3].min.pin);  // Pulse C
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.dirPort, motorData[CLOCK3].hour.dirPin);  // Dir D 
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.port, motorData[CLOCK3].hour.pin);  // Pulse D
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin);  // Hall min
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPort);  // Hall hour
+
+}
+
+void timer_init(void)
+{
+    // Set up clock 0 timers  
+    #if HIRESTIMER
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 0);
+    Chip_TIMER_SetMatch(LPC_TIMER32_0, 0, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 0);
+    Chip_TIMER_SetMatch(LPC_TIMER32_1, 0, timerFreq/10);
+    
+    #else
+
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 0);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 0, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 0);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 0, timerFreq/10);
+    #endif
+
+    // Set up clock 1 timers
+    #if HIRESTIMER
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 1);
+    Chip_TIMER_SetMatch(LPC_TIMER32_0, 1, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 1);
+    Chip_TIMER_SetMatch(LPC_TIMER32_1, 1, timerFreq/10);
+    
+    #else
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 1);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 1, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 1);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 1, timerFreq/10);
+    #endif
+
+    // Set up clock 2 timers
+    #if HIRESTIMER
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 2);
+    Chip_TIMER_SetMatch(LPC_TIMER32_0, 2, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 2);
+    Chip_TIMER_SetMatch(LPC_TIMER32_1, 2, timerFreq/10);
+    
+    #else
+
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 2);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 2, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 2);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 2, timerFreq/10);
+    #endif
+
+    // Set up clock 3 timers
+    #if HIRESTIMER
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 3);
+    Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 3);
+    Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, timerFreq/10);
+    
+    #else
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 3);
+    Chip_TIMER_SetMatch(LPC_TIMER16_0, 3, timerFreq/10);
+    
+    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 3);
+    Chip_TIMER_SetMatch(LPC_TIMER16_1, 3, timerFreq/10);
+    #endif
+}
+
+
+
 
 /*
     @brief    GPIO IRQ handler for handling hall effect triggers. 
@@ -1098,6 +1240,105 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 /*****************************************************************************
  * Realtime Threads
  ****************************************************************************/
+ void clock_func(void *p)
+{
+    unsigned int v=0;
+    uint8_t mSteps0 = 0, hSteps0 = 0, mSteps1 = 0, hSteps1 = 0, mSteps2 = 0, hSteps2 = 0, mSteps3 = 0, hSteps3 = 0;
+    
+    // Initialise clock events
+    ctl_events_init(&clock0Event, 0);
+    ctl_events_init(&clock1Event, 0);
+    ctl_events_init(&clock2Event, 0);
+    ctl_events_init(&clock3Event, 0);
+
+    gpio_init();
+
+    timer_init();
+
+    // Set up interrupts
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 1 << motorData[CLOCK0].hour.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].min.hallPort, 1 << motorData[CLOCK1].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].hour.hallPort, 1 << motorData[CLOCK1].hour.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].min.hallPort, 1 << motorData[CLOCK2].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].hour.hallPort, 1 << motorData[CLOCK2].hour.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].min.hallPin, GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort, 1 << motorData[CLOCK3].hour.hallPin, GPIO_INT_FALLING_EDGE); 
+
+    // Clear interrupts
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin);
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK1].min.hallPort, 1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin);\
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK2].min.hallPort, 1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin);
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
+
+    // Enable Iterrupts
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin);
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK1].min.hallPort, 1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin);
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK2].min.hallPort, 1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin);
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
+
+
+    while (1)
+    {      
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, RUN_ALL_CLOCKS|
+            RUN_CLOCK0_HOUR|RUN_CLOCK0_MIN|
+            RUN_CLOCK1_HOUR|RUN_CLOCK1_MIN|
+            RUN_CLOCK2_HOUR|RUN_CLOCK2_MIN|
+            RUN_CLOCK3_HOUR|RUN_CLOCK3_MIN, CTL_TIMEOUT_NONE, 0);  
+
+
+        if(clockControlEvent & HOME_CLOCKS)
+        {
+            //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
+            drive_continuous(ALLCLOCKS, BOTHARMS, &hSteps0); //TODO 
+
+        }
+        else
+        {
+            drive_to_pos(clockEvent, 'h', &hSteps0);
+        }
+
+
+
+        //Original code 
+                
+        //// Drive clock 0 hour arm until at desired position
+        ////if(clock0Event & RUN_CLOCK0_HOUR|RUN_ALL_CLOCKS)
+        //if(clockEvent & RUN_CLOCK0_HOUR)
+        //{
+        //    if(clockControlEvent & HOME_CLOCKS)
+        //    {
+        //        //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
+        //        drive_continuous(CLOCK0, HOURARM, &hSteps0);
+        //    }
+        //    else
+        //    {
+        //        drive_to_pos(CLOCK0, 'h', &hSteps0);
+        //    }
+        //    ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_HOUR); // clear event when at position
+        //}
+        
+        //// Drive clock 0 minute arm until at desired position
+        ////if(clock0Event & RUN_CLOCK0_MIN|RUN_ALL_CLOCKS)
+        //if(clockEvent & RUN_CLOCK0_MIN)
+        //{
+        //    if(clockControlEvent & HOME_CLOCKS)
+        //    {
+        //        drive_continuous(CLOCK0, MINUTEARM, &mSteps0);
+        //    }
+        //    else
+        //    {
+        //        drive_to_pos(CLOCK0, 'm', &mSteps0);
+        //    }           
+            
+        //    ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_MIN);  // clear event when at position
+        //}
+
+        v++;
+    }  
+}
+
+ 
 
 // Clock 0 control function
 void clock0_func(void *p)
@@ -1209,7 +1450,7 @@ void clock1_func(void *p)
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_6, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     
-    //// Set required pin direction
+    // Set required pin direction
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].min.dirPort, motorData[CLOCK1].min.dirPin);  // Dir C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].min.port, motorData[CLOCK1].min.pin);  // Pulse C
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK1].hour.dirPort, motorData[CLOCK1].hour.dirPin);  // Dir D 
@@ -1240,7 +1481,7 @@ void clock1_func(void *p)
    
     #endif
     
-    //// Set up interrupts
+    // Set up interrupts
     Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].min.hallPort, 1 << motorData[CLOCK1].min.hallPin, GPIO_INT_FALLING_EDGE);
     Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].hour.hallPort, 1 << motorData[CLOCK1].hour.hallPin, GPIO_INT_FALLING_EDGE);
 
@@ -1383,98 +1624,98 @@ void clock2_func(void *p)
     }  
 }
 
-void clock3_func(void *p)
-{  
-    unsigned int v=0;
-    uint8_t mSteps, hSteps;
+//void clock3_func(void *p)
+//{  
+//    unsigned int v=0;
+//    uint8_t mSteps, hSteps;
     
-    // Initialise clock 3 events
-    ctl_events_init(&clock3Event, 0);
+//    // Initialise clock 3 events
+//    ctl_events_init(&clock3Event, 0);
     
-    // Set up GPIO
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_0, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+//    // Set up GPIO
+//    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_8, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+//    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+//    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+//    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_0, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+//    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_10, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
+//    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_11, (IOCON_FUNC0 | IOCON_MODE_PULLUP)); 
     
-    // Set required pin direction
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].min.dirPort, motorData[CLOCK3].min.dirPin);  // Dir C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].min.port, motorData[CLOCK3].min.pin);  // Pulse C
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.dirPort, motorData[CLOCK3].hour.dirPin);  // Dir D 
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.port, motorData[CLOCK3].hour.pin);  // Pulse D
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin);  // Hall min
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPort);  // Hall hour
+//    // Set required pin direction
+//    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].min.dirPort, motorData[CLOCK3].min.dirPin);  // Dir C
+//    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].min.port, motorData[CLOCK3].min.pin);  // Pulse C
+//    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.dirPort, motorData[CLOCK3].hour.dirPin);  // Dir D 
+//    Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.port, motorData[CLOCK3].hour.pin);  // Pulse D
+//    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin);  // Hall min
+//    Chip_GPIO_SetPinDIRInput(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPort);  // Hall hour
     
-    // Set up interrupts
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPin, GPIO_INT_FALLING_EDGE);
+//    // Set up interrupts
+//    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin, GPIO_INT_FALLING_EDGE);
+//    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPin, GPIO_INT_FALLING_EDGE);
     
-    // Set up clock 3 timers
-    #if HIRESTIMER
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 3);
-    Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, timerFreq/10);
+//    // Set up clock 3 timers
+//    #if HIRESTIMER
+//    Chip_TIMER_MatchEnableInt(LPC_TIMER32_0, 3);
+//    Chip_TIMER_SetMatch(LPC_TIMER32_0, 3, timerFreq/10);
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 3);
-    Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, timerFreq/10);
+//    Chip_TIMER_MatchEnableInt(LPC_TIMER32_1, 3);
+//    Chip_TIMER_SetMatch(LPC_TIMER32_1, 3, timerFreq/10);
     
-    #else
-    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 3);
-    Chip_TIMER_SetMatch(LPC_TIMER16_0, 3, timerFreq/10);
+//    #else
+//    Chip_TIMER_MatchEnableInt(LPC_TIMER16_0, 3);
+//    Chip_TIMER_SetMatch(LPC_TIMER16_0, 3, timerFreq/10);
     
-    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 3);
-    Chip_TIMER_SetMatch(LPC_TIMER16_1, 3, timerFreq/10);
-    #endif
+//    Chip_TIMER_MatchEnableInt(LPC_TIMER16_1, 3);
+//    Chip_TIMER_SetMatch(LPC_TIMER16_1, 3, timerFreq/10);
+//    #endif
     
-    // Set up interrupts
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].min.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort, 1 << motorData[CLOCK3].hour.hallPin, GPIO_INT_FALLING_EDGE);
+//    // Set up interrupts
+//    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].min.hallPin, GPIO_INT_FALLING_EDGE);
+//    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort, 1 << motorData[CLOCK3].hour.hallPin, GPIO_INT_FALLING_EDGE);
 
-    // Clear interrupts
-    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
+//    // Clear interrupts
+//    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
     
-    // Enable interrupts
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
+//    // Enable interrupts
+//    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
     
-    while (1)
-    {      
+//    while (1)
+//    {      
             
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clock3Event, RUN_ALL_CLOCKS|RUN_CLOCK3_HOUR|RUN_CLOCK3_MIN, CTL_TIMEOUT_NONE, 0);      
+//        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clock3Event, RUN_ALL_CLOCKS|RUN_CLOCK3_HOUR|RUN_CLOCK3_MIN, CTL_TIMEOUT_NONE, 0);      
       
-        // Drive clock 3 hour arm until at desired position
-        if(clock3Event & RUN_CLOCK3_HOUR)
-        {
-            if(clockControlEvent & HOME_CLOCKS)
-            {
-                drive_continuous(CLOCK3, HOURARM, &hSteps);
-            }
-            else
-            {
-                drive_to_pos(CLOCK3, 'h', &hSteps);
-            }     
+//        // Drive clock 3 hour arm until at desired position
+//        if(clock3Event & RUN_CLOCK3_HOUR)
+//        {
+//            if(clockControlEvent & HOME_CLOCKS)
+//            {
+//                drive_continuous(CLOCK3, HOURARM, &hSteps);
+//            }
+//            else
+//            {
+//                drive_to_pos(CLOCK3, 'h', &hSteps);
+//            }     
 
-            ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_HOUR); // clear event when at position
-        }
+//            ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_HOUR); // clear event when at position
+//        }
         
-        // Drive clock 3 minute arm until at desired position
-        if(clock3Event & RUN_CLOCK3_MIN)
-        {
-            if(clockControlEvent & HOME_CLOCKS)
-            {
-                drive_continuous(CLOCK3, MINUTEARM, &mSteps);
-            }
-            else
-            {
-                drive_to_pos(CLOCK3, 'm', &mSteps);
-            }      
+//        // Drive clock 3 minute arm until at desired position
+//        if(clock3Event & RUN_CLOCK3_MIN)
+//        {
+//            if(clockControlEvent & HOME_CLOCKS)
+//            {
+//                drive_continuous(CLOCK3, MINUTEARM, &mSteps);
+//            }
+//            else
+//            {
+//                drive_to_pos(CLOCK3, 'm', &mSteps);
+//            }      
                                    
-            ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_MIN);  // clear event when at position
-        }
+//            ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_MIN);  // clear event when at position
+//        }
 
-        v++;
-    }  
-}
+//        v++;
+//    }  
+//}
 
 //void update_clocks(void)
 //{

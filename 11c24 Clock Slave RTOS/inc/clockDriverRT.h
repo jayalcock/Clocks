@@ -43,10 +43,11 @@ typedef struct
 void update_from_CAN(CCAN_MSG_OBJ_T *CANdata);
 
 // Clock n control threads
-void clock0_func(void *p);
-void clock1_func(void *p);
-void clock2_func(void *p);
-void clock3_func(void *p);
+void clock_func(void *p);
+//void clock0_func(void *p);
+//void clock1_func(void *p);
+//void clock2_func(void *p);
+//void clock3_func(void *p);
 
 // Master clock control thread
 void clock_control(void *p);
