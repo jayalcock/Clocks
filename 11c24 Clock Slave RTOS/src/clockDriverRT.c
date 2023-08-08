@@ -1105,6 +1105,7 @@ void home_clocks(void)
     
     // Drive clocks CW until hall is hit
     ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
+    ctl_events_set_clear(&clockEvent, RUN_ALL_CLOCKS, 0);
     clock_start_stop(ALLCLOCKS, BOTHARMS, START);    
 
     ctl_timeout_wait(ctl_get_current_time() + 1000);
@@ -1246,10 +1247,11 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
     uint8_t mSteps0 = 0, hSteps0 = 0, mSteps1 = 0, hSteps1 = 0, mSteps2 = 0, hSteps2 = 0, mSteps3 = 0, hSteps3 = 0;
     
     // Initialise clock events
-    ctl_events_init(&clock0Event, 0);
-    ctl_events_init(&clock1Event, 0);
-    ctl_events_init(&clock2Event, 0);
-    ctl_events_init(&clock3Event, 0);
+    //ctl_events_init(&clock0Event, 0);
+    //ctl_events_init(&clock1Event, 0);
+    //ctl_events_init(&clock2Event, 0);
+    //ctl_events_init(&clock3Event, 0);
+    ctl_events_init(&clockEvent, 0);
 
     gpio_init();
 
