@@ -524,7 +524,7 @@ void clock_thread(void *msgQueuePtr)
         update_position(&clockNode0, &min0, &hour0, msgQueuePtr);
         //update_position(&clockNode2, &min2, &hour2, msgQueuePtr);
 
-        start_movement(ALL_CLOCKS, msgQueuePtr);
+        //start_movement(ALL_CLOCKS, msgQueuePtr);
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         

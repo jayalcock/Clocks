@@ -22,6 +22,7 @@ struct clockArmData
     int16_t angleDesired;
     uint8_t dir;
     uint8_t start;
+    uint32_t steps;
     uint32_t remainingSteps;
     uint8_t atPosition;    
     uint8_t speed;

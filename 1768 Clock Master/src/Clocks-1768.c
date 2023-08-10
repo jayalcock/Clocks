@@ -149,6 +149,7 @@ int main(void) {
     ctl_task_run(&uart_task, 65, uart_thread, 0, "uart_task", STACKSIZE, uart_task_stack+1, 0);
     
     Board_LED_Set(0, 1);
+    Board_LED_Set(1, 0);
     //bool state = false;
 
     struct TEST_STRUCT{
