@@ -52,6 +52,7 @@
 #define RUN_CLOCK2_HOUR 1<<6
 #define RUN_CLOCK3_MIN  1<<7
 #define RUN_CLOCK3_HOUR 1<<8
+#define HOME_CLOCKS     1<<9
 
 // Clock control event trigger constsnts
 #define UPDATE_ALL_CLOCKS   1<<0
@@ -64,7 +65,7 @@
 #define UPDATE_CLOCK3_MIN   1<<7
 #define UPDATE_CLOCK3_HOUR  1<<8
 #define CAN_UPDATE          1<<9
-#define HOME_CLOCKS         1<<10
+
 
 // Clock Homing event trigger constants
 #define CLOCK0_MIN_HOME  1<<1
@@ -86,6 +87,11 @@
 
 // Clock functions
 #define HOMECLOCKS      1
+
+enum{
+    POS_CTRL,
+    VEL_CTRL,
+    };
 
 // Initialise objects
 // Events
@@ -120,6 +126,7 @@ motorStruct motorData[] =
         //hour
         { 0, 3, // pulse port/pin 
           0, 2, // direction port/pin 
+          2, 2, // hall port/pin 
           0,    // angle
           0,    // desired angle 
           0,    // direction
@@ -129,10 +136,12 @@ motorStruct motorData[] =
           1,    // at position
           2,    // speed
           2,    // accel
-          2, 2 }, // hall port/pin 
+          0},    // pos/vel control mode
+
         //minute
         { 0, 5, // pulse port/pin
           0, 4, // direction port/pin
+          2, 1, // hall port/pin
           0,    // angle
           0,    // desired angle
           0,    // direction
@@ -142,19 +151,19 @@ motorStruct motorData[] =
           1,    // at position
           2,    // speed
           2,    // accel
-          2, 1 }}, // hall port/pin
+          0 }}, // pos/vel control mode
                 
     {1, //clock num
-        {0, 7, 0, 6, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 6}, //hour
-        {0, 9, 0, 8, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 3}}, //minute       
+        {0, 7, 0, 6, 2, 6, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0}, //hour
+        {0, 9, 0, 8, 2, 3, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0}}, //minute       
                             
     {2, //clock num
-        {1, 5, 1, 4, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 8}, //hour
-        {1, 7, 1, 6, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 7}}, //minute
+        {1, 5, 1, 4, 2, 8, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0}, //hour
+        {1, 7, 1, 6, 2, 7, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0}}, //minute
                      
     {3, //clock num
-        {1, 10, 1, 8, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 11}, //hour
-        {2, 0, 1, 11, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 10}}, //minute   
+        {1, 10, 1, 8, 0, 2, 11, 0, 0, 0, 0, 0, 1, 2, 2, 0}, //hour
+        {2, 0, 1, 11, 0, 2, 10, 0, 0, 0, 0, 0, 1, 2, 2, 0}}, //minute   
           
 };
 
@@ -409,6 +418,71 @@ void CT16B1_IRQHandler(void)
 }   
 #endif
 
+/*
+    @brief    GPIO IRQ handler for handling hall effect triggers. 
+    
+    @return   Nothing
+
+*/
+void GPIO2_IRQHandler(void)
+{
+    uint16_t triggeredPins;
+    
+    // Determine which halls have been triggered
+    triggeredPins = Chip_GPIO_GetMaskedInts(LPC_GPIO, motorData[CLOCK0].min.hallPort); 
+    
+    if(triggeredPins & 1 << motorData[CLOCK0].min.hallPin)
+    {
+         ctl_events_set_clear(&clockHomeEvent, CLOCK0_MIN_HOME, 0);
+         motorData[CLOCK0].min.start = 0;
+    }
+    
+    if(triggeredPins & 1 << motorData[CLOCK0].hour.hallPin)
+    {
+        ctl_events_set_clear(&clockHomeEvent, CLOCK0_HOUR_HOME, 0);
+        motorData[CLOCK0].hour.start = 0;
+    }
+    
+    if(triggeredPins & 1 << motorData[CLOCK1].min.hallPin)
+    {
+         ctl_events_set_clear(&clockHomeEvent, CLOCK1_MIN_HOME, 0);
+         motorData[CLOCK1].min.start = 0;
+    }
+    if(triggeredPins & 1 << motorData[CLOCK1].hour.hallPin)
+    {
+        ctl_events_set_clear(&clockHomeEvent, CLOCK1_HOUR_HOME, 0);
+        motorData[CLOCK1].hour.start = 0;
+    }
+    
+    if(triggeredPins & 1 << motorData[CLOCK2].min.hallPin)
+    {
+         ctl_events_set_clear(&clockHomeEvent, CLOCK2_MIN_HOME, 0);
+         motorData[CLOCK2].min.start = 0;
+    }
+    if(triggeredPins & 1 << motorData[CLOCK2].hour.hallPin)
+    {
+        ctl_events_set_clear(&clockHomeEvent, CLOCK2_HOUR_HOME, 0);
+        motorData[CLOCK2].hour.start = 0;
+    }
+    
+    if(triggeredPins & 1 << motorData[CLOCK3].min.hallPin)
+    {
+         ctl_events_set_clear(&clockHomeEvent, CLOCK3_MIN_HOME, 0);
+         motorData[CLOCK3].min.start = 0;
+    }
+    if(triggeredPins & 1 << motorData[CLOCK3].hour.hallPin)
+    {
+        ctl_events_set_clear(&clockHomeEvent, CLOCK3_HOUR_HOME, 0);
+        motorData[CLOCK3].hour.start = 0;
+    }   
+
+    
+    
+    // Clear interrupts 
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, triggeredPins);
+    
+}
+
 
 void gpio_init(void)
 {
@@ -549,75 +623,8 @@ void timer_init(void)
 }
 
 
-
-
 /*
-    @brief    GPIO IRQ handler for handling hall effect triggers. 
-    
-    @return   Nothing
-
-*/
-void GPIO2_IRQHandler(void)
-{
-    uint16_t triggeredPins;
-    
-    // Determine which halls have been triggered
-    triggeredPins = Chip_GPIO_GetMaskedInts(LPC_GPIO, motorData[CLOCK0].min.hallPort); 
-    
-    if(triggeredPins & 1 << motorData[CLOCK0].min.hallPin)
-    {
-         ctl_events_set_clear(&clockHomeEvent, CLOCK0_MIN_HOME, 0);
-         motorData[CLOCK0].min.start = 0;
-    }
-    
-    if(triggeredPins & 1 << motorData[CLOCK0].hour.hallPin)
-    {
-        ctl_events_set_clear(&clockHomeEvent, CLOCK0_HOUR_HOME, 0);
-        motorData[CLOCK0].hour.start = 0;
-    }
-    
-    if(triggeredPins & 1 << motorData[CLOCK1].min.hallPin)
-    {
-         ctl_events_set_clear(&clockHomeEvent, CLOCK1_MIN_HOME, 0);
-         motorData[CLOCK1].min.start = 0;
-    }
-    if(triggeredPins & 1 << motorData[CLOCK1].hour.hallPin)
-    {
-        ctl_events_set_clear(&clockHomeEvent, CLOCK1_HOUR_HOME, 0);
-        motorData[CLOCK1].hour.start = 0;
-    }
-    
-    if(triggeredPins & 1 << motorData[CLOCK2].min.hallPin)
-    {
-         ctl_events_set_clear(&clockHomeEvent, CLOCK2_MIN_HOME, 0);
-         motorData[CLOCK2].min.start = 0;
-    }
-    if(triggeredPins & 1 << motorData[CLOCK2].hour.hallPin)
-    {
-        ctl_events_set_clear(&clockHomeEvent, CLOCK2_HOUR_HOME, 0);
-        motorData[CLOCK2].hour.start = 0;
-    }
-    
-    if(triggeredPins & 1 << motorData[CLOCK3].min.hallPin)
-    {
-         ctl_events_set_clear(&clockHomeEvent, CLOCK3_MIN_HOME, 0);
-         motorData[CLOCK3].min.start = 0;
-    }
-    if(triggeredPins & 1 << motorData[CLOCK3].hour.hallPin)
-    {
-        ctl_events_set_clear(&clockHomeEvent, CLOCK3_HOUR_HOME, 0);
-        motorData[CLOCK3].hour.start = 0;
-    }   
-
-    
-    
-    // Clear interrupts 
-    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, triggeredPins);
-    
-}
-
-/*
-    @brief      Basid delay function. 
+    @brief      Basic delay function. 
     
     @param      delay: cycles to delay for
 
@@ -752,24 +759,39 @@ void update_stepcount(void)
 
     @param      clockNum: clock number to modify
     @param      arm:  arm to modify
-    @param      start:  arm direction
+    @param      start:  start/stop
 
     @return     Nothing
 */
 
-void clock_start_stop(const uint8_t clockNum, const char arm, const uint8_t start)
+void set_start_stop(const uint8_t clockNum, const char arm, const uint8_t runCmd)
 {
     if(clockNum == ALLCLOCKS)
     {
-        motorData[CLOCK0].min.start = start;
-        motorData[CLOCK0].hour.start = start;
-        motorData[CLOCK1].min.start = start;
-        motorData[CLOCK1].hour.start = start;
-        motorData[CLOCK2].min.start = start;
-        motorData[CLOCK2].hour.start = start;
-        motorData[CLOCK3].min.start = start;
-        motorData[CLOCK3].hour.start = start;    
+        motorData[CLOCK0].min.start = runCmd;
+        motorData[CLOCK0].hour.start = runCmd;
+        motorData[CLOCK1].min.start = runCmd;
+        motorData[CLOCK1].hour.start = runCmd;
+        motorData[CLOCK2].min.start = runCmd;
+        motorData[CLOCK2].hour.start = runCmd;
+        motorData[CLOCK3].min.start = runCmd;
+        motorData[CLOCK3].hour.start = runCmd;
         
+    }
+    
+    else 
+    {
+        if(arm == MINUTEARM | BOTHARMS)
+        {
+            motorData[clockNum].min.start = runCmd;
+        }
+        else if(arm == HOURARM | BOTHARMS)
+        {
+            motorData[clockNum].hour.start = runCmd;
+        }
+    }
+    if(runCmd == START)
+    {
         //ctl_events_set_clear(&clockControlEvent, RUN_ALL_CLOCKS, 0);
         ctl_events_set_clear(&clockControlEvent, RUN_CLOCK0_HOUR, 0);
         ctl_events_set_clear(&clockControlEvent, RUN_CLOCK0_MIN, 0);
@@ -779,19 +801,6 @@ void clock_start_stop(const uint8_t clockNum, const char arm, const uint8_t star
         ctl_events_set_clear(&clockControlEvent, RUN_CLOCK2_MIN, 0);
         ctl_events_set_clear(&clockControlEvent, RUN_CLOCK3_HOUR, 0);
         ctl_events_set_clear(&clockControlEvent, RUN_CLOCK3_MIN, 0);
-        
-    }
-    
-    else 
-    {
-        if(arm == MINUTEARM | BOTHARMS)
-        {
-            motorData[clockNum].min.start = start;
-        }
-        else if(arm == HOURARM | BOTHARMS)
-        {
-            motorData[clockNum].hour.start = start;
-        }
     }
     
 }
@@ -904,7 +913,42 @@ void set_arm_speed(const uint8_t clockNum, const char arm, const uint16_t speed)
     }
     
 }
+/*
+    @brief      Set clock control mode, position or velocity
 
+    @param      clockNum: clock number to modify
+    @param      arm:  arm to modify
+    @param      mdoe:  desired control mode - position or velocity
+
+    @return     Nothing
+*/
+void set_control_mode(const uint8_t clockNum, const char arm, const uint16_t mode)
+{
+    if(clockNum == ALLCLOCKS)
+    {
+        motorData[CLOCK0].min.controlMode = mode;
+        motorData[CLOCK0].hour.controlMode = mode;
+        motorData[CLOCK1].min.controlMode = mode;
+        motorData[CLOCK1].hour.controlMode = mode;
+        motorData[CLOCK2].min.controlMode = mode;
+        motorData[CLOCK2].hour.controlMode = mode;
+        motorData[CLOCK3].min.controlMode = mode;
+        motorData[CLOCK3].hour.controlMode = mode;    
+    }
+    
+    else 
+    {
+        if(arm == MINUTEARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].min.controlMode = mode;
+        }
+        else if(arm == HOURARM | arm == BOTHARMS)
+        {
+            motorData[clockNum].hour.controlMode = mode;
+        }
+    }
+    
+}
 /*
     @brief      Drive clock to specific position
 
@@ -1105,7 +1149,10 @@ void home_clocks(void)
     //localControl = 1; 
     
     // Stop all motion
-    clock_start_stop(ALLCLOCKS, BOTHARMS, STOP);  
+    set_start_stop(ALLCLOCKS, BOTHARMS, STOP);  
+    
+    // Set control mode to position control
+    set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CTRL);
     
     // Set direction CW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
@@ -1114,10 +1161,10 @@ void home_clocks(void)
     set_arm_speed(ALLCLOCKS, BOTHARMS, 3);
     
     // Drive clocks CW until hall is hit
-    ctl_events_set_clear(&clockControlEvent, HOME_CLOCKS, 0);
-    ctl_events_set_clear(&clockEvent, RUN_ALL_CLOCKS, 0);
-    clock_start_stop(ALLCLOCKS, BOTHARMS, START);    
-
+    //ctl_events_set_clear(&clockEvent, HOME_CLOCKS, 0);
+    //ctl_events_set_clear(&clockEvent, RUN_ALL_CLOCKS, 0);
+    set_start_stop(ALLCLOCKS, BOTHARMS, START); 
+    
     ctl_timeout_wait(ctl_get_current_time() + 1000);
        
     // Enable GPIO interrupts
@@ -1140,7 +1187,7 @@ void home_clocks(void)
         CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
         CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
     
-    // Set current angle to 0
+    // Update current arm angle to 0
     motorData[CLOCK0].min.angle = 0;
     motorData[CLOCK0].hour.angle = 0;
     motorData[CLOCK1].min.angle = 0;
@@ -1151,16 +1198,16 @@ void home_clocks(void)
     motorData[CLOCK3].hour.angle = 0;
     
     
-    // Start motion and run CW for 1 seconds
-    
-    //set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
-    clock_start_stop(ALLCLOCKS, BOTHARMS, START);
+    // Start motion and run CW for 1 seconds    
+    // TODO Change to position control and drive 30 degrees
+        //set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
+    set_start_stop(ALLCLOCKS, BOTHARMS, START);
     ctl_timeout_wait(ctl_get_current_time() + 1000);
-    clock_start_stop(ALLCLOCKS, BOTHARMS, STOP);
+    set_start_stop(ALLCLOCKS, BOTHARMS, STOP);
     
     // Set direction CCW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
-    clock_start_stop(ALLCLOCKS, BOTHARMS, START);
+    set_start_stop(ALLCLOCKS, BOTHARMS, START);
     
     // Drive CCW until hall is hit
     ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
@@ -1179,6 +1226,10 @@ void home_clocks(void)
     motorData[CLOCK3].min.angle = (motorData[CLOCK3].min.angle / 2) + 180;
     motorData[CLOCK3].hour.angle = motorData[CLOCK3].hour.angle / 2;
     
+    
+    // Set to position control to drive arms to homed position 
+    set_control_mode(ALLCLOCKS, BOTHARMS, POS_CTRL);
+     
     // Set desired angle for all arms to 0/12 oclock
     set_arm_angle(CLOCK0, MINUTEARM, HOMEPOSMIN);
     set_arm_angle(CLOCK0, HOURARM, HOMEPOSHOUR);
@@ -1202,10 +1253,10 @@ void home_clocks(void)
         1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
         1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
         
-    ctl_events_set_clear(&clockControlEvent, 0, HOME_CLOCKS);   
+    //ctl_events_set_clear(&clockEvent, 0, HOME_CLOCKS);   
     
     // Start motion 
-    clock_start_stop(ALLCLOCKS, BOTHARMS, START);
+    set_start_stop(ALLCLOCKS, BOTHARMS, START);
 
     ctl_timeout_wait(ctl_get_current_time() + 1000);    
     
@@ -1254,17 +1305,14 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
  void clock_func(void *p)
 {
     unsigned int v=0;
-    //uint8_t mSteps0 = 0, hSteps0 = 0, mSteps1 = 0, hSteps1 = 0, mSteps2 = 0, hSteps2 = 0, mSteps3 = 0, hSteps3 = 0;
     
     // Initialise clock events
-    //ctl_events_init(&clock0Event, 0);
-    //ctl_events_init(&clock1Event, 0);
-    //ctl_events_init(&clock2Event, 0);
-    //ctl_events_init(&clock3Event, 0);
     ctl_events_init(&clockEvent, 0);
 
+    // Initialise GPIO 
     gpio_init();
-
+    
+    // Initialise peripheral timers
     timer_init();
 
     // Set up interrupts
@@ -1298,53 +1346,121 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
             RUN_CLOCK1_HOUR|RUN_CLOCK1_MIN|
             RUN_CLOCK2_HOUR|RUN_CLOCK2_MIN|
             RUN_CLOCK3_HOUR|RUN_CLOCK3_MIN, CTL_TIMEOUT_NONE, 0);  
-
-
-        //if(clockControlEvent & HOME_CLOCKS)
-        //{
-        //    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
-        //    drive_continuous(ALLCLOCKS, BOTHARMS); //TODO 
-
-        //}
-        //else
-        //{
-        //    drive_to_pos(clockEvent, 'h');
-        //}
-
-
-
-        //Original code 
                 
-        // Drive clock 0 hour arm until at desired position
-        //if(clock0Event & RUN_CLOCK0_HOUR|RUN_ALL_CLOCKS)
+        // Step clock 0 hour arm
         if(clockEvent & RUN_CLOCK0_HOUR)
         {
-            if(clockControlEvent & HOME_CLOCKS)
+            if(motorData[CLOCK0].hour.controlMode == VEL_CTRL)
             {
-                //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].min.hallPin);
                 drive_continuous(CLOCK0, HOURARM);
             }
             else
             {
-                drive_to_pos(CLOCK0, 'h');
+                drive_to_pos(CLOCK0, HOURARM);
             }
-            ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_HOUR); // clear event when at position
+            ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_HOUR); // clear event 
         }
         
-        // Drive clock 0 minute arm until at desired position
-        //if(clock0Event & RUN_CLOCK0_MIN|RUN_ALL_CLOCKS)
+        // Step clock 0 minute arm 
         if(clockEvent & RUN_CLOCK0_MIN)
         {
-            if(clockControlEvent & HOME_CLOCKS)
+            if(motorData[CLOCK0].min.controlMode == VEL_CTRL)
             {
                 drive_continuous(CLOCK0, MINUTEARM);
             }
             else
             {
-                drive_to_pos(CLOCK0, 'm');
+                drive_to_pos(CLOCK0, MINUTEARM);
             }           
             
-            ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_MIN);  // clear event when at position
+            ctl_events_set_clear(&clock0Event, 0, RUN_CLOCK0_MIN);  // clear event
+        }
+        
+        // Step clock 1 hour arm 
+        if(clockEvent & RUN_CLOCK1_HOUR)
+        {
+            if(motorData[CLOCK1].hour.controlMode == VEL_CTRL)
+            {
+                drive_continuous(CLOCK1, HOURARM);
+            }
+            else
+            {
+                drive_to_pos(CLOCK1, HOURARM);
+            }
+            ctl_events_set_clear(&clock1Event, 0, RUN_CLOCK1_HOUR); // clear event
+        }
+        
+        // Step clock 1 minute arm
+        if(clockEvent & RUN_CLOCK1_MIN)
+        {
+            if(motorData[CLOCK1].min.controlMode == VEL_CTRL)
+            {
+                drive_continuous(CLOCK1, MINUTEARM);
+            }
+            else
+            {
+                drive_to_pos(CLOCK1, MINUTEARM);
+            }           
+            
+            ctl_events_set_clear(&clock1Event, 0, RUN_CLOCK1_MIN);  // clear event when at position
+        }
+        
+        // Step clock 2 hour arm
+        if(clockEvent & RUN_CLOCK2_HOUR)
+        {
+            if(motorData[CLOCK2].hour.controlMode == VEL_CTRL)
+            {
+                drive_continuous(CLOCK2, HOURARM);
+            }
+            else
+            {
+                drive_to_pos(CLOCK2, HOURARM);
+            }
+            ctl_events_set_clear(&clock2Event, 0, RUN_CLOCK2_HOUR); // clear event when at position
+        }
+        
+        // Step clock 2 minute arm
+        if(clockEvent & RUN_CLOCK2_MIN)
+        {
+            if(motorData[CLOCK2].min.controlMode == VEL_CTRL)
+            {
+                drive_continuous(CLOCK2, MINUTEARM);
+            }
+            else
+            {
+                drive_to_pos(CLOCK2, MINUTEARM);
+            }           
+            
+            ctl_events_set_clear(&clock2Event, 0, RUN_CLOCK2_MIN);  // clear event when at position
+        }
+        
+        // Step clock 3 hour arm
+        if(clockEvent & RUN_CLOCK3_HOUR)
+        {
+            if(motorData[CLOCK3].hour.controlMode == VEL_CTRL)
+            {
+                drive_continuous(CLOCK3, HOURARM);
+            }
+            else
+            {
+                drive_to_pos(CLOCK3, HOURARM);
+            }
+            ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_HOUR); // clear event when at position
+        }
+        
+        // Step clock 3 minute arm
+        if(clockEvent & RUN_CLOCK3_MIN)
+        {
+            if(motorData[CLOCK3].min.controlMode == VEL_CTRL)
+            {
+                drive_continuous(CLOCK3, MINUTEARM);
+            }
+            else
+            {
+                drive_to_pos(CLOCK3, MINUTEARM);
+            }           
+            
+            ctl_events_set_clear(&clock3Event, 0, RUN_CLOCK3_MIN);  // clear event when at position
         }
 
         v++;
@@ -1941,7 +2057,7 @@ void clock_control(void *p)
                 {
                     if(can_RX_data.data[0] == 200)
                     {
-                        clock_start_stop(ALLCLOCKS, BOTHARMS, START);
+                        set_start_stop(ALLCLOCKS, BOTHARMS, START);
                     }
                 }
                 

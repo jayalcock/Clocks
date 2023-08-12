@@ -18,6 +18,8 @@ struct clockArmData
     uint8_t pin;
     uint8_t dirPort;
     uint8_t dirPin;
+    uint8_t hallPort;
+    uint8_t hallPin;
     int16_t angle;
     int16_t angleDesired;
     uint8_t dir;
@@ -27,8 +29,8 @@ struct clockArmData
     uint8_t atPosition;    
     uint8_t speed;
     uint8_t accel;
-    uint8_t hallPort;
-    uint8_t hallPin;
+    uint8_t controlMode;
+
 };
 
 // Data for each specific clock
