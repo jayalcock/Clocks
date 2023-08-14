@@ -41,6 +41,14 @@
 #define RUN_CLOCK3_MIN  1<<7
 #define RUN_CLOCK3_HOUR 1<<8
 #define HOME_CLOCKS     1<<9
+#define CLOCK0_MIN_AT_POS   1<<10
+#define CLOCK0_HOUR_AT_POS  1<<11
+#define CLOCK1_MIN_AT_POS   1<<12
+#define CLOCK1_HOUR_AT_POS  1<<13
+#define CLOCK2_MIN_AT_POS   1<<14
+#define CLOCK2_HOUR_AT_POS  1<<15
+#define CLOCK3_MIN_AT_POS   1<<16
+#define CLOCK4_HOUR_AT_POS  1<<17
 
 // Clock control event trigger constsnts
 //#define UPDATE_ALL_CLOCKS   1<<0
@@ -56,6 +64,7 @@
 
 
 // Clock Homing event trigger constants
+#define HOMING_ACTIVE       1<<0
 #define CLOCK0_MIN_HOME     1<<1
 #define CLOCK0_HOUR_HOME    1<<2
 #define CLOCK1_MIN_HOME     1<<3
@@ -64,7 +73,7 @@
 #define CLOCK2_HOUR_HOME    1<<6
 #define CLOCK3_MIN_HOME     1<<7
 #define CLOCK3_HOUR_HOME    1<<8
-#define HOMING_ACTIVE       1<<9
+
 
 
 // Can message types
@@ -1176,8 +1185,17 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
 */
 void home_clocks(void)
 {
-    //localControl = 1; 
-    ctl_events_set_clear(&clockHomeEvent, HOMING_ACTIVE, 0);
+  
+    ctl_events_set_clear(&clockHomeEvent, HOMING_ACTIVE, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
+    CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
+    CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
+    CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME);
+    
+    // Enable GPIO interrupts
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
+        1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
+        1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
+        1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);  
     
     // Stop all motion
     set_start_stop(ALLCLOCKS, BOTHARMS, STOP);  
@@ -1190,27 +1208,10 @@ void home_clocks(void)
     
     // Set speed 
     set_arm_speed(ALLCLOCKS, BOTHARMS, 3);
-    
+             
     // Drive clocks CW until hall is hit
-    //ctl_events_set_clear(&clockEvent, HOME_CLOCKS, 0);
-    //ctl_events_set_clear(&clockEvent, RUN_ALL_CLOCKS, 0);
     set_start_stop(ALLCLOCKS, BOTHARMS, START); 
-    
-    ctl_timeout_wait(ctl_get_current_time() + 1000);
-       
-    // Enable GPIO interrupts
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
-        1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
-        1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
-        1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);  
-       
-    // Clear interrupts 
-    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
-        motorData[CLOCK1].hour.hallPin | motorData[CLOCK1].min.hallPin |
-        motorData[CLOCK2].hour.hallPin | motorData[CLOCK2].min.hallPin |
-        motorData[CLOCK3].hour.hallPin | motorData[CLOCK3].min.hallPin); 
-        
-    
+
     // Wait for all clocks to be at home pos
     ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, 
         CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
@@ -1231,10 +1232,13 @@ void home_clocks(void)
     
     // Start motion and run CW for 1 seconds    
     // TODO Change to position control and drive 30 degrees
-        //set_arm_angle(ALLCLOCKS, BOTHARMS, 30);
+    
+    set_arm_angle(ALLCLOCKS, BOTHARMS, 50);
+    update_stepcount();
+    set_control_mode(ALLCLOCKS, BOTHARMS, POS_CTRL);
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     ctl_timeout_wait(ctl_get_current_time() + 1000);
-    set_start_stop(ALLCLOCKS, BOTHARMS, STOP);
+    //set_start_stop(ALLCLOCKS, BOTHARMS, STOP);
     
     // Clear interrupts 
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
@@ -1244,6 +1248,7 @@ void home_clocks(void)
     
     // Set direction CCW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
+    set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CTRL);
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     
     // Drive CCW until hall is hit
@@ -1354,14 +1359,14 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
     timer_init();
 
     // Set up interrupts
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].min.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort, 1 << motorData[CLOCK0].hour.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].min.hallPort, 1 << motorData[CLOCK1].min.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].hour.hallPort, 1 << motorData[CLOCK1].hour.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].min.hallPort, 1 << motorData[CLOCK2].min.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].hour.hallPort, 1 << motorData[CLOCK2].hour.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].min.hallPin, GPIO_INT_FALLING_EDGE);
-    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort, 1 << motorData[CLOCK3].hour.hallPin, GPIO_INT_FALLING_EDGE); 
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].min.hallPort,     1 << motorData[CLOCK0].min.hallPin,     GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].hour.hallPort,    1 << motorData[CLOCK0].hour.hallPin,    GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].min.hallPort,     1 << motorData[CLOCK1].min.hallPin,     GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK1].hour.hallPort,    1 << motorData[CLOCK1].hour.hallPin,    GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].min.hallPort,     1 << motorData[CLOCK2].min.hallPin,     GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK2].hour.hallPort,    1 << motorData[CLOCK2].hour.hallPin,    GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].min.hallPort,     1 << motorData[CLOCK3].min.hallPin,     GPIO_INT_FALLING_EDGE);
+    Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK3].hour.hallPort,    1 << motorData[CLOCK3].hour.hallPin,    GPIO_INT_FALLING_EDGE); 
 
     // Clear interrupts
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin);
