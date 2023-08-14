@@ -5,7 +5,6 @@
 
 #define NUMBEROFCLOCKS 4
 #define NUMBEROFARMS 2
-#define TIMESTEPMS 1
 #define STEPSIZE 12 // 1/12 degree per step
 #define PULSEWIDTH 1
 //#define PULSEPERIOD 10000

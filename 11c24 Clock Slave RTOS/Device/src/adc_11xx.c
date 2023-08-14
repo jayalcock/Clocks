@@ -1,8 +1,8 @@
 /*
- * @brief LPC17xx/40xx A/D conversion driver
+ * @brief LPC11xx A/D conversion driver
  *
  * @note
- * Copyright(C) NXP Semiconductors, 2014
+ * Copyright(C) NXP Semiconductors, 2012
  * All rights reserved.
  *
  * @par
@@ -31,6 +31,8 @@
 
 #include "chip.h"
 
+#if !defined(CHIP_LPC1125)
+
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
@@ -46,14 +48,7 @@
 /* Get the number of clock for a full conversion */
 STATIC INLINE uint8_t getFullConvClk(void)
 {
-#if defined(CHIP_LPC177X_8X) || defined(CHIP_LPC40XX)
-	return 31;
-#elif defined(CHIP_LPC175X_6X)
-	return 65;
-#else
-	return 0;
-#endif
-
+	return 11;
 }
 
 /* Get divider value */
@@ -69,21 +64,15 @@ STATIC uint8_t getClkDiv(LPC_ADC_T *pADC, bool burstMode, uint32_t adcRate, uint
 	   ADC Clock = PCLK_ADC0 / (CLKDIV + 1);
 	   ADC rate = ADC clock / (the number of clocks required for each conversion);
 	 */
-#if defined(CHIP_LPC175X_6X)
-	adcBlockFreq = Chip_Clock_GetPeripheralClockRate(SYSCTL_PCLK_ADC);
-#else
-	adcBlockFreq = Chip_Clock_GetPeripheralClockRate();
-#endif
-#if defined(ADC_ACC_12BITS)
-	fullAdcRate = adcRate * getFullConvClk();
-#else
+	adcBlockFreq = Chip_Clock_GetSystemClockRate();
+
 	if (burstMode) {
 		fullAdcRate = adcRate * clks;
 	}
 	else {
 		fullAdcRate = adcRate * getFullConvClk();
 	}
-#endif
+
 	/* Get the round value by fomular: (2*A + B)/(2*B) */
 	div = ((adcBlockFreq * 2 + fullAdcRate) / (fullAdcRate * 2)) - 1;
 	return div;
@@ -122,24 +111,22 @@ void Chip_ADC_Init(LPC_ADC_T *pADC, ADC_CLOCK_SETUP_T *ADCSetup)
 	uint32_t cr = 0;
 	uint32_t clk;
 
+	Chip_SYSCTL_PowerUp(SYSCTL_POWERDOWN_ADC_PD);
+
 	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_ADC);
 
-#if defined(ADC_TRIM_SUPPORT)
-	pADC->ADTRM = 0xF00;
-#endif
 	pADC->INTEN = 0;		/* Disable all interrupts */
 
 	cr |= ADC_CR_PDN;
 
 	ADCSetup->adcRate = ADC_MAX_SAMPLE_RATE;
-	ADCSetup->bitsAccuracy = 0;	/* LPC17xx/40xx doesn't support this setting */
-	clk = 0;
+	ADCSetup->bitsAccuracy = ADC_10BITS;
+	clk = 11;
+
 	ADCSetup->burstMode = false;
 	div = getClkDiv(pADC, false, ADCSetup->adcRate, clk);
 	cr |= ADC_CR_CLKDIV(div);
-#if !defined(ADC_ACC_12BITS)
 	cr |= ADC_CR_BITACC(ADCSetup->bitsAccuracy);
-#endif /*defined(ADC_ACC_12BITS)*/
 	pADC->CR = cr;
 }
 
@@ -149,6 +136,7 @@ void Chip_ADC_DeInit(LPC_ADC_T *pADC)
 	pADC->INTEN = 0x00000100;
 	pADC->CR = 0;
 	Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_ADC);
+	Chip_SYSCTL_PowerDown(SYSCTL_POWERDOWN_ADC_PD);
 }
 
 /* Get the ADC value */
@@ -212,10 +200,15 @@ void Chip_ADC_SetSampleRate(LPC_ADC_T *pADC, ADC_CLOCK_SETUP_T *ADCSetup, uint32
 	ADCSetup->adcRate = rate;
 	div = getClkDiv(pADC, ADCSetup->burstMode, rate, (11 - ADCSetup->bitsAccuracy));
 	cr |= ADC_CR_CLKDIV(div);
-#if !defined(ADC_ACC_12BITS)
 	cr |= ADC_CR_BITACC(ADCSetup->bitsAccuracy);
-#endif /*defined(ADC_ACC_12BITS)*/
 	pADC->CR = cr;
+}
+
+/* Set the ADC accuracy bits */
+void Chip_ADC_SetResolution(LPC_ADC_T *pADC, ADC_CLOCK_SETUP_T *ADCSetup, ADC_RESOLUTION_T resolution)
+{
+	ADCSetup->bitsAccuracy = resolution;
+	Chip_ADC_SetSampleRate(pADC, ADCSetup, ADCSetup->adcRate);
 }
 
 /* Enable or disable the ADC channel on ADC peripheral */
@@ -246,7 +239,7 @@ void Chip_ADC_SetBurstCmd(LPC_ADC_T *pADC, FunctionalState NewState)
 /* Read the ADC value and convert it to 8bits value */
 Status Chip_ADC_ReadByte(LPC_ADC_T *pADC, ADC_CHANNEL_T channel, uint8_t *data)
 {
-	uint16_t temp;
+	uint16_t temp = 0;
 	Status rt;
 
 	rt = readAdcVal(pADC, channel, &temp);
@@ -254,3 +247,5 @@ Status Chip_ADC_ReadByte(LPC_ADC_T *pADC, ADC_CHANNEL_T channel, uint8_t *data)
 
 	return rt;
 }
+
+#endif /* !defined(CHIP_LPC1125) */

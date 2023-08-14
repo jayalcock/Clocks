@@ -414,22 +414,20 @@ void CAN_IRQHandler(void)
 #endif /*FULL_CAN_AF_USED*/
 }
 
-
-void sendToCAN(CAN_MSG_T *sendMsg)
+// Start CAN Tx public function
+void startCanTx()
 {    
-    
-    SendMsgBuf = *sendMsg;
+    // Set CAN tx event
     ctl_events_set_clear(&can_event, 1<<0, 0);
 }
 
-
-void CAN_Thread(void *p)
+// CAN Thread
+void CAN_Thread(void *msgQueuePtr)
 {
-	CAN_BUFFER_ID_T   TxBuf;
-	//CAN_MSG_T SendMsgBuf;
+	CAN_BUFFER_ID_T TxBuf;
+	CAN_MSG_T SendMsgBuf;
+        void* msgPtr;
         
-
-
         ctl_events_init(&can_event, 0);
         
 	Chip_CAN_Init(LPC_CAN, LPC_CANAF, LPC_CANAF_RAM);
@@ -450,74 +448,31 @@ void CAN_Thread(void *p)
 #else
 	Chip_CAN_SetAFMode(LPC_CANAF, CAN_AF_BYBASS_MODE);
 #endif /*AF_LUT_USED*/
-	NVIC_EnableIRQ(CAN_IRQn);
-
-
-	/* Loopback test */
-//	Chip_CAN_SetMode(LPC_CAN, CAN_MOD_STM, ENABLE);
-//	int temp = Chip_CAN_GetMode(LPC_CAN);
-//	DEBUGOUT("%d\n", temp);
-
-
-	//SendMsgBuf.ID = CAN_TX_MSG_STD_ID;
-	//SendMsgBuf.DLC = 4;
-	//SendMsgBuf.Type = 0;
-	//SendMsgBuf.Data[0] = 'A';
-	//SendMsgBuf.Data[1] = 'B';
-	//SendMsgBuf.Data[2] = 'C';
-	//SendMsgBuf.Data[3] = 'D';
-	//TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
-	//Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
-	//while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
-  
-	//DEBUGOUT("Message Sent!!!\r\n");
-        //DEBUGSTR("TX Success\r\n");
-        
-
-	//PrintCANMsg(&SendMsgBuf);
-        
-        
-
-//	SendMsgBuf.ID = CAN_TX_MSG_REMOTE_STD_ID;
-//	SendMsgBuf.Type = CAN_REMOTE_MSG;
-//	SendMsgBuf.DLC = 8;
-//	TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
-//	Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
-//	while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
-//	DEBUGOUT("Message Sent!!!\r\n");
-//	PrintCANMsg(&SendMsgBuf);
-//
-//	SendMsgBuf.ID = CAN_EXTEND_ID_USAGE | CAN_TX_MSG_EXT_ID;
-//	SendMsgBuf.Type = 0;
-//	SendMsgBuf.Data[0] = 'E';
-//	SendMsgBuf.Data[1] = 'F';
-//	SendMsgBuf.Data[2] = 'G';
-//	SendMsgBuf.Data[3] = 'H';
-//	SendMsgBuf.Data[4] = 'I';
-//	SendMsgBuf.Data[5] = 'J';
-//	SendMsgBuf.Data[6] = 'K';
-//	SendMsgBuf.Data[7] = 'L';
-//	TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
-//	Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
-//	while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
-//	DEBUGOUT("Message Sent!!!\r\n");
-//	PrintCANMsg(&SendMsgBuf);
-
-       
+	NVIC_EnableIRQ(CAN_IRQn);       
 
 	while (1)
         {
-            ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS_WITH_AUTO_CLEAR, &can_event, 1<<0, CTL_TIMEOUT_NONE, 0);
+            // Wait for can event to be triggered
+            ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &can_event, 1<<0, CTL_TIMEOUT_NONE, 0);
+            
+            // Receive message from message queue
+            ctl_message_queue_receive((CTL_MESSAGE_QUEUE_t*) msgQueuePtr, &msgPtr, CTL_TIMEOUT_NONE, 0);
+            
+            // Copy message to local buffer
+            SendMsgBuf = *(CAN_MSG_T*) msgPtr;
+            
+            // Get free tx buffer 
             TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
+            
+            // Send message and wait for ACK 
             Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
             while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
             //DEBUGSTR("TX Success\r\n");
-            Board_LED_Toggle(0);
+            Board_LED_Toggle(1);
+            
+            // Clear can event
+            ctl_events_set_clear(&can_event, 0, 1<<0);
         
         }
 }
-
-/**
- * @}
- */
 

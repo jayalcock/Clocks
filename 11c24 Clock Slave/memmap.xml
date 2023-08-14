@@ -1,0 +1,5 @@
+<!DOCTYPE Board_Memory_Definition_File>
+<root name="LPC11C24FBD48/301">
+  <MemorySegment name="FLASH" start="0x00000000" size="0x00008000" access="ReadOnly" />
+  <MemorySegment name="RAM" start="0x10000050" size="0x00001EF8" access="Read/Write" />  
+</root>

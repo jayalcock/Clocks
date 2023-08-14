@@ -31,6 +31,9 @@
 
 
 CTL_TASK_t main_task, can_task, test_task, clock_task, uart_task;
+CTL_MESSAGE_QUEUE_t canMsgQueue;
+
+void *queue[20];
 
 unsigned can_task_stack[1+STACKSIZE+1];
 //unsigned test_task_stack[1+STACKSIZE+1];
@@ -122,11 +125,12 @@ int main(void) {
     
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
+    ctl_message_queue_init(&canMsgQueue, queue, 20);
     
     //CAN Thread
     memset(can_task_stack, 0xcd, sizeof(can_task_stack));  // write known values into the stack
     can_task_stack[0]=can_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&can_task, 55, CAN_Thread, 0, "can_task", STACKSIZE, can_task_stack+1, 0);
+    ctl_task_run(&can_task, 75, CAN_Thread, &canMsgQueue, "can_task", STACKSIZE, can_task_stack+1, 0);
     
     //TEST Thread
     //memset(test_task_stack, 0xcd, sizeof(test_task_stack));  // write known values into the stack
@@ -136,17 +140,40 @@ int main(void) {
     //Clock Thread
     memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack
     clock_task_stack[0]=clock_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_task, 50, clock_thread, 0, "clock_task", STACKSIZE, clock_task_stack+1, 0);
+    ctl_task_run(&clock_task, 50, clock_thread, &canMsgQueue, "clock_task", STACKSIZE, clock_task_stack+1, 0);
     
     //TODO In development
     //UART Thread
     memset(uart_task_stack, 0xcd, sizeof(uart_task_stack));  // write known values into the stack
     uart_task_stack[0]=uart_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&uart_task, 65, uart_thread, 0, "uart_task", STACKSIZE, uart_task_stack+1, 0);
-   
     
-    bool state = false;
+    Board_LED_Set(0, 1);
+    Board_LED_Set(1, 0);
+    //bool state = false;
 
+    struct TEST_STRUCT{
+        int q;
+        int w;
+    };
+    
+    typedef struct TEST_STRUCT TEST_STRUCT;
+    
+    
+    TEST_STRUCT testOut = {10, 11};
+    TEST_STRUCT testIn;
+    
+
+    ctl_message_queue_post(&canMsgQueue, &testOut, CTL_TIMEOUT_NONE, 0);
+
+   
+   
+    void *testPtr;
+
+    ctl_message_queue_receive(&canMsgQueue, &testPtr, CTL_TIMEOUT_NONE, 0);
+
+    testIn = *(TEST_STRUCT*)testPtr;
+    
     ctl_task_set_priority(&main_task, 0); // drop to lowest priority to start created tasks running.
     // Force the counter to be placed into memory
     volatile static int i = 0;
