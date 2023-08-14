@@ -43,27 +43,28 @@
 #define HOME_CLOCKS     1<<9
 
 // Clock control event trigger constsnts
-#define UPDATE_ALL_CLOCKS   1<<0
-#define UPDATE_CLOCK0_MIN   1<<1
-#define UPDATE_CLOCK0_HOUR  1<<2
-#define UPDATE_CLOCK1_MIN   1<<3
-#define UPDATE_CLOCK1_HOUR  1<<4
-#define UPDATE_CLOCK2_MIN   1<<5
-#define UPDATE_CLOCK2_HOUR  1<<6
-#define UPDATE_CLOCK3_MIN   1<<7
-#define UPDATE_CLOCK3_HOUR  1<<8
+//#define UPDATE_ALL_CLOCKS   1<<0
+//#define UPDATE_CLOCK0_MIN   1<<1
+//#define UPDATE_CLOCK0_HOUR  1<<2
+//#define UPDATE_CLOCK1_MIN   1<<3
+//#define UPDATE_CLOCK1_HOUR  1<<4
+//#define UPDATE_CLOCK2_MIN   1<<5
+//#define UPDATE_CLOCK2_HOUR  1<<6
+//#define UPDATE_CLOCK3_MIN   1<<7
+//#define UPDATE_CLOCK3_HOUR  1<<8
 #define CAN_UPDATE          1<<9
 
 
 // Clock Homing event trigger constants
-#define CLOCK0_MIN_HOME  1<<1
-#define CLOCK0_HOUR_HOME 1<<2
-#define CLOCK1_MIN_HOME  1<<3
-#define CLOCK1_HOUR_HOME 1<<4
-#define CLOCK2_MIN_HOME  1<<5
-#define CLOCK2_HOUR_HOME 1<<6
-#define CLOCK3_MIN_HOME  1<<7
-#define CLOCK3_HOUR_HOME 1<<8
+#define CLOCK0_MIN_HOME     1<<1
+#define CLOCK0_HOUR_HOME    1<<2
+#define CLOCK1_MIN_HOME     1<<3
+#define CLOCK1_HOUR_HOME    1<<4
+#define CLOCK2_MIN_HOME     1<<5
+#define CLOCK2_HOUR_HOME    1<<6
+#define CLOCK3_MIN_HOME     1<<7
+#define CLOCK3_HOUR_HOME    1<<8
+#define HOMING_ACTIVE       1<<9
 
 
 // Can message types
@@ -992,7 +993,7 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
     {
         if(motorData[clockNum].hour.remainingSteps != 0)
         {
-            motorData[clockNum].hour.atPosition = 0;
+            motorData[clockNum].hour.atPosition = TRUE;
         }
 
         if(!motorData[clockNum].hour.atPosition)
@@ -1007,7 +1008,7 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
             if(motorData[clockNum].hour.steps >= STEPSIZE)
             {
                 
-                if(motorData[clockNum].hour.dir == 0)
+                if(motorData[clockNum].hour.dir == CW)
                 {
                     motorData[clockNum].hour.angle++; 
                     if(motorData[clockNum].hour.angle >= 360)
@@ -1030,7 +1031,7 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
             // At desired position 
             if(motorData[clockNum].hour.remainingSteps <= 0)
             {
-                motorData[clockNum].hour.atPosition = 1;
+                motorData[clockNum].hour.atPosition = TRUE;
                 //motorData[clockNum].hour.start == 0;
                 set_start_stop(clockNum, HOURARM, STOP);
             }
@@ -1042,7 +1043,7 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
     {
         if(motorData[clockNum].min.remainingSteps != 0)
         {
-            motorData[clockNum].min.atPosition = 0;
+            motorData[clockNum].min.atPosition = FALSE;
         }
     
         if(!motorData[clockNum].min.atPosition)
@@ -1056,7 +1057,7 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
             // Update angle actual calculation
             if(motorData[clockNum].min.steps >= STEPSIZE)
             {
-                if(motorData[clockNum].min.dir == 0)
+                if(motorData[clockNum].min.dir == CW)
                 {
                     motorData[clockNum].min.angle++; 
                     if(motorData[clockNum].min.angle >= 360)
@@ -1078,7 +1079,7 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
     
             if(motorData[clockNum].min.remainingSteps <= 0)
             {
-                motorData[clockNum].min.atPosition = 1;
+                motorData[clockNum].min.atPosition = TRUE;
                 //motorData[clockNum].min.start == 0;
                 set_start_stop(clockNum, MINUTEARM, STOP);
             }
@@ -1113,7 +1114,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
     {        
         if(motorData[clockNum].min.steps == STEPSIZE)
         {
-            if(motorData[clockNum].min.dir == 0)
+            if(motorData[clockNum].min.dir == CW)
             {
                 motorData[clockNum].min.angle++; 
                 
@@ -1140,7 +1141,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
     {
         if(motorData[clockNum].hour.steps == STEPSIZE)
         {
-            if(motorData[clockNum].hour.dir == 0)
+            if(motorData[clockNum].hour.dir == CW)
             {
                 motorData[clockNum].hour.angle++; 
                 
@@ -1176,6 +1177,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
 void home_clocks(void)
 {
     //localControl = 1; 
+    ctl_events_set_clear(&clockHomeEvent, HOMING_ACTIVE, 0);
     
     // Stop all motion
     set_start_stop(ALLCLOCKS, BOTHARMS, STOP);  
@@ -1295,7 +1297,8 @@ void home_clocks(void)
     //    }
     //localControl = 0;
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
-        
+    
+    ctl_events_set_clear(&clockHomeEvent, 0, HOMING_ACTIVE);
     
 }
 
@@ -1319,7 +1322,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
     //printf("%d\n", rx_buffer[0]);
     
     
-    if(!localControl)
+    if(!clockHomeEvent & HOMING_ACTIVE)
     {
         ctl_events_set_clear(&clockControlEvent, CAN_UPDATE, 0);
     }
