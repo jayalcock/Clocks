@@ -993,7 +993,7 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
     {
         if(motorData[clockNum].hour.remainingSteps != 0)
         {
-            motorData[clockNum].hour.atPosition = TRUE;
+            motorData[clockNum].hour.atPosition = FALSE;
         }
 
         if(!motorData[clockNum].hour.atPosition)
@@ -1112,7 +1112,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
     
     if (arm == MINUTEARM)
     {        
-        if(motorData[clockNum].min.steps == STEPSIZE)
+        if(motorData[clockNum].min.steps >= STEPSIZE)
         {
             if(motorData[clockNum].min.dir == CW)
             {
@@ -1134,12 +1134,12 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
             }
         
 
-            motorData[clockNum].min.steps++;
+            motorData[clockNum].min.steps = 0;
         }
     }
-    else if (arm == HOURARM)
+    if (arm == HOURARM)
     {
-        if(motorData[clockNum].hour.steps == STEPSIZE)
+        if(motorData[clockNum].hour.steps >= STEPSIZE)
         {
             if(motorData[clockNum].hour.dir == CW)
             {
@@ -1161,7 +1161,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
             }
         
     
-            motorData[clockNum].hour.steps++;
+            motorData[clockNum].hour.steps = 0;
         }
     }
     
@@ -1236,6 +1236,12 @@ void home_clocks(void)
     ctl_timeout_wait(ctl_get_current_time() + 1000);
     set_start_stop(ALLCLOCKS, BOTHARMS, STOP);
     
+    // Clear interrupts 
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
+        motorData[CLOCK1].hour.hallPin | motorData[CLOCK1].min.hallPin |
+        motorData[CLOCK2].hour.hallPin | motorData[CLOCK2].min.hallPin |
+        motorData[CLOCK3].hour.hallPin | motorData[CLOCK3].min.hallPin); 
+    
     // Set direction CCW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
@@ -1275,7 +1281,7 @@ void home_clocks(void)
     // Set direction of arms
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
     
-    // Calculate number of pulses
+    // Calculate number of pulses to desired angle
     update_stepcount();
     
     // Disable GPIO interrupts
@@ -1284,12 +1290,11 @@ void home_clocks(void)
         1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
         1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
         
-    //ctl_events_set_clear(&clockEvent, 0, HOME_CLOCKS);   
     
     // Start motion 
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
 
-    ctl_timeout_wait(ctl_get_current_time() + 1000);    
+    ctl_timeout_wait(ctl_get_current_time() + 2000);    
     
     //while(!motorData[0].hour.atPosition & !motorData[0].min.atPosition & !motorData[1].hour.atPosition & !motorData[1].min.atPosition,
     //        !motorData[2].hour.atPosition, !motorData[2].min.atPosition, !motorData[3].hour.atPosition, !motorData[3].min.atPosition)
@@ -1297,7 +1302,7 @@ void home_clocks(void)
     //    }
     //localControl = 0;
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
-    
+        
     ctl_events_set_clear(&clockHomeEvent, 0, HOMING_ACTIVE);
     
 }
@@ -1321,11 +1326,11 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
     //can_RX_data = *CANdata;
     //printf("%d\n", rx_buffer[0]);
     
-    
-    if(!clockHomeEvent & HOMING_ACTIVE)
-    {
-        ctl_events_set_clear(&clockControlEvent, CAN_UPDATE, 0);
-    }
+    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, !HOMING_ACTIVE, CTL_TIMEOUT_NONE, 0);
+    //if(clockHomeEvent & !HOMING_ACTIVE)
+    //{
+    ctl_events_set_clear(&clockControlEvent, CAN_UPDATE, 0);
+    //}
 
 }
 
@@ -1365,10 +1370,10 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
 
     // Enable Iterrupts
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin);
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK1].min.hallPort, 1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin);
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK2].min.hallPort, 1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin);
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin);
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK1].min.hallPort, 1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin);
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK2].min.hallPort, 1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin);
+    //Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK3].min.hallPort, 1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);
 
 
     while (1)
