@@ -38,11 +38,15 @@ int main(void)
     
     Chip_GPIO_Init(LPC_GPIO); // TODO is this needed?
     
+    // Main clock control thread initialization
+    memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
+    clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    ctl_task_run(&clock_control_task, 60, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
+    
     // Clock control thread initialization
     memset(clock_stack, 0xcd, sizeof(clock_stack));  // write known values into the stack
     clock_stack[0]=clock0_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&clock_task, 50, clock_func, 0, "clock_task", STACKSIZE, clock_stack+1, 0);    
-    
     
     //// Clock0 control thread initialization
     //memset(clock0_stack, 0xcd, sizeof(clock0_stack));  // write known values into the stack
@@ -68,17 +72,11 @@ int main(void)
     memset(comms_stack, 0xcd, sizeof(comms_stack));  // write known values into the stack
     comms_stack[0]=comms_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
     ctl_task_run(&comms_task, 80, comms_func, 0, "comms_task", STACKSIZE, comms_stack+1, 0);
-    
-    // Main clock control thread initialization
-    memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
-    clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_control_task, 60, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
-
+  
     // Set test LED high
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO3_0, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0);
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
-    
     
     /* Reset 32bit timer 1 -
         Timer has an issue that sets the reset bit on startup 
