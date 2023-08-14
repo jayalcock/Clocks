@@ -795,7 +795,7 @@ void pulse_delay(const uint16_t delay)
 static void pulse_generation(const uint8_t motorNum, const uint8_t arm)
 {
     // Set direction - minute arms
-    if(motorData[motorNum].min.dir == 0)
+    if(motorData[motorNum].min.dir == CW)
     {
         Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].min.dirPort, motorData[motorNum].min.dirPin);
     }
@@ -805,7 +805,7 @@ static void pulse_generation(const uint8_t motorNum, const uint8_t arm)
     }
     
     // Set direction - hour arms
-    if(motorData[motorNum].hour.dir == 0)
+    if(motorData[motorNum].hour.dir == CW)
     {
         Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].hour.dirPort, motorData[motorNum].hour.dirPin);
     }
@@ -845,7 +845,7 @@ static void pulse_generation(const uint8_t motorNum, const uint8_t arm)
 static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, const uint8_t dir)
 {
 
-    if (dir == 0)
+    if (dir == CW)
     {
         if((newAngle - angle) < 0)
         {
@@ -1296,15 +1296,12 @@ void home_clocks(void)
     motorData[CLOCK3].hour.angle = 0;
     
     
-    // Start motion and run CW for 1 seconds    
-    // TODO Change to position control and drive 30 degrees
-    
+    // Start motion and run CW for 50 degrees to pass other side of hall sensing area        
     set_arm_angle(ALLCLOCKS, BOTHARMS, 50);
     update_stepcount();
     set_control_mode(ALLCLOCKS, BOTHARMS, POS_CTRL);
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     ctl_timeout_wait(ctl_get_current_time() + 1000);
-    //set_start_stop(ALLCLOCKS, BOTHARMS, STOP);
     
     // Clear interrupts 
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
@@ -1348,7 +1345,6 @@ void home_clocks(void)
     set_arm_angle(CLOCK3, MINUTEARM, HOMEPOSMIN);
     set_arm_angle(CLOCK3, HOURARM, HOMEPOSHOUR);
     
-    
     // Set direction of arms
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
     
@@ -1366,12 +1362,7 @@ void home_clocks(void)
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
 
     ctl_timeout_wait(ctl_get_current_time() + 2000);    
-    
-    //while(!motorData[0].hour.atPosition & !motorData[0].min.atPosition & !motorData[1].hour.atPosition & !motorData[1].min.atPosition,
-    //        !motorData[2].hour.atPosition, !motorData[2].min.atPosition, !motorData[3].hour.atPosition, !motorData[3].min.atPosition)
-    //    {
-    //    }
-    //localControl = 0;
+
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
         
     ctl_events_set_clear(&clockHomeEvent, 0, HOMING_ACTIVE);
