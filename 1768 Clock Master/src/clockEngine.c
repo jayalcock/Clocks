@@ -43,6 +43,13 @@
 #define ALL_CLOCKS  200
 
 CTL_EVENT_SET_t clockEvent;
+
+// Clock functions
+enum clock_functions
+{
+    HOMECLOCKS,          
+    
+};    
   
 
 static const char* RESET_CHIP = "AT+RESTORE\r\n";
@@ -363,7 +370,7 @@ void clock_thread(void *msgQueuePtr)
     ctl_events_init(&clockEvent, 0);
     
     
-    trigger_slave_func(ALL_CLOCKS, 1, msgQueuePtr);
+    trigger_slave_func(ALL_CLOCKS, HOMECLOCKS, msgQueuePtr);
     ctl_timeout_wait(ctl_get_current_time() + 3000);
  
  

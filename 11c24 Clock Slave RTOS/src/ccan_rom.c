@@ -247,8 +247,6 @@ void comms_func(void *p)
          
         NVIC_EnableIRQ(CAN_IRQn);
           
-        //debug_printf("%d\n", canMSG.data[1]);     
-     
         update_from_CAN(&canMSG);
               
         if(RingBuffer_IsEmpty(&rxBuff))
@@ -256,6 +254,7 @@ void comms_func(void *p)
             ctl_events_set_clear(&canEvent, 0, CAN_RX);
         }
         
+        //debug_printf("%d\n", canMSG.data[0]);   
         
         v++;
     }  

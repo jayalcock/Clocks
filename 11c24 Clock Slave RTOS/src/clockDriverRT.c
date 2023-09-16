@@ -77,7 +77,12 @@
 #define TRIGGERFUNC     0x204
 
 // Clock functions
-#define HOMECLOCKS      1
+enum clock_functions
+{
+    HOMECLOCKS,          
+    
+};   
+
 
 // Clock Numbers
 enum clock_numbers
@@ -114,7 +119,7 @@ enum control_mode
 
 // Initialise objects
 // Events
-CTL_EVENT_SET_t clockControlEvent, clockHomeEvent, clockEvent; //clock0Event, clock1Event, clock2Event, clock3Event, ;
+CTL_EVENT_SET_t clockControlEvent, clockHomeEvent, clockEvent;
 
 // Messages
 static CTL_MESSAGE_QUEUE_t can_RX;
@@ -1269,6 +1274,15 @@ void home_clocks(void)
     CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
     CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME);
     
+    
+    // Clear interrupts 
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
+        motorData[CLOCK1].hour.hallPin | motorData[CLOCK1].min.hallPin |
+        motorData[CLOCK2].hour.hallPin | motorData[CLOCK2].min.hallPin |
+        motorData[CLOCK3].hour.hallPin | motorData[CLOCK3].min.hallPin); 
+        
+    
+    
     // Enable GPIO interrupts
     Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
         1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
@@ -1291,11 +1305,11 @@ void home_clocks(void)
     set_start_stop(ALLCLOCKS, BOTHARMS, START); 
 
     // Wait for all clocks to be at home pos
-    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, 
-        CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
-        CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
-        CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
-        CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
+    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS, &clockHomeEvent, 
+        CLOCK0_MIN_HOME | CLOCK0_HOUR_HOME |
+        CLOCK1_MIN_HOME | CLOCK1_HOUR_HOME |
+        CLOCK2_MIN_HOME | CLOCK2_HOUR_HOME |
+        CLOCK3_MIN_HOME | CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
     
     // Update current arm angle to 0
     motorData[CLOCK0].min.angle = 0;
@@ -1306,6 +1320,12 @@ void home_clocks(void)
     motorData[CLOCK2].hour.angle = 0;
     motorData[CLOCK3].min.angle = 0;
     motorData[CLOCK3].hour.angle = 0;
+    
+    ctl_events_set_clear(&clockHomeEvent, 0,  
+        CLOCK0_MIN_HOME | CLOCK0_HOUR_HOME |
+        CLOCK1_MIN_HOME | CLOCK1_HOUR_HOME |
+        CLOCK2_MIN_HOME | CLOCK2_HOUR_HOME |
+        CLOCK3_MIN_HOME | CLOCK3_HOUR_HOME);
     
     
     // Start motion and run CW for 50 degrees to pass other side of hall sensing area        
@@ -1327,7 +1347,7 @@ void home_clocks(void)
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     
     // Drive CCW until hall is hit
-    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
+    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
         CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
         CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
         CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
@@ -1342,6 +1362,12 @@ void home_clocks(void)
     motorData[CLOCK2].hour.angle = motorData[CLOCK2].hour.angle / 2;
     motorData[CLOCK3].min.angle = (motorData[CLOCK3].min.angle / 2) + 180;
     motorData[CLOCK3].hour.angle = motorData[CLOCK3].hour.angle / 2;
+    
+    ctl_events_set_clear(&clockHomeEvent, 0,  
+        CLOCK0_MIN_HOME | CLOCK0_HOUR_HOME |
+        CLOCK1_MIN_HOME | CLOCK1_HOUR_HOME |
+        CLOCK2_MIN_HOME | CLOCK2_HOUR_HOME |
+        CLOCK3_MIN_HOME | CLOCK3_HOUR_HOME);
     
     
     // Set to position control to drive arms to homed position 
@@ -1368,7 +1394,7 @@ void home_clocks(void)
         1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
         1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
         1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
-        
+
     
     // Start motion 
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
@@ -1402,37 +1428,51 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
             0x203 - start motion 
             0x204 - trigger function
     */
-     
-    if(canData->mode_id == POSITION)
+    
+    /* Skip if homing procedure active */ 
+    if(!clockHomeEvent & HOMING_ACTIVE)
     {
+        /* Update position */ 
+        if(canData->mode_id == POSITION)
+        {
        
-        motorData[canData->data[0]].min.angleDesired = ((canData->data[1] << 8) | (canData->data[2])); // minute
-        motorData[canData->data[0]].hour.angleDesired = ((canData->data[3] << 8) | (canData->data[4])); // hour
-        update_stepcount(canData->data[0]);
+            motorData[canData->data[0]].min.angleDesired = ((canData->data[1] << 8) | (canData->data[2])); // minute
+            motorData[canData->data[0]].hour.angleDesired = ((canData->data[3] << 8) | (canData->data[4])); // hour
+            update_stepcount(canData->data[0]);
     
-    }
-
-    // start motion
-    if (canData->mode_id == STARTMOTION)
-    {
-        if(canData->data[0] == 200)
-        {
-            set_start_stop(ALLCLOCKS, BOTHARMS, START);
         }
+
+        /* Update speed and direction */
+        if(canData->mode_id == SPEED)
+        {
+            motorData[canData->data[0]].min.speed = (canData->data[1]);
+            motorData[canData->data[0]].hour.speed = (canData->data[2]); 
+            motorData[canData->data[0]].min.dir = (canData->data[3]); 
+            motorData[canData->data[0]].hour.dir = (canData->data[4]); 
+        }
+        
+        /* Start motion command */
+        if (canData->mode_id == STARTMOTION)
+        {
+            if(canData->data[0] == 200)
+            {
+                set_start_stop(ALLCLOCKS, BOTHARMS, START);
+            }
     
 
-    }
-
-    // trigger specific clock functions 
-    if (canData->mode_id == TRIGGERFUNC)
-    {
-        // Trigger homing procedure
-        if(canData->data[0] == HOMECLOCKS)
-        {
-            home_clocks();
         }
-    }
 
+        /* Trigger specific clock functions */
+        if (canData->mode_id == TRIGGERFUNC)
+        {
+            // Trigger homing procedure
+            if(canData->data[0] == HOMECLOCKS)
+            {
+                home_clocks();
+            }
+        }
+
+    }
 }
 
 
@@ -1586,6 +1626,7 @@ void clock_control(void *p)
     
     // Initialise clock control events
     ctl_events_init(&clockControlEvent, 0);
+    ctl_events_init(&clockHomeEvent, 0);
     ctl_events_init(&clockEvent, 0);
     //ctl_mutex_init(&mutex);
  
