@@ -51,16 +51,9 @@
 #define CLOCK4_HOUR_AT_POS  1<<17
 
 // Clock control event trigger constsnts
-//#define UPDATE_ALL_CLOCKS   1<<0
-//#define UPDATE_CLOCK0_MIN   1<<1
-//#define UPDATE_CLOCK0_HOUR  1<<2
-//#define UPDATE_CLOCK1_MIN   1<<3
-//#define UPDATE_CLOCK1_HOUR  1<<4
-//#define UPDATE_CLOCK2_MIN   1<<5
-//#define UPDATE_CLOCK2_HOUR  1<<6
-//#define UPDATE_CLOCK3_MIN   1<<7
-//#define UPDATE_CLOCK3_HOUR  1<<8
-#define CAN_UPDATE          1<<9
+#define CAN_UPDATE          1<<0
+#define BUFFER_NOT_EMPTY    1<<1
+#define BUFFER_NOT_FULL     1<<2         
 
 
 // Clock Homing event trigger constants
@@ -122,24 +115,24 @@ enum control_mode
 // Initialise objects
 // Events
 CTL_EVENT_SET_t clockControlEvent, clockHomeEvent, clockEvent; //clock0Event, clock1Event, clock2Event, clock3Event, ;
+
 // Messages
-CCAN_MSG_OBJ_T can_RX_data;
+static CTL_MESSAGE_QUEUE_t can_RX;
+CTL_MUTEX_t mutex;
 
 // Buffer
-#define RXBUFFSIZE 5
-RINGBUFF_T rxBuffer;
-CCAN_MSG_OBJ_T rx_buffer[RXBUFFSIZE];
+#define RXBUFFSIZE 10
+static RINGBUFF_T rxBuffer;
+static CCAN_MSG_OBJ_T rx_buffer[RXBUFFSIZE];
 
 
 // File scope variables
 const uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
 uint32_t timerFreq;
-uint8_t localControl = 0;
 
-uint8_t homingSpeed = 2;
-volatile uint8_t homingDir = 0;
-uint8_t homingBit = 0;
-
+// Test variables
+int test = 0;
+int test1 = 0;
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -241,6 +234,7 @@ void clock_testing(void)
 // Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
 void CT32B0_IRQHandler(void)
 {
+    ctl_enter_isr();
     // Clock 0 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_0, CLOCK0)) 
     {
@@ -281,6 +275,7 @@ void CT32B0_IRQHandler(void)
             ctl_events_set_clear(&clockEvent, RUN_CLOCK3_MIN, 0);
 
     }  
+    ctl_exit_isr();
 } 
 
 
@@ -295,6 +290,7 @@ void CT32B0_IRQHandler(void)
 */
 void CT32B1_IRQHandler(void)
 {
+    ctl_enter_isr();
     // Clock 0 hour timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER32_1, CLOCK0)) 
     {
@@ -335,6 +331,7 @@ void CT32B1_IRQHandler(void)
             ctl_events_set_clear(&clockEvent, RUN_CLOCK3_HOUR, 0);
 
     }
+    ctl_exit_isr();
 }  
 
 
@@ -348,6 +345,7 @@ void CT32B1_IRQHandler(void)
 */
 void CT16B0_IRQHandler(void)
 {
+    ctl_enter_isr();
     // Clock 0 minute timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER16_0, CLOCK0)) 
     {
@@ -388,7 +386,7 @@ void CT16B0_IRQHandler(void)
             ctl_events_set_clear(&clockEvent, RUN_CLOCK3_MIN, 0);
 
     }
-  
+    ctl_exit_isr();
 }  
 
 /* 
@@ -400,6 +398,7 @@ void CT16B0_IRQHandler(void)
 */
 void CT16B1_IRQHandler(void)
 {
+    ctl_enter_isr();
     // Clock 0 hour timer - match interrupt clear and match value reset
     if (Chip_TIMER_MatchPending(LPC_TIMER16_1, CLOCK0)) 
     {
@@ -440,6 +439,7 @@ void CT16B1_IRQHandler(void)
             ctl_events_set_clear(&clockEvent, RUN_CLOCK3_HOUR, 0);
 
     }
+    ctl_exit_isr();
   
 }   
 #endif
@@ -505,6 +505,8 @@ void set_start_stop(const uint8_t clockNum, const uint8_t arm, const uint8_t run
 */
 void GPIO2_IRQHandler(void)
 {
+    ctl_enter_isr();
+    
     uint16_t triggeredPins;
     
     // Determine which halls have been triggered
@@ -559,6 +561,8 @@ void GPIO2_IRQHandler(void)
     
     // Clear interrupts 
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, triggeredPins);
+    
+    ctl_exit_isr();
     
 }
 
@@ -877,24 +881,32 @@ static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, c
     }
 }
 
-void update_stepcount(void)
+void update_stepcount(const uint8_t clockNum)
 {
-    for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
+    if(clockNum == ALLCLOCKS)
     {
-        motorData[i].min.remainingSteps = calculate_steps(motorData[i].min.angleDesired, motorData[i].min.angle, motorData[i].min.dir);
-        motorData[i].hour.remainingSteps = calculate_steps(motorData[i].hour.angleDesired, motorData[i].hour.angle, motorData[i].hour.dir);
-        
-        if(motorData[i].min.remainingSteps != 0)
+        for(uint8_t i = 0; i < NUMBEROFCLOCKS; i++)
         {
-            motorData[i].min.atPosition = 0;
-        }
+            motorData[i].min.remainingSteps = calculate_steps(motorData[i].min.angleDesired, motorData[i].min.angle, motorData[i].min.dir);
+            motorData[i].hour.remainingSteps = calculate_steps(motorData[i].hour.angleDesired, motorData[i].hour.angle, motorData[i].hour.dir);
         
-        if(motorData[i].hour.remainingSteps != 0)
-        {
-            motorData[i].hour.atPosition = 0;
-        }
+            if(motorData[i].min.remainingSteps != 0)
+            {
+                motorData[i].min.atPosition = 0;
+            }
         
+            if(motorData[i].hour.remainingSteps != 0)
+            {
+                motorData[i].hour.atPosition = 0;
+            }
+        }
     }
+    else
+    {
+        motorData[clockNum].min.remainingSteps = calculate_steps(motorData[clockNum].min.angleDesired, motorData[clockNum].min.angle, motorData[clockNum].min.dir);
+        motorData[clockNum].hour.remainingSteps = calculate_steps(motorData[clockNum].hour.angleDesired, motorData[clockNum].hour.angle, motorData[clockNum].hour.dir);
+    }
+
     
 }
 
@@ -1298,7 +1310,7 @@ void home_clocks(void)
     
     // Start motion and run CW for 50 degrees to pass other side of hall sensing area        
     set_arm_angle(ALLCLOCKS, BOTHARMS, 50);
-    update_stepcount();
+    update_stepcount(ALLCLOCKS);
     set_control_mode(ALLCLOCKS, BOTHARMS, POS_CTRL);
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     ctl_timeout_wait(ctl_get_current_time() + 1000);
@@ -1349,7 +1361,7 @@ void home_clocks(void)
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
     
     // Calculate number of pulses to desired angle
-    update_stepcount();
+    update_stepcount(ALLCLOCKS);
     
     // Disable GPIO interrupts
     Chip_GPIO_DisableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
@@ -1381,18 +1393,45 @@ void home_clocks(void)
 
     @return     Nothing
 */
-void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
+void update_from_CAN(CCAN_MSG_OBJ_T *canData)
 {
-    RingBuffer_Insert(&rxBuffer, CANdata);
+    /* Message types:
+            0x200 - position
+            0x201 - speed
+            0x202 - acceleration
+            0x203 - start motion 
+            0x204 - trigger function
+    */
+     
+    if(canData->mode_id == POSITION)
+    {
+       
+        motorData[canData->data[0]].min.angleDesired = ((canData->data[1] << 8) | (canData->data[2])); // minute
+        motorData[canData->data[0]].hour.angleDesired = ((canData->data[3] << 8) | (canData->data[4])); // hour
+        update_stepcount(canData->data[0]);
     
-    //can_RX_data = *CANdata;
-    //printf("%d\n", rx_buffer[0]);
+    }
+
+    // start motion
+    if (canData->mode_id == STARTMOTION)
+    {
+        if(canData->data[0] == 200)
+        {
+            set_start_stop(ALLCLOCKS, BOTHARMS, START);
+        }
     
-    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS_WITH_AUTO_CLEAR, &clockHomeEvent, !HOMING_ACTIVE, CTL_TIMEOUT_NONE, 0);
-    //if(clockHomeEvent & !HOMING_ACTIVE)
-    //{
-    ctl_events_set_clear(&clockControlEvent, CAN_UPDATE, 0);
-    //}
+
+    }
+
+    // trigger specific clock functions 
+    if (canData->mode_id == TRIGGERFUNC)
+    {
+        // Trigger homing procedure
+        if(canData->data[0] == HOMECLOCKS)
+        {
+            home_clocks();
+        }
+    }
 
 }
 
@@ -1540,10 +1579,20 @@ void update_from_CAN(CCAN_MSG_OBJ_T *CANdata)
 void clock_control(void *p)
 {
     unsigned int v = 0;
+    //void *rxQueue [10];
+    //void *rxPtr;
+    //uint8_t i;
+    //CCAN_MSG_OBJ_T can_RX_data;
     
     // Initialise clock control events
     ctl_events_init(&clockControlEvent, 0);
     ctl_events_init(&clockEvent, 0);
+    //ctl_mutex_init(&mutex);
+ 
+    // Initialise message queue
+    //ctl_message_queue_init(&can_RX, rxQueue, 10);
+    
+    //ctl_message_queue_setup_events(&can_RX, &clockControlEvent, BUFFER_NOT_EMPTY, BUFFER_NOT_FULL);
     
     // Initialise GPIO 
     gpio_init();
@@ -1552,7 +1601,7 @@ void clock_control(void *p)
     timer_init();
     
     // Initialise ring buffer
-    RingBuffer_Init(&rxBuffer, &rx_buffer, sizeof(can_RX_data), RXBUFFSIZE);
+    //RingBuffer_Init(&rxBuffer, &rx_buffer, sizeof(can_RX_data), RXBUFFSIZE);
         
     #if TESTING
         clock_testing();
@@ -1562,86 +1611,9 @@ void clock_control(void *p)
     {
              
         // Wait for any clock event to be triggered
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, CAN_UPDATE, CTL_TIMEOUT_NONE, 0);
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, CAN_UPDATE | BUFFER_NOT_EMPTY, CTL_TIMEOUT_NONE, 0);
 
-        // Update with data received from CAN bus
-        if(clockControlEvent & CAN_UPDATE)
-        {
-            /* Message types:
-            0x200 - position
-            0x201 - speed
-            0x202 - acceleration
-            0x203 - start motion 
-            0x204 - trigger function
-            */
-
-            while(!RingBuffer_IsEmpty(&rxBuffer))
-            {
-                RingBuffer_Pop(&rxBuffer, &can_RX_data);
             
-                // position update
-                if(can_RX_data.mode_id == POSITION)
-                {
-                 
-    
-                    for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
-                    {
-                        if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
-                        {
-                            motorData[i].min.angleDesired = ((can_RX_data.data[1] << 8) | (can_RX_data.data[2])); // minute
-                            motorData[i].hour.angleDesired = ((can_RX_data.data[3] << 8) | (can_RX_data.data[4])); // hour
-                            update_stepcount();
-                        }  
-                    }  
-      
-                }
-            
- 
-                // speed and direction update
-                if (can_RX_data.mode_id == SPEED)
-                {
-                    for(int i = FIRSTCLOCK; i < NUMBEROFCLOCKS; i++)
-                    {
-                        if(can_RX_data.data[0] == motorData[i].clockNumber) // find which clock to update
-                        {
-                            motorData[i].min.speed = (can_RX_data.data[1]);     // minute speed
-                            motorData[i].hour.speed = (can_RX_data.data[2]);    // hour speed
-                            motorData[i].min.dir = (can_RX_data.data[3]);       // minute direction
-                            motorData[i].hour.dir = (can_RX_data.data[4]);      // hour direction
-                        }
-                    }
-        
-                }
-            
-                // acceleration update
-                if (can_RX_data.mode_id == ACCELERATION)
-                {
-                }
-            
-                // start motion
-                if (can_RX_data.mode_id == STARTMOTION)
-                {
-                    if(can_RX_data.data[0] == 200)
-                    {
-                        set_start_stop(ALLCLOCKS, BOTHARMS, START);
-                    }
-                }
-                
-                // trigger specific clock functions 
-                if (can_RX_data.mode_id == TRIGGERFUNC)
-                {
-                    // Trigger homing procedure
-                    if(can_RX_data.data[0] == HOMECLOCKS)
-                    {
-                        home_clocks();
-                    }
-                }
-            
-            }
-
-            ctl_events_set_clear(&clockControlEvent, 0, CAN_UPDATE);
-        }
-                 
             
         v++;
            

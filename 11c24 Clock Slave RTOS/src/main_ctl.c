@@ -10,14 +10,11 @@
  ****************************************************************************/
 #define STACKSIZE 128      
 
-CTL_TASK_t main_task, clock0_task, clock1_task, clock2_task, clock3_task, comms_task, clock_control_task, clock_task;
+CTL_TASK_t main_task, comms_task, clock_control_task, clock_task;
 
 // Stack memory allocation
-unsigned clock0_stack[1+STACKSIZE+1], clock1_stack[1+STACKSIZE+1], clock2_stack[1+STACKSIZE+1], 
-    clock3_stack[1+STACKSIZE+1], comms_stack[1+STACKSIZE+1], clock_control_stack[1+STACKSIZE+1];
+unsigned clock_stack[1+STACKSIZE+1], comms_stack[1+STACKSIZE+1], clock_control_stack[1+STACKSIZE+1];
     
-unsigned clock_stack[1+STACKSIZE+1];
-
 
 /*****************************************************************************
  * Public functions
@@ -25,6 +22,7 @@ unsigned clock_stack[1+STACKSIZE+1];
 // Error handler
 void ctl_handle_error(CTL_ERROR_CODE_t e)
 {
+    asm("BKPT");
     while (1);
 }
 
@@ -41,32 +39,12 @@ int main(void)
     // Main clock control thread initialization
     memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
     clock_control_stack[0]=clock_control_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_control_task, 60, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
+    ctl_task_run(&clock_control_task, 70, clock_control, 0, "clock_control_task", STACKSIZE, clock_control_stack+1, 0);
     
     // Clock control thread initialization
     memset(clock_stack, 0xcd, sizeof(clock_stack));  // write known values into the stack
-    clock_stack[0]=clock0_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_task, 50, clock_func, 0, "clock_task", STACKSIZE, clock_stack+1, 0);    
-    
-    //// Clock0 control thread initialization
-    //memset(clock0_stack, 0xcd, sizeof(clock0_stack));  // write known values into the stack
-    //clock0_stack[0]=clock0_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    //ctl_task_run(&clock0_task, 50, clock0_func, 0, "clock0_task", STACKSIZE, clock0_stack+1, 0);
-    
-    //// Clock1 control thread initialization
-    //memset(clock1_stack, 0xcd, sizeof(clock1_stack));  // write known values into the stack
-    //clock1_stack[0]=clock1_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    //ctl_task_run(&clock1_task, 50, clock1_func, 0, "clock1_task", STACKSIZE, clock1_stack+1, 0);
- 
-    //// Clock2 control thread initialization
-    //memset(clock2_stack, 0xcd, sizeof(clock2_stack));  // write known values into the stack
-    //clock2_stack[0]=clock2_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    //ctl_task_run(&clock2_task, 50, clock2_func, 0, "clock2_task", STACKSIZE, clock2_stack+1, 0);
-
-    //// Clock3 control thread initialization
-    //memset(clock3_stack, 0xcd, sizeof(clock3_stack));  // write known values into the stack
-    //clock3_stack[0]=clock3_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    //ctl_task_run(&clock3_task, 50, clock3_func, 0, "clock3_task", STACKSIZE, clock3_stack+1, 0);
+    clock_stack[0]=clock_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
+    ctl_task_run(&clock_task, 90, clock_func, 0, "clock_task", STACKSIZE, clock_stack+1, 0);    
     
     // Communications thread initialization
     memset(comms_stack, 0xcd, sizeof(comms_stack));  // write known values into the stack

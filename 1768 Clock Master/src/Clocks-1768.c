@@ -122,6 +122,7 @@ int main(void) {
 #endif   
   
     SysTick_Config(SystemCoreClock / 1000);
+   
     
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 

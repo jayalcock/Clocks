@@ -15,7 +15,7 @@
 
 //#include "uart_17xx_40xx.h"
 
-#define RESET_WIFI      1
+#define RESET_WIFI      0
 #define UNUSED_ANGLE    45
 #define ONE_SECOND      1000U
 #define GMT             -7
@@ -40,7 +40,7 @@
 #define ACCEL_ID    0x202
 #define START_ID    0x203
 #define FUNC_ID     0x204
-#define ALL_CLOCKS 200
+#define ALL_CLOCKS  200
 
 CTL_EVENT_SET_t clockEvent;
   
@@ -279,18 +279,18 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
 }
 
-void update_position(const uint8_t *clockNum, const uint16_t *minuteAngle, const uint16_t *hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
     sendMsgBuff.ID = POS_ID;
     sendMsgBuff.DLC = POS_DL;
     sendMsgBuff.Type = 0;
-    sendMsgBuff.Data[0] = *clockNum;
-    sendMsgBuff.Data[1] = *minuteAngle >> 8;
-    sendMsgBuff.Data[2] = *minuteAngle & 0xFF;
-    sendMsgBuff.Data[3] = *hourAngle >> 8;
-    sendMsgBuff.Data[4] = *hourAngle & 0xFF;
+    sendMsgBuff.Data[0] = clockNum;
+    sendMsgBuff.Data[1] = minuteAngle >> 8;
+    sendMsgBuff.Data[2] = minuteAngle & 0xFF;
+    sendMsgBuff.Data[3] = hourAngle >> 8;
+    sendMsgBuff.Data[4] = hourAngle & 0xFF;
 
     ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
     
@@ -364,7 +364,7 @@ void clock_thread(void *msgQueuePtr)
     
     
     trigger_slave_func(ALL_CLOCKS, 1, msgQueuePtr);
-    //ctl_timeout_wait(ctl_get_current_time() + 5000);
+    ctl_timeout_wait(ctl_get_current_time() + 3000);
  
  
     // Initialise and start the RTC
@@ -384,14 +384,17 @@ void clock_thread(void *msgQueuePtr)
     writeClockValue(POS_C, THREE);
     writeClockValue(POS_D, FOUR);
     
-    uint16_t min0 = 0;
+    uint16_t min0 = 180;
     uint16_t hour0 = 0;
-    uint16_t min1 = 0;
+    uint16_t min1 = 180;
     uint16_t hour1 = 0;
-    uint16_t min2 = 0;
+    uint16_t min2 = 180;
     uint16_t hour2 = 0;
-    uint16_t min3 = 0;
+    uint16_t min3 = 180;
     uint16_t hour3 = 0;
+    uint16_t min4 = 180;
+    uint16_t hour4 = 0;
+    
     uint8_t speed0m = 3;
     uint8_t speed0h = 3;
     uint8_t speed1m = 3;
@@ -428,6 +431,8 @@ void clock_thread(void *msgQueuePtr)
         hour2 += 45;
         min3 += 45;
         hour3 += 45;
+        min4 += 45;
+        hour4 += 45;
         
         
         //min0 = rand()/91;
@@ -515,23 +520,53 @@ void clock_thread(void *msgQueuePtr)
         {
             hour3 += 360;
         }
+        
+        if(min4 >= 360)
+        {    
+            min4 -= 360;
+        }
+        if(min4 <= 0)
+        {
+            min4 += 360;
+        }
+        
+        if(hour4 >= 360)
+        {    
+            hour4 -= 360;
+        }
+        if(hour4 <= 0)
+        {
+            hour4 += 360;
+        }
             
         //update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
         //update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
         //update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
         //update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
             
-        update_position(&clockNode0, &min0, &hour0, msgQueuePtr);
-        //update_position(&clockNode2, &min2, &hour2, msgQueuePtr);
+        update_position(clockNode0, min0, hour0, msgQueuePtr);
+        //ctl_timeout_wait(ctl_get_current_time() + 1);
+        update_position(clockNode1, min1, hour1, msgQueuePtr);
+        //ctl_timeout_wait(ctl_get_current_time() + 1);
+        update_position(clockNode2, min2, hour2, msgQueuePtr);
+        //ctl_timeout_wait(ctl_get_current_time() + 1);
 
         //start_movement(ALL_CLOCKS, msgQueuePtr);
         
-        ctl_timeout_wait(ctl_get_current_time() + 2000);
+        //ctl_timeout_wait(ctl_get_current_time() + 2000);
         
-        update_position(&clockNode1, &min1, &hour1, msgQueuePtr);
-        //update_position(&clockNode3, &min3, &hour3, msgQueuePtr);
+        
+        update_position(clockNode3, min3, hour3, msgQueuePtr);
+        
+        //update_position(4, min4, hour4, msgQueuePtr);
+        
+        //update_position(clockNode0, min0, hour0, msgQueuePtr);
+        //update_position(clockNode1, min1, hour1, msgQueuePtr);
+        //update_position(clockNode2, min2, hour2, msgQueuePtr);  
+        //update_position(clockNode3, min3, hour3, msgQueuePtr);
 
-        
+        //ctl_timeout_wait(ctl_get_current_time() + 1);
+        //ctl_timeout_wait(ctl_get_current_time() + 10);
         start_movement(ALL_CLOCKS, msgQueuePtr);
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);

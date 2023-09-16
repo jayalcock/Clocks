@@ -21,7 +21,7 @@ void rtcInit(void);
 void RTC_IRQHandler(void);
 
 // Update remote clock arm positions 
-void update_position(const uint8_t *clockNum, const uint16_t *minuteAngle, const uint16_t *hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr);
+void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr);
 
 // Update clock arm speeds and directions
 void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir, CTL_MESSAGE_QUEUE_t *msgQueuePtr);

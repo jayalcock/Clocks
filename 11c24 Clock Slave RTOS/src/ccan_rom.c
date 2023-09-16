@@ -2,21 +2,53 @@
 #include "ctl_api.h"
 #include "clockDriverRT.h"
 #include "ring_buffer.h"
+#include "debugio.h"
 
 
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
 #define TEST_CCAN_BAUD_RATE 500000
+#define CAN_ERROR_NONE 0x00000000UL 
+#define CAN_ERROR_PASS 0x00000001UL 
+#define CAN_ERROR_WARN 0x00000002UL 
+#define CAN_ERROR_BOFF 0x00000004UL 
+#define CAN_ERROR_STUF 0x00000008UL 
+#define CAN_ERROR_FORM 0x00000010UL 
+#define CAN_ERROR_ACK 0x00000020UL 
+#define CAN_ERROR_BIT1 0x00000040UL 
+#define CAN_ERROR_BIT0 0x00000080UL 
+#define CAN_ERROR_CRC 0x00000100UL
+
+
 #define CAN_RX 1<<0
 #define CAN_TX 1<<1
+#define BUFFER_NOT_EMPTY 1<<2
+#define BUFFER_NOT_FULL 1<<3
 
-CCAN_MSG_OBJ_T msg_obj;
-CTL_EVENT_SET_t canEvent;
+static CCAN_MSG_OBJ_T msg_obj;
+static CTL_EVENT_SET_t canEvent;
 
-#define SIZEOFRXBUFF 5
-RINGBUFF_T rxBuff;
-CCAN_MSG_OBJ_T buff[SIZEOFRXBUFF];
+/* Define ringbuffer constants and variables */
+#define SIZEOFRXBUFF 20
+static RINGBUFF_T rxBuff;
+static CCAN_MSG_OBJ_T buff[SIZEOFRXBUFF];
+
+// Clock Numbers
+enum clock_numbers
+{
+    CLOCK0,          
+    CLOCK1,          
+    CLOCK2,          
+    CLOCK3,          
+    ALLCLOCKS,
+    MINUTEARM, 
+    HOURARM, 
+    BOTHARMS,
+    
+};   
+
+
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -59,21 +91,37 @@ void baudrateCalculate(uint32_t baud_rate, uint32_t *can_api_timing_cfg)
 /*	Function is executed by the Callback handler after
     a CAN message has been received */
 void CAN_rx(uint8_t msg_obj_num) 
-{
-
-    /* Determine which CAN message has been received */
+{   
+    ctl_enter_isr(); 
+    //NVIC_DisableIRQ(CAN_IRQn);
+       
+    ///* Determine which CAN message has been received */
     msg_obj.msgobj = msg_obj_num;
+
     /* Now load up the msg_obj structure with the CAN message */
     LPC_CCAN_API->can_receive(&msg_obj);
-    RingBuffer_Insert(&rxBuff, &msg_obj);
+
+    /* Load into ringbuffer */
+    if(!RingBuffer_Insert(&rxBuff, &msg_obj))
+    {
+       //asm("BKPT");
+    } 
+
+    //NVIC_EnableIRQ(CAN_IRQn);
+    
+    /* Set event flag for processing in main loop */
     ctl_events_set_clear(&canEvent, CAN_RX, 0);
-                
+    ctl_exit_isr(); 
 }
 
 /*	CAN transmit callback */
 /*	Function is executed by the Callback handler after
     a CAN message has been transmitted */
-void CAN_tx(uint8_t msg_obj_num) {}
+void CAN_tx(uint8_t msg_obj_num) 
+{
+    //ctl_enter_isr();
+    //ctl_exit_isr();
+}
 
 /*	CAN error callback */
 /*	Function is executed by the Callback handler after
@@ -82,7 +130,9 @@ void CAN_error(uint32_t error_info)
 {
     //if (error_info & CAN_ERROR_BOFF)
     //    reset_can = TRUE;
-
+    
+    asm("BKPT");
+    
     //return;
 
 }
@@ -93,10 +143,11 @@ void CAN_error(uint32_t error_info)
  * @note	The CCAN interrupt handler must be provided by the user application.
  *	It's function is to call the isr() API located in the ROM
  */
-//void CAN_IRQHandler(void) 
 void C_CAN_IRQHandler(void)
 {
+    //ctl_enter_isr(); 
     LPC_CCAN_API->isr();
+    //ctl_exit_isr();
 }
 
 /*****************************************************************************
@@ -129,6 +180,7 @@ int can_init(void)
 	LPC_CCAN_API->config_calb(&callbacks);
 	/* Enable the CAN Interrupt */
 	NVIC_EnableIRQ(CAN_IRQn);
+        
         
 	/* Send a simple one time CAN message */
 	//msg_obj.msgobj  = 0;
@@ -171,39 +223,38 @@ int can_init(void)
 void comms_func(void *p)
 {  
     unsigned int v=0;
-    
-    CCAN_MSG_OBJ_T temp;
+    CCAN_MSG_OBJ_T canMSG;
     
     // Initialize ring buffer
-    RingBuffer_Init(&rxBuff, &buff, sizeof(msg_obj), SIZEOFRXBUFF);
-    
+    //RingBuffer_Init(&rxBuff, &buff, sizeof(msg_obj), SIZEOFRXBUFF);
+    RingBuffer_Init(&rxBuff, &buff, sizeof(CCAN_MSG_OBJ_T), SIZEOFRXBUFF);
     
     // Initialise CAN driver
     can_init();
     
      // Initialise CAN event
-    ctl_events_init(&canEvent, 0);
-       
+    ctl_events_init(&canEvent, 0);    
     
     while (1)
     {      
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &canEvent, CAN_RX, CTL_TIMEOUT_NONE, 0);    
+
+        Board_LED_Toggle(0);  
+
+        NVIC_DisableIRQ(CAN_IRQn);
+
+        RingBuffer_Pop(&rxBuff, &canMSG); 
+         
+        NVIC_EnableIRQ(CAN_IRQn);
+          
+        //debug_printf("%d\n", canMSG.data[1]);     
      
-        if(canEvent == CAN_RX)
-        {   
-            Board_LED_Toggle(0);            
-            //update_from_CAN(&msg_obj);
-            
-            
-            RingBuffer_Pop(&rxBuff, &temp);
-            update_from_CAN(&temp);
-            
-            if(RingBuffer_IsEmpty(&rxBuff))
-            {
-                ctl_events_set_clear(&canEvent, 0, CAN_RX);
-            }
+        update_from_CAN(&canMSG);
+              
+        if(RingBuffer_IsEmpty(&rxBuff))
+        { 
+            ctl_events_set_clear(&canEvent, 0, CAN_RX);
         }
-   
         
         
         v++;
