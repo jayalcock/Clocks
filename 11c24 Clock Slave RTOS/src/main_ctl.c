@@ -63,7 +63,7 @@ int main(void)
     //int *TESTptr = &test;
     //*TESTptr = 0;
     
-    int *TESTptr = 0x40018004;
+    uint32_t *TESTptr = (uint32_t *) 0x40018004;
     *TESTptr = 0;
     
     
