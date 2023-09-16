@@ -23,8 +23,6 @@
 
 #define CAN_RX 1<<0
 #define CAN_TX 1<<1
-#define BUFFER_NOT_EMPTY 1<<2
-#define BUFFER_NOT_FULL 1<<3
 
 static CCAN_MSG_OBJ_T msg_obj;
 static CTL_EVENT_SET_t canEvent;
@@ -226,7 +224,6 @@ void comms_func(void *p)
     CCAN_MSG_OBJ_T canMSG;
     
     // Initialize ring buffer
-    //RingBuffer_Init(&rxBuff, &buff, sizeof(msg_obj), SIZEOFRXBUFF);
     RingBuffer_Init(&rxBuff, &buff, sizeof(CCAN_MSG_OBJ_T), SIZEOFRXBUFF);
     
     // Initialise CAN driver
@@ -237,18 +234,22 @@ void comms_func(void *p)
     
     while (1)
     {      
+        // Wait for RX from CAN bus
         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &canEvent, CAN_RX, CTL_TIMEOUT_NONE, 0);    
 
         Board_LED_Toggle(0);  
-
+        
+        // Disbale CAN IRQ when receiving from buffer
         NVIC_DisableIRQ(CAN_IRQn);
 
         RingBuffer_Pop(&rxBuff, &canMSG); 
          
         NVIC_EnableIRQ(CAN_IRQn);
           
+        // Send commands/position to clocks
         update_from_CAN(&canMSG);
-              
+        
+        // Clear event flag if buffer empty
         if(RingBuffer_IsEmpty(&rxBuff))
         { 
             ctl_events_set_clear(&canEvent, 0, CAN_RX);

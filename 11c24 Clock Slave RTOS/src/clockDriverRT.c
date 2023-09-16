@@ -119,11 +119,7 @@ enum control_mode
 
 // Initialise objects
 // Events
-CTL_EVENT_SET_t clockControlEvent, clockHomeEvent, clockEvent;
-
-// Messages
-static CTL_MESSAGE_QUEUE_t can_RX;
-CTL_MUTEX_t mutex;
+static CTL_EVENT_SET_t clockControlEvent, clockHomeEvent, clockEvent;
 
 // Buffer
 #define RXBUFFSIZE 10
@@ -132,19 +128,11 @@ static CCAN_MSG_OBJ_T rx_buffer[RXBUFFSIZE];
 
 
 // File scope variables
-const uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
-uint32_t timerFreq;
-
-// Test variables
-int test = 0;
-int test1 = 0;
-
-/*****************************************************************************
- * Public types/enumerations/variables
- ****************************************************************************/
+const static uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
+static uint32_t timerFreq;
 
 // Population of motor data structs with initial values
-motorStruct motorData[] =
+static motorStruct motorData[] =
 {
     {0, //clock num
         //hour
@@ -190,6 +178,12 @@ motorStruct motorData[] =
         {2, 0, 1, 11, 2, 10, 0, 0, 0, 0, 0, 1, 2, 2, 0}}, //minute   
           
 };
+
+/*****************************************************************************
+ * Public types/enumerations/variables
+ ****************************************************************************/
+
+
 
 /*****************************************************************************
  * Private functions
