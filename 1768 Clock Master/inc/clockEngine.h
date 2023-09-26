@@ -26,6 +26,6 @@
 //void start_movement(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr);
 
 // RT thread for calculating clock positions
-void clock_thread(void *msgQueuePtr);
+void clock_main_thread(void *msgQueuePtr);
 
 #endif /* _CLOCKENGINE_H_ */

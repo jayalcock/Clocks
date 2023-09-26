@@ -24,7 +24,7 @@ typedef uint16_t digitData[3][6];
                   
 //} referenceData;
 
-                            
+// Number zero representation                           
 digitData ZERO[2] =
 {
     { // minute
@@ -52,7 +52,8 @@ digitData ZERO[2] =
     } 
                                 
 };
-                            
+          
+// Number one representation          
 digitData ONE[2] = 
 {
     { // minute
@@ -80,6 +81,7 @@ digitData ONE[2] =
                                 
 };
 
+// Number two representation
 digitData TWO[2] = 
 {
     { // minute
@@ -109,7 +111,7 @@ digitData TWO[2] =
                                 
 };
         
-
+// Number three representation
 digitData THREE[2] = 
 {
     { // minute
@@ -137,7 +139,8 @@ digitData THREE[2] =
     }
                           
 };     
-                   
+  
+// Number four representation  
 digitData FOUR[2] = 
 {
     { // minute
@@ -166,6 +169,7 @@ digitData FOUR[2] =
                           
 };               
 
+// Number five representation
 digitData FIVE[2] = 
 {
     { // minute
@@ -194,6 +198,7 @@ digitData FIVE[2] =
                           
 };              
 
+// Number six representation
 digitData SIX[2] = 
 {
     { // minute
@@ -221,7 +226,8 @@ digitData SIX[2] =
     }
                           
 };
-                      
+               
+// Number seven representation       
 digitData SEVEN[2] = 
 {
     { // minute
@@ -250,6 +256,7 @@ digitData SEVEN[2] =
                           
 };
 
+// Number eight representation
 digitData EIGHT[2] = 
 {
     { // minute
@@ -278,7 +285,7 @@ digitData EIGHT[2] =
                           
 };
 
-                      
+// Number nine representation                     
 digitData NINE[2] = 
 {
     { // minute

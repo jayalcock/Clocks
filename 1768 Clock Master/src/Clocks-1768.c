@@ -141,7 +141,7 @@ int main(void) {
     //Clock Thread
     memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack
     clock_task_stack[0]=clock_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_task, 50, clock_thread, &canMsgQueue, "clock_task", STACKSIZE, clock_task_stack+1, 0);
+    ctl_task_run(&clock_task, 50, clock_main_thread, &canMsgQueue, "clock_task", STACKSIZE, clock_task_stack+1, 0);
     
     //TODO In development
     //UART Thread

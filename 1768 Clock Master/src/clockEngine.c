@@ -14,6 +14,7 @@
 
 #include "debugio.h"
 
+// Clock control constants
 #define RESET_WIFI      0
 #define UNUSED_ANGLE    45
 #define ONE_SECOND      1000U
@@ -72,12 +73,6 @@ static const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 static const char* MODE = "AT+CWMODE=1\r\n";
 static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
 
-
-/* Called in clockData.h
-    // Clock hour representation of angular position
-    static const uint16_t timeAngle[13] = {0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0};
-*/
-
 // Matrix for storing overall clock position data
 typedef uint16_t clockData[COLUMNS][ROWS];    
 
@@ -106,22 +101,59 @@ static void clock_matrix_number_update(clockStruct *clockMtxPtr, const uint8_t p
     }
     
 }
+
+/* 
+    @brief  Load current time into clock matrix
     
-static void showTime(clockStruct *clockMtxPtr)
+    @param  Clock matrix pointer
+  
+    @return Nothing
+    
+*/
+static void time_load_into_matrix(clockStruct *clockMtxPtr)
 {
-    int digitA, digitB, digitC, digitD;
+    uint8_t digitA, digitB, digitC, digitD, twoDigHr, twoDigMin;
     
-    digitA = 1;
-    digitB = 1;
-    digitC = 1;
-    digitD = 1;
+    // Get actual time from RTC values
+    twoDigHr = HOUR;
+    twoDigMin = MIN;
     
-    // Get actual time
+    // Break hour number (HH) into two digits (H H)
+    if(twoDigHr < 10)
+    {
+        digitA = 0;
+        digitB = twoDigHr;
+    }
+    else if(twoDigHr < 20)
+    {
+        digitA = 1;
+        digitB = twoDigHr - 10;
+    }
+    else
+    {
+        digitA = 2;
+        digitB = twoDigHr - 20;
+    }
     
-    // Load each value from actual time into matrix for display
+    // Break minute number (MM) into two digits (M M)
+    if(twoDigMin < 10)
+    {
+        digitC = 0;
+        digitD = twoDigMin;
+    }
+    else if(twoDigMin < 20)
+    {
+        digitC = 1;
+        digitD = twoDigMin - 10;
+    }
+    else
+    {
+        digitC = 2;
+        digitD = twoDigMin - 20;
+    }
     
-    // Start motion
     
+    // Load each value from actual time into matrix for display    
     switch (digitA)
     {
         case 0:
@@ -130,28 +162,28 @@ static void showTime(clockStruct *clockMtxPtr)
         case 1:
             clock_matrix_number_update(clockMtxPtr, POS_A, ONE);
             break;
-        case '2':
+        case 2:
             clock_matrix_number_update(clockMtxPtr, POS_A, TWO);
             break;
-        case '3':
+        case 3:
             clock_matrix_number_update(clockMtxPtr, POS_A, THREE);
             break;
-        case '4':
+        case 4:
             clock_matrix_number_update(clockMtxPtr, POS_A, FOUR);
             break;
-        case '5':
+        case 5:
             clock_matrix_number_update(clockMtxPtr, POS_A, FIVE);
             break;
-        case '6':
+        case 6:
             clock_matrix_number_update(clockMtxPtr, POS_A, SIX);
             break;
-        case '7':
+        case 7:
             clock_matrix_number_update(clockMtxPtr, POS_A, SEVEN);
             break;
-        case '8':
+        case 8:
             clock_matrix_number_update(clockMtxPtr, POS_A, EIGHT);
             break;
-        case '9':
+        case 9:
             clock_matrix_number_update(clockMtxPtr, POS_A, NINE);
             break;
     }
@@ -164,28 +196,28 @@ static void showTime(clockStruct *clockMtxPtr)
         case 1:
             clock_matrix_number_update(clockMtxPtr, POS_B, ONE);
             break;
-        case '2':
+        case 2:
             clock_matrix_number_update(clockMtxPtr, POS_B, TWO);
             break;
-        case '3':
+        case 3:
             clock_matrix_number_update(clockMtxPtr, POS_B, THREE);
             break;
-        case '4':
+        case 4:
             clock_matrix_number_update(clockMtxPtr, POS_B, FOUR);
             break;
-        case '5':
+        case 5:
             clock_matrix_number_update(clockMtxPtr, POS_B, FIVE);
             break;
-        case '6':
+        case 6:
             clock_matrix_number_update(clockMtxPtr, POS_B, SIX);
             break;
-        case '7':
+        case 7:
             clock_matrix_number_update(clockMtxPtr, POS_B, SEVEN);
             break;
-        case '8':
+        case 8:
             clock_matrix_number_update(clockMtxPtr, POS_B, EIGHT);
             break;
-        case '9':
+        case 9:
             clock_matrix_number_update(clockMtxPtr, POS_B, NINE);
             break;
     }
@@ -198,28 +230,28 @@ static void showTime(clockStruct *clockMtxPtr)
         case 1:
             clock_matrix_number_update(clockMtxPtr, POS_C, ONE);
             break;
-        case '2':
+        case 2:
             clock_matrix_number_update(clockMtxPtr, POS_C, TWO);
             break;
-        case '3':
+        case 3:
             clock_matrix_number_update(clockMtxPtr, POS_C, THREE);
             break;
-        case '4':
+        case 4:
             clock_matrix_number_update(clockMtxPtr, POS_C, FOUR);
             break;
-        case '5':
+        case 5:
             clock_matrix_number_update(clockMtxPtr, POS_C, FIVE);
             break;
-        case '6':
+        case 6:
             clock_matrix_number_update(clockMtxPtr, POS_C, SIX);
             break;
-        case '7':
+        case 7:
             clock_matrix_number_update(clockMtxPtr, POS_C, SEVEN);
             break;
-        case '8':
+        case 8:
             clock_matrix_number_update(clockMtxPtr, POS_C, EIGHT);
             break;
-        case '9':
+        case 9:
             clock_matrix_number_update(clockMtxPtr, POS_C, NINE);
             break;
     }
@@ -233,35 +265,43 @@ static void showTime(clockStruct *clockMtxPtr)
         case 1:
             clock_matrix_number_update(clockMtxPtr, POS_D, ONE);
             break;
-        case '2':
+        case 2:
             clock_matrix_number_update(clockMtxPtr, POS_D, TWO);
             break;
-        case '3':
+        case 3:
             clock_matrix_number_update(clockMtxPtr, POS_D, THREE);
             break;
-        case '4':
+        case 4:
             clock_matrix_number_update(clockMtxPtr, POS_D, FOUR);
             break;
-        case '5':
+        case 5:
             clock_matrix_number_update(clockMtxPtr, POS_D, FIVE);
             break;
-        case '6':
+        case 6:
             clock_matrix_number_update(clockMtxPtr, POS_D, SIX);
             break;
-        case '7':
+        case 7:
             clock_matrix_number_update(clockMtxPtr, POS_D, SEVEN);
             break;
-        case '8':
+        case 8:
             clock_matrix_number_update(clockMtxPtr, POS_D, EIGHT);
             break;
-        case '9':
+        case 9:
             clock_matrix_number_update(clockMtxPtr, POS_D, NINE);
             break;
     }
     
 }
-      
-void initialiseMatrix(clockStruct *clockMtxPtr)
+    
+/* 
+    @brief  Initialise matrix to zeros
+    
+    @param  Clock matrix pointer
+  
+    @return Nothing
+    
+*/    
+void matrix_initialise(clockStruct *clockMtxPtr)
 {
     
     for(size_t row = 0; row <  ROWS; row++)
@@ -273,66 +313,16 @@ void initialiseMatrix(clockStruct *clockMtxPtr)
         }   
     }
 }
-    
 
-void writeClockValue(clockData (*clockMatrix)[ARMS][COLUMNS][ROWS], const uint8_t pos, const digitData *val)
-{
     
-    
-    /* Replaced by #define offsets
-    uint8_t x_offset;
-    
-    // Determine offset in x direction given digit position
-    if(pos == 0)
-    {
-        x_offset = 1;
-    }
-    else if (pos == 1)
-    {
-        x_offset = 4;
-    }
-    else if (pos == 2)
-    {
-        x_offset = 8;
-    }
-    else if (pos == 3)
-    {
-        x_offset = 11;
-    }
-    */
-    
-    // Populate clock matirx with desired position
-    for(int k = 0; k < 2; k++) // hr/min
-    {
-        for(int i = 0; i < 3; i++) // column
-        {
-            for(int j = 0; j < 6; j++) // row
-            {
-                //clockMatrix[k][i+pos][j+1] = val[k][i][j];
-            }
-        }
-    } 
-    
-}
-    
-
-// Sets home position of arm
-int setHome(void)
-{
-    int atPosition;
-    
-    return 1;
-    
-}
-
 // Prints time from RTC 
-void printTime(void)
+void time_printf(void)
 {
-    printf("%d:%d:%d\n", HOUR, MIN, SEC);
+    debug_printf("%d:%d:%d\n", HOUR, MIN, SEC);
 }
 
 // Sets time
-void setTime(uint8_t hour, uint8_t min, uint8_t sec)
+void RTC_time_set(uint8_t hour, uint8_t min, uint8_t sec)
 {
     HOUR = hour;
     MIN = min;
@@ -341,7 +331,7 @@ void setTime(uint8_t hour, uint8_t min, uint8_t sec)
 }
 
 // Initialises RTC
-void rtcInit(void)
+void rtc_init(void)
 {
     
     // Power on RTC peripheral 
@@ -374,7 +364,6 @@ void rtcInit(void)
         
     } while ((CCR & CCR_CCALEN) == 0);
     
-    
     // Enable RTC in NVIC
     NVIC_ISER0 |= RTC_IRQn;
     
@@ -396,7 +385,7 @@ void RTC_IRQHandler(void)
 }
  
 // Calculates readable time value from NTP data
-void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec, char* timeString)
+void NTP_conversion(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec, char* timeString)
 {
     char hourC[4], minC[4], secC[4];
     uint32_t timeInt;   
@@ -448,7 +437,7 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
 } 
    
-void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
+void uart_ntp_rx()//uint8_t *hour, uint8_t *min, uint8_t *sec)
 {
 
     char timeString[9] = "00:00:00";
@@ -482,7 +471,7 @@ void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
     Board_UARTPutChar('\n');
     
     //Calculate time from received NTP data
-    calculateTime(ntpTemp, &hour, &min, &sec, timeString);
+    NTP_conversion(ntpTemp, &hour, &min, &sec, timeString);
 
     // Print current time 
     Chip_UART_SendBlocking(LPC_UART0, "The current time is: ", 21);
@@ -494,7 +483,8 @@ void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
     ESP_command(DISCONNECT_FROM_IP, ONE_SECOND, 0);
 }
 
-void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+// Update position of slave clocks over CAN bus
+void slave_position_tx(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -513,7 +503,7 @@ void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const u
 }
 
 // Update speed and direction of clocks via can bus
-void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+void slave_update_speed_direction(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -532,7 +522,7 @@ void update_speed_dir(const uint8_t clockNum, const uint8_t minuteSpeed, const u
 }
 
 // UStart movement of clocks via can bus
-void start_movement(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+void motion_start(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -564,13 +554,138 @@ void trigger_slave_func(const uint8_t clockNum, const uint8_t funcNum, CTL_MESSA
     
     startCanTx();
 }
-    
 
-void clock_thread(void *msgQueuePtr)
+void test_routine(clockStruct *clockMtxPtr)
+{
+    static uint16_t min0 = 180;
+    static uint16_t hour0 = 0;
+    static uint16_t min1 = 180;
+    static uint16_t hour1 = 0;
+    static uint16_t min2 = 180;
+    static uint16_t hour2 = 0;
+    static uint16_t min3 = 180;
+    static uint16_t hour3 = 0;
+    static uint16_t min4 = 180;
+    static uint16_t hour4 = 0;
+       
+    min0 += 45;
+    hour0 += 45;
+    min1 += 45;
+    hour1 += 45;
+    min2 += 45;
+    hour2 += 45;
+    min3 += 45;
+    hour3 += 45;
+    min4 += 45;
+    hour4 += 45;
+       
+        
+                    
+    if(min0 >= 360)
+    {
+        min0 -= 360;
+    }
+    if(min0 <=0)
+    {
+        min0 += 360;
+    }
+    if(hour0 >= 360)
+    {   
+        hour0 -= 360;
+    }
+    if(hour0 <=0)
+    {
+        hour0 += 360;
+    }
+    
+    if(min1 >= 360)
+    {    
+        min1 -= 360;
+    }
+    if(min1 <= 0)
+    {
+        min1 += 360;
+    }
+    
+    if(hour1 >= 360)
+    {    
+        hour1 -= 360;
+    }
+    if(hour1 <= 0)
+    {
+        hour1 += 360;
+    }
+    
+    if(min2 >= 360)
+    {
+        min2 -= 360;
+    }
+    if(min2 <= 0)
+    {
+        min2 += 360;
+    }
+    
+    if(hour2 >= 360)
+    {   
+        hour2 -= 360;
+    }
+    if(hour2 <= 0)
+    {
+        hour2 += 360;
+    }
+    
+    if(min3 >= 360)
+    {    
+        min3 -= 360;
+    }
+    if(min3 <= 0)
+    {
+        min3 += 360;
+    }
+    
+    if(hour3 >= 360)
+    {    
+        hour3 -= 360;
+    }
+    
+    if(hour3 <= 0)
+    {
+        hour3 += 360;
+    }
+    
+    if(min4 >= 360)
+    {    
+        min4 -= 360;
+    }
+    if(min4 <= 0)
+    {
+        min4 += 360;
+    }
+    
+    if(hour4 >= 360)
+    {    
+        hour4 -= 360;
+    }
+    if(hour4 <= 0)
+    {
+        hour4 += 360;
+    }
+    
+    clockMtxPtr->minute[0][0] = min0;
+    clockMtxPtr->minute[0][1] = min1;
+    clockMtxPtr->minute[0][2] = min2;
+    clockMtxPtr->minute[0][3] = min3;
+    clockMtxPtr->hour[0][0] = hour0;
+    clockMtxPtr->hour[0][1] = hour1;
+    clockMtxPtr->hour[0][2] = hour2;
+    clockMtxPtr->hour[0][3] = hour3;
+    
+}
+
+void clock_main_thread(void *msgQueuePtr)
 {
     
     // Initialise clock matrix - 1x hour, 1x minute
-    //clockData clockMatrix[ARMS] = {};
     clockStruct clockMatrix;
     
     uint8_t clockNode0 = 0;
@@ -582,21 +697,17 @@ void clock_thread(void *msgQueuePtr)
     ctl_events_init(&clockEvent, 0);
     
     // Initialise matrix to zeors
-    initialiseMatrix(&clockMatrix);
-    
-    showTime(&clockMatrix);
-    
-    debug_printf("%d\n", clockMatrix.minute[0][0]);
-    //debug_printf("%d\n", ZERO[0][0][0]);
-    
+    matrix_initialise(&clockMatrix);  
     
     //trigger_slave_func(ALL_CLOCKS, HOMECLOCKS, msgQueuePtr);
     //ctl_timeout_wait(ctl_get_current_time() + 2000);
  
  
     // Initialise and start the RTC
-    rtcInit();
-    setTime(10, 5, 55);
+    rtc_init();
+    RTC_time_set(20, 5, 55);
+    
+    time_load_into_matrix(&clockMatrix);
     
     #if RESET_WIFI
         ESP_command(RESET_CHIP, ONE_SECOND, 0);
@@ -604,23 +715,7 @@ void clock_thread(void *msgQueuePtr)
     #endif
     
     // Update time from NTP server
-    getNTPtime();
-    
-    //writeClockValue(POS_A, ONE);
-    //writeClockValue(POS_B, TWO);
-    //writeClockValue(POS_C, THREE);
-    //writeClockValue(POS_D, FOUR);
-    
-    uint16_t min0 = 180;
-    uint16_t hour0 = 0;
-    uint16_t min1 = 180;
-    uint16_t hour1 = 0;
-    uint16_t min2 = 180;
-    uint16_t hour2 = 0;
-    uint16_t min3 = 180;
-    uint16_t hour3 = 0;
-    uint16_t min4 = 180;
-    uint16_t hour4 = 0;
+    uart_ntp_rx();
     
     uint8_t speed0m = 3;
     uint8_t speed0h = 3;
@@ -639,10 +734,10 @@ void clock_thread(void *msgQueuePtr)
     uint8_t dir3m = 0;
     uint8_t dir3h = 0;
     
-    update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
-    update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
-    update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
-    update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
+    slave_update_speed_direction(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
+    slave_update_speed_direction(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
+    slave_update_speed_direction(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
+    slave_update_speed_direction(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
     
     
  
@@ -650,141 +745,27 @@ void clock_thread(void *msgQueuePtr)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
         
-        
-        min0 += 45;
-        hour0 += 45;
-        min1 += 45;
-        hour1 += 45;
-        min2 += 45;
-        hour2 += 45;
-        min3 += 45;
-        hour3 += 45;
-        min4 += 45;
-        hour4 += 45;
-        
-        
-        //min0 = rand()/91;
-        //hour0 = rand()/91;
-        //min1 = rand()/91;
-        //hour1 = rand()/91;
-        //speed0m = rand()/6554.4;
-        //speed0h = rand()/6553.4;
-        //speed1m = rand()/6553.4;
-        //speed1h = rand()/6553.4;
-        
-        //dir0m = rand()/16383.5;
-        //dir0h = rand()/16383.5;
-        //dir1m = rand()/16383.5;
-        //dir1h = rand()/16383.5;
-        
-                    
-        if(min0 >= 360)
-        {
-            min0 -= 360;
-        }
-        if(min0 <=0)
-        {
-            min0 += 360;
-        }
-        if(hour0 >= 360)
-        {   
-            hour0 -= 360;
-        }
-        if(hour0 <=0)
-        {
-            hour0 += 360;
-        }
-        
-        if(min1 >= 360)
-        {    
-            min1 -= 360;
-        }
-        if(min1 <= 0)
-        {
-            min1 += 360;
-        }
-        
-        if(hour1 >= 360)
-        {    
-            hour1 -= 360;
-        }
-        if(hour1 <= 0)
-        {
-            hour1 += 360;
-        }
-        
-        if(min2 >= 360)
-        {
-            min2 -= 360;
-        }
-        if(min2 <= 0)
-        {
-            min2 += 360;
-        }
-        
-        if(hour2 >= 360)
-        {   
-            hour2 -= 360;
-        }
-        if(hour2 <= 0)
-        {
-            hour2 += 360;
-        }
-        
-        if(min3 >= 360)
-        {    
-            min3 -= 360;
-        }
-        if(min3 <= 0)
-        {
-            min3 += 360;
-        }
-        
-        if(hour3 >= 360)
-        {    
-            hour3 -= 360;
-        }
-        if(hour3 <= 0)
-        {
-            hour3 += 360;
-        }
-        
-        if(min4 >= 360)
-        {    
-            min4 -= 360;
-        }
-        if(min4 <= 0)
-        {
-            min4 += 360;
-        }
-        
-        if(hour4 >= 360)
-        {    
-            hour4 -= 360;
-        }
-        if(hour4 <= 0)
-        {
-            hour4 += 360;
-        }
             
         //update_speed_dir(clockNode0, speed0m, speed0h, dir0m, dir0h, msgQueuePtr);
         //update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
         //update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
         //update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
             
-        update_position(clockNode0, min0, hour0, msgQueuePtr);
-        //ctl_timeout_wait(ctl_get_current_time() + 1);
-        update_position(clockNode1, min1, hour1, msgQueuePtr);
-        //ctl_timeout_wait(ctl_get_current_time() + 1);
-        update_position(clockNode2, min2, hour2, msgQueuePtr);
-        //ctl_timeout_wait(ctl_get_current_time() + 1);
+            
+        for(int i = 0; i < 4; i++)
+        {
+            slave_position_tx(clockNode0, clockMatrix.minute[0][i], clockMatrix.minute[0][i], msgQueuePtr);
+        }
+           
+        //slave_position_tx(clockNode1, min1, hour1, msgQueuePtr);
+        //slave_position_tx(clockNode2, min2, hour2, msgQueuePtr);
 
         //start_movement(ALL_CLOCKS, msgQueuePtr);
         
         //ctl_timeout_wait(ctl_get_current_time() + 2000);
         
         
-        update_position(clockNode3, min3, hour3, msgQueuePtr);
+        //slave_position_tx(clockNode3, min3, hour3, msgQueuePtr);
         
         //update_position(4, min4, hour4, msgQueuePtr);
         
@@ -793,12 +774,7 @@ void clock_thread(void *msgQueuePtr)
         //update_position(clockNode2, min2, hour2, msgQueuePtr);  
         //update_position(clockNode3, min3, hour3, msgQueuePtr);
 
-        //ctl_timeout_wait(ctl_get_current_time() + 1);
-        //ctl_timeout_wait(ctl_get_current_time() + 10);
-        start_movement(ALL_CLOCKS, msgQueuePtr);
-        
-        
-       
+        motion_start(ALL_CLOCKS, msgQueuePtr);       
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);
         
