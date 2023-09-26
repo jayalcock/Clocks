@@ -358,7 +358,7 @@
       debug_initial_breakpoint=""
       debug_initial_breakpoint_set_option="Never" />
     <folder Name="Device" exclude="" filter="" path="Device" recurse="Yes" />
-    <folder Name="Source" exclude="" filter="" path="src" recurse="No" />
+    <folder Name="Source" exclude="" filter="" path="src" recurse="Yes" />
     <folder Name="System Files">
       <file file_name="$(TargetsDir)/LPC1000/LPC1000_LinkPatch.js" />
       <file file_name="$(TargetsDir)/LPC1000/LPC1700_Startup.s">
@@ -370,6 +370,7 @@
         <configuration Name="Common" file_type="Reset Script" />
       </file>
       <file file_name="$(StudioDir)/source/thumb_crt0.s" />
+      <file file_name="LPC1768_MemoryMap.xml" />
     </folder>
     <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
   </project>

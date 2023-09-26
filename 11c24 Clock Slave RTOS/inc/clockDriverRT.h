@@ -12,7 +12,7 @@
 // Structs
 
 // Data for each specific clock arm 
-struct clockArmData
+typedef struct 
 {
     uint8_t port;
     uint8_t pin;
@@ -31,14 +31,14 @@ struct clockArmData
     uint8_t accel;
     uint8_t controlMode;
 
-};
+} clockArmData;
 
 // Data for each specific clock
 typedef struct
 {
     uint8_t clockNumber;
-    struct clockArmData hour;
-    struct clockArmData min;
+    clockArmData hour;
+    clockArmData min;
     
 } motorStruct;
 

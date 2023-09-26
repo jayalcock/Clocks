@@ -12,10 +12,20 @@
 // Clock hour representation of angular position
 static const uint16_t timeAngle[13] = {0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0};
     
+    
 // Matrix for storing clock specific angle data for invidiviual digits
 typedef uint16_t digitData[3][6];
+//typedef uint16_t digitData[][6];
 
-digitData ZERO[2] = 
+//typedef struct 
+//{
+//    digitData minute;
+//    digitData hour;
+                  
+//} referenceData;
+
+                            
+digitData ZERO[2] =
 {
     { // minute
         // left

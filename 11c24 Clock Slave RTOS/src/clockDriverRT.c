@@ -454,7 +454,7 @@ void CT16B1_IRQHandler(void)
     @return     Nothing
 */
 
-void set_start_stop(const uint8_t clockNum, const uint8_t arm, const uint8_t runCmd)
+static void set_start_stop(const uint8_t clockNum, const uint8_t arm, const uint8_t runCmd)
 {
     if(clockNum == ALLCLOCKS)
     {
@@ -565,7 +565,7 @@ void GPIO2_IRQHandler(void)
     
 }
 
-void gpio_init(void)
+static void gpio_init(void)
 {
     // Enable IRQs for GPIO port 2
     NVIC_EnableIRQ(EINT2_IRQn);
@@ -658,7 +658,7 @@ void gpio_init(void)
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, RESETPORT, RESETPIN); 
 }
 
-void timer_init(void)
+static void timer_init(void)
 {
     
     timerFreq = Chip_Clock_GetSystemClockRate();
@@ -778,7 +778,7 @@ void timer_init(void)
     @return     Nothing
 
 */
-void pulse_delay(const uint16_t delay)
+static void pulse_delay(const uint16_t delay)
 {
     for(uint16_t i = 0; i < delay; i++)
     {
@@ -880,7 +880,7 @@ static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, c
     }
 }
 
-void update_stepcount(const uint8_t clockNum)
+static void update_stepcount(const uint8_t clockNum)
 {
     if(clockNum == ALLCLOCKS)
     {
@@ -918,7 +918,7 @@ void update_stepcount(const uint8_t clockNum)
 
     @return     Nothing
 */
-void set_arm_direction(const uint8_t clockNum, const uint8_t arm, const uint8_t direction)
+static void set_arm_direction(const uint8_t clockNum, const uint8_t arm, const uint8_t direction)
 {
     if(clockNum == ALLCLOCKS)
     {
@@ -955,7 +955,7 @@ void set_arm_direction(const uint8_t clockNum, const uint8_t arm, const uint8_t 
 
     @return     Nothing
 */
-void set_arm_angle(const uint8_t clockNum, const uint8_t arm, const uint16_t angle)
+static void set_arm_angle(const uint8_t clockNum, const uint8_t arm, const uint16_t angle)
 {
     if(clockNum == ALLCLOCKS)
     {
@@ -991,7 +991,7 @@ void set_arm_angle(const uint8_t clockNum, const uint8_t arm, const uint16_t ang
 
     @return     Nothing
 */
-void set_arm_speed(const uint8_t clockNum, const uint8_t arm, const uint16_t speed)
+static void set_arm_speed(const uint8_t clockNum, const uint8_t arm, const uint16_t speed)
 {
     if(clockNum == ALLCLOCKS)
     {
@@ -1027,7 +1027,7 @@ void set_arm_speed(const uint8_t clockNum, const uint8_t arm, const uint16_t spe
 
     @return     Nothing
 */
-void set_control_mode(const uint8_t clockNum, const uint8_t arm, const uint16_t mode)
+static void set_control_mode(const uint8_t clockNum, const uint8_t arm, const uint16_t mode)
 {
     if(clockNum == ALLCLOCKS)
     {
@@ -1260,7 +1260,7 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
 
     @return     Nothing
 */
-void home_clocks(void)
+static void home_clocks(void)
 {
   
     ctl_events_set_clear(&clockHomeEvent, HOMING_ACTIVE, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|

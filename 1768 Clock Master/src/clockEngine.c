@@ -10,10 +10,9 @@
 #include "uart_rb.h"
 #include "LPC1768.h"
 #include "clockData.h"
-//#include "can_17xx_40xx.h"
 #include "can.h"
 
-//#include "uart_17xx_40xx.h"
+#include "debugio.h"
 
 #define RESET_WIFI      0
 #define UNUSED_ANGLE    45
@@ -42,6 +41,19 @@
 #define FUNC_ID     0x204
 #define ALL_CLOCKS  200
 
+#define ROWS    8
+#define COLUMNS 16
+#define ARMS    2
+
+// Get the number of elements in any C array
+//#define ARRAY_LEN(array) (sizeof(array) / sizeof(array[0]))
+
+/// Get number of rows in a 2D array
+//#define NUM_ROWS(array_2d) ARRAY_LEN(array_2d)
+
+/// Get number of columns in a 2D array
+//#define NUM_COLS(array_2d) ARRAY_LEN(array_2d[0])
+
 CTL_EVENT_SET_t clockEvent;
 
 // Clock functions
@@ -50,7 +62,7 @@ enum clock_functions
     HOMECLOCKS,          
     
 };    
-  
+
 
 static const char* RESET_CHIP = "AT+RESTORE\r\n";
 static const char* NTP = "AT+CIPSTART=\"UDP\",\"207.210.46.249\",123\r\n";
@@ -66,16 +78,210 @@ static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
     static const uint16_t timeAngle[13] = {0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0};
 */
 
-// Initialise clock matrix - 1x hour, 1x minute
-clockData clockMatrix[2] = {0};
-    
-static uint16_t clockTemp;  
-                            
-void writeClockValue(const uint8_t pos, const digitData *val)
+// Matrix for storing overall clock position data
+typedef uint16_t clockData[COLUMNS][ROWS];    
+
+typedef struct 
 {
-    //uint8_t x_offset;
+    clockData minute;
+    clockData hour;
+} clockStruct;
+
+//// Initialise clock matrix - 1x hour, 1x minute
+//static clockData clockMatrix[ARMS] = {};
+
+static void clock_matrix_number_update(clockStruct *clockMtxPtr, const uint8_t position, const digitData *numberPtr)
+{
+    const static uint8_t y_offset = 1;
+    
+    int i = 6, y = 3;
+    
+    for(size_t row = 0; row <  i; row++)
+    {
+        for(size_t col = 0; col < y; col++)
+        {
+            clockMtxPtr->minute[col+position][row+y_offset] = numberPtr[0][col][row];
+            clockMtxPtr->hour[col+position][row+y_offset] = numberPtr[1][col][row];        
+        }   
+    }
+    
+}
+    
+static void showTime(clockStruct *clockMtxPtr)
+{
+    int digitA, digitB, digitC, digitD;
+    
+    digitA = 1;
+    digitB = 1;
+    digitC = 1;
+    digitD = 1;
+    
+    // Get actual time
+    
+    // Load each value from actual time into matrix for display
+    
+    // Start motion
+    
+    switch (digitA)
+    {
+        case 0:
+            clock_matrix_number_update(clockMtxPtr, POS_A, ZERO);
+            break;
+        case 1:
+            clock_matrix_number_update(clockMtxPtr, POS_A, ONE);
+            break;
+        case '2':
+            clock_matrix_number_update(clockMtxPtr, POS_A, TWO);
+            break;
+        case '3':
+            clock_matrix_number_update(clockMtxPtr, POS_A, THREE);
+            break;
+        case '4':
+            clock_matrix_number_update(clockMtxPtr, POS_A, FOUR);
+            break;
+        case '5':
+            clock_matrix_number_update(clockMtxPtr, POS_A, FIVE);
+            break;
+        case '6':
+            clock_matrix_number_update(clockMtxPtr, POS_A, SIX);
+            break;
+        case '7':
+            clock_matrix_number_update(clockMtxPtr, POS_A, SEVEN);
+            break;
+        case '8':
+            clock_matrix_number_update(clockMtxPtr, POS_A, EIGHT);
+            break;
+        case '9':
+            clock_matrix_number_update(clockMtxPtr, POS_A, NINE);
+            break;
+    }
+        
+    switch (digitB)
+    {
+        case 0:
+            clock_matrix_number_update(clockMtxPtr, POS_B, ZERO);
+            break;
+        case 1:
+            clock_matrix_number_update(clockMtxPtr, POS_B, ONE);
+            break;
+        case '2':
+            clock_matrix_number_update(clockMtxPtr, POS_B, TWO);
+            break;
+        case '3':
+            clock_matrix_number_update(clockMtxPtr, POS_B, THREE);
+            break;
+        case '4':
+            clock_matrix_number_update(clockMtxPtr, POS_B, FOUR);
+            break;
+        case '5':
+            clock_matrix_number_update(clockMtxPtr, POS_B, FIVE);
+            break;
+        case '6':
+            clock_matrix_number_update(clockMtxPtr, POS_B, SIX);
+            break;
+        case '7':
+            clock_matrix_number_update(clockMtxPtr, POS_B, SEVEN);
+            break;
+        case '8':
+            clock_matrix_number_update(clockMtxPtr, POS_B, EIGHT);
+            break;
+        case '9':
+            clock_matrix_number_update(clockMtxPtr, POS_B, NINE);
+            break;
+    }
+        
+    switch (digitC)
+    {
+        case 0:
+            clock_matrix_number_update(clockMtxPtr, POS_C, ZERO);
+            break;
+        case 1:
+            clock_matrix_number_update(clockMtxPtr, POS_C, ONE);
+            break;
+        case '2':
+            clock_matrix_number_update(clockMtxPtr, POS_C, TWO);
+            break;
+        case '3':
+            clock_matrix_number_update(clockMtxPtr, POS_C, THREE);
+            break;
+        case '4':
+            clock_matrix_number_update(clockMtxPtr, POS_C, FOUR);
+            break;
+        case '5':
+            clock_matrix_number_update(clockMtxPtr, POS_C, FIVE);
+            break;
+        case '6':
+            clock_matrix_number_update(clockMtxPtr, POS_C, SIX);
+            break;
+        case '7':
+            clock_matrix_number_update(clockMtxPtr, POS_C, SEVEN);
+            break;
+        case '8':
+            clock_matrix_number_update(clockMtxPtr, POS_C, EIGHT);
+            break;
+        case '9':
+            clock_matrix_number_update(clockMtxPtr, POS_C, NINE);
+            break;
+    }
+
+            
+    switch (digitD)
+    {
+        case 0:
+            clock_matrix_number_update(clockMtxPtr, POS_D, ZERO);
+            break;
+        case 1:
+            clock_matrix_number_update(clockMtxPtr, POS_D, ONE);
+            break;
+        case '2':
+            clock_matrix_number_update(clockMtxPtr, POS_D, TWO);
+            break;
+        case '3':
+            clock_matrix_number_update(clockMtxPtr, POS_D, THREE);
+            break;
+        case '4':
+            clock_matrix_number_update(clockMtxPtr, POS_D, FOUR);
+            break;
+        case '5':
+            clock_matrix_number_update(clockMtxPtr, POS_D, FIVE);
+            break;
+        case '6':
+            clock_matrix_number_update(clockMtxPtr, POS_D, SIX);
+            break;
+        case '7':
+            clock_matrix_number_update(clockMtxPtr, POS_D, SEVEN);
+            break;
+        case '8':
+            clock_matrix_number_update(clockMtxPtr, POS_D, EIGHT);
+            break;
+        case '9':
+            clock_matrix_number_update(clockMtxPtr, POS_D, NINE);
+            break;
+    }
+    
+}
+      
+void initialiseMatrix(clockStruct *clockMtxPtr)
+{
+    
+    for(size_t row = 0; row <  ROWS; row++)
+    {
+        for(size_t col = 0; col < COLUMNS; col++)
+        {
+            clockMtxPtr->minute[col][row] = 0;
+            clockMtxPtr->hour[col][row] = 0;        
+        }   
+    }
+}
+    
+
+void writeClockValue(clockData (*clockMatrix)[ARMS][COLUMNS][ROWS], const uint8_t pos, const digitData *val)
+{
+    
     
     /* Replaced by #define offsets
+    uint8_t x_offset;
+    
     // Determine offset in x direction given digit position
     if(pos == 0)
     {
@@ -102,7 +308,7 @@ void writeClockValue(const uint8_t pos, const digitData *val)
         {
             for(int j = 0; j < 6; j++) // row
             {
-                clockMatrix[k][i+pos][j+1] = val[k][i][j];
+                //clockMatrix[k][i+pos][j+1] = val[k][i][j];
             }
         }
     } 
@@ -180,59 +386,15 @@ void rtcInit(void)
 // Real time clock interrupt handler
 void RTC_IRQHandler(void)
 {
-    
+    ctl_enter_isr();
     
     // Reset interrupt
     ILR |= ILR_RTCCIF;
     
-}
+    ctl_exit_isr();
     
-void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
-{
-
-    char timeString[9] = "00:00:00";
-    uint8_t hour; 
-    uint8_t min;
-    uint8_t sec;
+}
  
-    uint8_t ntpTemp[48] = {0};
-    
-    #if RESET_WIFI
-    //Select WIFI mode
-    ESP_command(MODE, 1000U, 0);
-    
-    //Connect to WIFI
-    ESP_command(SSIDPWD, 6000U, 0);
-    #endif 
-  
-    //Connect to NTP Server
-    ESP_command(NTP, 2000U, 0);
-     
-    //Interrogate NTP
-    ESP_command(SEND, ONE_SECOND, 0);
-
-    //Send NTP Packet
-    ESP_command(NTP_PACKET, 2000U, 48);
-    
-    //Copy received NTP data from ring buffer
-    ringBuffer1Copy(ntpTemp, 48); 
-    
-    Board_UARTPutChar('\n');
-    Board_UARTPutChar('\n');
-    
-    //Calculate time from received NTP data
-    calculateTime(ntpTemp, &hour, &min, &sec, timeString);
-
-    // Print current time 
-    Chip_UART_SendBlocking(LPC_UART0, "The current time is: ", 21);
-    Chip_UART_SendBlocking(LPC_UART0, timeString, 9);
-    Chip_UART_SendBlocking(LPC_UART0, "\n\n", 2);    
-    
-
-    //Disconnect from NTP
-    ESP_command(DISCONNECT_FROM_IP, ONE_SECOND, 0);
-}
-
 // Calculates readable time value from NTP data
 void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec, char* timeString)
 {
@@ -284,6 +446,52 @@ void calculateTime(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *se
 
     //Construct formatted time string
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
+} 
+   
+void getNTPtime()//uint8_t *hour, uint8_t *min, uint8_t *sec)
+{
+
+    char timeString[9] = "00:00:00";
+    uint8_t hour; 
+    uint8_t min;
+    uint8_t sec;
+ 
+    uint8_t ntpTemp[48] = {0};
+    
+    #if RESET_WIFI
+    //Select WIFI mode
+    ESP_command(MODE, 1000U, 0);
+    
+    //Connect to WIFI
+    ESP_command(SSIDPWD, 6000U, 0);
+    #endif 
+  
+    //Connect to NTP Server
+    ESP_command(NTP, 2000U, 0);
+     
+    //Interrogate NTP
+    ESP_command(SEND, ONE_SECOND, 0);
+
+    //Send NTP Packet
+    ESP_command(NTP_PACKET, 2000U, 48);
+    
+    //Copy received NTP data from ring buffer
+    ringBuffer1Copy(ntpTemp, 48); 
+    
+    Board_UARTPutChar('\n');
+    Board_UARTPutChar('\n');
+    
+    //Calculate time from received NTP data
+    calculateTime(ntpTemp, &hour, &min, &sec, timeString);
+
+    // Print current time 
+    Chip_UART_SendBlocking(LPC_UART0, "The current time is: ", 21);
+    Chip_UART_SendBlocking(LPC_UART0, timeString, 9);
+    Chip_UART_SendBlocking(LPC_UART0, "\n\n", 2);    
+    
+
+    //Disconnect from NTP
+    ESP_command(DISCONNECT_FROM_IP, ONE_SECOND, 0);
 }
 
 void update_position(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
@@ -360,18 +568,30 @@ void trigger_slave_func(const uint8_t clockNum, const uint8_t funcNum, CTL_MESSA
 
 void clock_thread(void *msgQueuePtr)
 {
-
+    
+    // Initialise clock matrix - 1x hour, 1x minute
+    //clockData clockMatrix[ARMS] = {};
+    clockStruct clockMatrix;
+    
     uint8_t clockNode0 = 0;
     uint8_t clockNode1 = 1;
     uint8_t clockNode2 = 2;
     uint8_t clockNode3 = 3;
     
-     
+    // Initialise event set
     ctl_events_init(&clockEvent, 0);
     
+    // Initialise matrix to zeors
+    initialiseMatrix(&clockMatrix);
     
-    trigger_slave_func(ALL_CLOCKS, HOMECLOCKS, msgQueuePtr);
-    ctl_timeout_wait(ctl_get_current_time() + 3000);
+    showTime(&clockMatrix);
+    
+    debug_printf("%d\n", clockMatrix.minute[0][0]);
+    //debug_printf("%d\n", ZERO[0][0][0]);
+    
+    
+    //trigger_slave_func(ALL_CLOCKS, HOMECLOCKS, msgQueuePtr);
+    //ctl_timeout_wait(ctl_get_current_time() + 2000);
  
  
     // Initialise and start the RTC
@@ -386,10 +606,10 @@ void clock_thread(void *msgQueuePtr)
     // Update time from NTP server
     getNTPtime();
     
-    writeClockValue(POS_A, ONE);
-    writeClockValue(POS_B, TWO);
-    writeClockValue(POS_C, THREE);
-    writeClockValue(POS_D, FOUR);
+    //writeClockValue(POS_A, ONE);
+    //writeClockValue(POS_B, TWO);
+    //writeClockValue(POS_C, THREE);
+    //writeClockValue(POS_D, FOUR);
     
     uint16_t min0 = 180;
     uint16_t hour0 = 0;
@@ -423,6 +643,7 @@ void clock_thread(void *msgQueuePtr)
     update_speed_dir(clockNode1, speed1m, speed1h, dir1m, dir1h, msgQueuePtr);   
     update_speed_dir(clockNode2, speed2m, speed2h, dir2m, dir3h, msgQueuePtr);
     update_speed_dir(clockNode3, speed3m, speed3h, dir3m, dir3h, msgQueuePtr);   
+    
     
  
     while(1)
@@ -576,7 +797,11 @@ void clock_thread(void *msgQueuePtr)
         //ctl_timeout_wait(ctl_get_current_time() + 10);
         start_movement(ALL_CLOCKS, msgQueuePtr);
         
+        
+       
+        
         ctl_timeout_wait(ctl_get_current_time() + 2000);
+        
        
         
     }
