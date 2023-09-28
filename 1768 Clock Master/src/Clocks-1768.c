@@ -39,7 +39,7 @@ unsigned can_task_stack[1+STACKSIZE+1];
 //unsigned test_task_stack[1+STACKSIZE+1];
 unsigned test_task_stack[100];
 //unsigned clock_task_stack[1+STACKSIZE+1];
-unsigned clock_task_stack[200];
+unsigned clock_task_stack[1+600+1];
 unsigned uart_task_stack[1+STACKSIZE+1];
 
 // CTL Error Handler
@@ -141,7 +141,7 @@ int main(void) {
     //Clock Thread
     memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack
     clock_task_stack[0]=clock_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_task, 50, clock_main_thread, &canMsgQueue, "clock_task", STACKSIZE, clock_task_stack+1, 0);
+    ctl_task_run(&clock_task, 50, clock_main_thread, &canMsgQueue, "clock_task", 600, clock_task_stack+1, 0);
     
     //TODO In development
     //UART Thread

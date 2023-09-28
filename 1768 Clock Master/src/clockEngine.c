@@ -23,8 +23,12 @@
 #define SECONDS_PER_MIN 60
 #define SECONDS_PER_HOUR 3600
 #define SECONDS_PER_DAY 86400
-#define CLOCK_COLUMNS   15
-#define CLOCK_ROWS      8
+
+#define ROWS    8
+#define COLUMNS 15
+#define ARMS    2
+#define DEFAULT_ANGLE_MIN 45
+#define DEFAILT_ANGLE_HR  255
 
 // Offsets for each physical position in digital representation 
 #define POS_A 1
@@ -41,10 +45,10 @@
 #define START_ID    0x203
 #define FUNC_ID     0x204
 #define ALL_CLOCKS  200
+#define NUMBER_OF_SLAVES 1
 
-#define ROWS    8
-#define COLUMNS 16
-#define ARMS    2
+
+#define CONTINUOUS_ROTATE 200
 
 // Get the number of elements in any C array
 #define ARRAY_LEN(array) (sizeof(array) / sizeof(array[0]))
@@ -57,10 +61,13 @@
 
 CTL_EVENT_SET_t clockEvent;
 
-enum arm_direction
+enum clock_enum
 {
     CW,
     CCW,
+    minuteArm,
+    hourArm,
+    bothArms,
 };
 
 // Clock functions
@@ -70,7 +77,7 @@ enum clock_functions
     
 };    
 
-
+// ESP WIFI Commands
 static const char* RESET_CHIP = "AT+RESTORE\r\n";
 static const char* NTP = "AT+CIPSTART=\"UDP\",\"207.210.46.249\",123\r\n";
 static const char* SEND = "AT+CIPSEND=48\r\n";
@@ -79,10 +86,7 @@ static const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 static const char* MODE = "AT+CWMODE=1\r\n";
 static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
 
-// Matrix for storing overall clock position data
-//typedef uint16_t clockAngleData[COLUMNS][ROWS];   
-//typedef uint8_t clockSpeedData[COLUMNS][ROWS];
-
+// Struct for storing clock data
 typedef struct 
 {
     uint16_t minuteAngle[COLUMNS][ROWS];
@@ -99,6 +103,8 @@ typedef struct
 /*****************************************************************************
  * Private functions
  ****************************************************************************/
+
+
  
  /* 
     @brief      Load clock matrix with specified digit representation
@@ -324,7 +330,7 @@ static void time_load_into_matrix(clockDataStruct *clockMtxPtr)
     @return Nothing
     
 */    
-void matrix_initialise(clockDataStruct *clockMtxPtr)
+static void matrix_initialise(clockDataStruct *clockMtxPtr)
 {
     
     for(size_t row = 0; row <  ROWS; row++)
@@ -343,13 +349,13 @@ void matrix_initialise(clockDataStruct *clockMtxPtr)
 
     
 // Prints time from RTC 
-void time_printf(void)
+static void time_printf(void)
 {
     debug_printf("%d:%d:%d\n", HOUR, MIN, SEC);
 }
 
 // Sets time
-void RTC_time_set(uint8_t hour, uint8_t min, uint8_t sec)
+static void RTC_time_set(uint8_t hour, uint8_t min, uint8_t sec)
 {
     HOUR = hour;
     MIN = min;
@@ -358,7 +364,7 @@ void RTC_time_set(uint8_t hour, uint8_t min, uint8_t sec)
 }
 
 // Initialises RTC
-void rtc_init(void)
+static void rtc_init(void)
 {
     
     // Power on RTC peripheral 
@@ -412,7 +418,7 @@ void RTC_IRQHandler(void)
 }
  
 // Calculates readable time value from NTP data
-void NTP_conversion(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec, char* timeString)
+static void NTP_conversion(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *sec, char* timeString)
 {
     char hourC[4], minC[4], secC[4];
     uint32_t timeInt;   
@@ -464,7 +470,7 @@ void NTP_conversion(uint8_t *dataBuffer, uint8_t *hour, uint8_t *min, uint8_t *s
     snprintf(timeString, strlen(timeString)+1, "%s:%s:%s", hourC, minC, secC);
 } 
    
-void uart_ntp_rx()//uint8_t *hour, uint8_t *min, uint8_t *sec)
+static void uart_ntp_rx()//uint8_t *hour, uint8_t *min, uint8_t *sec)
 {
 
     char timeString[9] = "00:00:00";
@@ -511,7 +517,7 @@ void uart_ntp_rx()//uint8_t *hour, uint8_t *min, uint8_t *sec)
 }
 
 // Update position of slave clocks over CAN bus
-void slave_position_tx(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+static void slave_position_tx(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -530,7 +536,7 @@ void slave_position_tx(const uint8_t clockNum, const uint16_t minuteAngle, const
 }
 
 // Update speed and direction of clocks via can bus
-void slave_update_speed_direction(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+static void slave_update_speed_direction(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -549,7 +555,7 @@ void slave_update_speed_direction(const uint8_t clockNum, const uint8_t minuteSp
 }
 
 // UStart movement of clocks via can bus
-void motion_start(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+static void motion_start(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     CAN_MSG_T sendMsgBuff;
     
@@ -563,7 +569,50 @@ void motion_start(const uint8_t clockNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
     startCanTx();
 }
 
-void trigger_slave_func(const uint8_t clockNum, const uint8_t funcNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+//TODO TEST THIS FUNCTION
+static void matrix_update_clock_angle(clockDataStruct *clockMtxPtr, const uint8_t *clockPosRowPtr, const uint8_t *clockPosColPtr, const bool *armPtr, const uint16_t *anglePtr)
+{
+    if(*clockPosRowPtr == ALL_CLOCKS)
+    {
+        if(*armPtr == minuteArm)
+        {
+            for(size_t row = 0; row <  ROWS; row++)
+            {
+                for(size_t col = 0; col < COLUMNS; col++)
+                {
+                    clockMtxPtr->minuteAngle[col][row] = *anglePtr;
+                        
+                }   
+            }
+        }
+        if(*armPtr == hourArm)
+        {
+            for(size_t row = 0; row <  ROWS; row++)
+            {
+                for(size_t col = 0; col < COLUMNS; col++)
+                {
+                    clockMtxPtr->hourAngle[col][row] = *anglePtr;
+                        
+                }   
+            }
+        }    
+         
+     }
+     else
+     {
+        if(*armPtr == minuteArm)
+        {
+            clockMtxPtr->minuteAngle[*clockPosColPtr][*clockPosRowPtr] = *anglePtr;
+        }
+        if(*armPtr == hourArm)
+        {
+            clockMtxPtr->hourAngle[*clockPosColPtr][*clockPosRowPtr] = *anglePtr;
+        }
+    }
+    
+}
+
+static void trigger_slave_func(const uint8_t clockNum, const uint8_t funcNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
 {
     /* Function 1 - Home clocks
        Function 2 - 
@@ -580,6 +629,57 @@ void trigger_slave_func(const uint8_t clockNum, const uint8_t funcNum, CTL_MESSA
     ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
     
     startCanTx();
+}
+
+static void pattern_continuous_rotation(clockDataStruct *clockMtxPtr, const uint8_t speed, const uint8_t direction, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+{
+
+    // Load continuous rotation angle into matrix
+    for(size_t row = 0; row <  ROWS; row++)
+    {
+        for(size_t col = 0; col < COLUMNS; col++)
+        {
+            clockMtxPtr->minuteAngle[col][row] = CONTINUOUS_ROTATE;
+            clockMtxPtr->hourAngle[col][row] = CONTINUOUS_ROTATE;        
+        }   
+    }
+    
+    // Update speed
+    for(size_t row = 0; row <  ROWS; row++)
+    {
+        for(size_t col = 0; col < COLUMNS; col++)
+        {
+            clockMtxPtr->minuteSpeed[col][row] = speed;
+            clockMtxPtr->hourSpeed[col][row] = speed;        
+        }   
+    }
+    
+    // Update direction
+    for(size_t row = 0; row <  ROWS; row++)
+    {
+        for(size_t col = 0; col < COLUMNS; col++)
+        {
+            clockMtxPtr->minuteDirection[col][row] = direction;
+            clockMtxPtr->hourDirection[col][row] = direction;        
+        }   
+    }
+    
+    // Send data to slaves
+    for(int i = 0; i < NUMBER_OF_SLAVES; i++)
+    {
+        slave_update_speed_direction(i, clockMtxPtr->minuteSpeed[0][i], clockMtxPtr->hourSpeed[0][i], clockMtxPtr->minuteDirection[0][i], clockMtxPtr->hourDirection[0][i], msgQueuePtr);
+        slave_position_tx(i, clockMtxPtr->minuteAngle[0][i], clockMtxPtr->minuteAngle[0][i], msgQueuePtr);
+    }
+    // Start motion
+    motion_start(ALL_CLOCKS, msgQueuePtr);   
+    
+}
+
+static void position_reset(clockDataStruct *clockMtxPtr)
+{
+    
+    
+    
 }
 
 void test_routine(clockDataStruct *clockMtxPtr)
@@ -735,6 +835,7 @@ void test_routine(clockDataStruct *clockMtxPtr)
     
 }
 
+
 void clock_main_thread(void *msgQueuePtr)
 {
     
@@ -766,20 +867,23 @@ void clock_main_thread(void *msgQueuePtr)
     // Update time from NTP server
     //uart_ntp_rx();
     
+    pattern_continuous_rotation(&clockMatrix, 2, CW, msgQueuePtr);  
  
     while(1)
     {
-        //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
         
-        test_routine(&clockMatrix);
-            
-        for(int i = 0; i < 4; i++)
-        {
-            slave_update_speed_direction(i, clockMatrix.minuteSpeed[0][i], clockMatrix.hourSpeed[0][i], clockMatrix.minuteDirection[0][i], clockMatrix.hourDirection[0][i], msgQueuePtr);
-            slave_position_tx(i, clockMatrix.minuteAngle[0][i], clockMatrix.minuteAngle[0][i], msgQueuePtr);
-        }
+        //test_routine(&clockMatrix);
+          
+        
+        
+        //for(int i = 0; i < 4; i++)
+        //{
+        //    slave_update_speed_direction(i, clockMatrix.minuteSpeed[0][i], clockMatrix.hourSpeed[0][i], clockMatrix.minuteDirection[0][i], clockMatrix.hourDirection[0][i], msgQueuePtr);
+        //    slave_position_tx(i, clockMatrix.minuteAngle[0][i], clockMatrix.minuteAngle[0][i], msgQueuePtr);
+        //}
 
-        motion_start(ALL_CLOCKS, msgQueuePtr);       
+        //motion_start(ALL_CLOCKS, msgQueuePtr);       
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);
            

@@ -1,8 +1,8 @@
 <!DOCTYPE CrossStudio_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints groups="Breakpoints;V7M Exceptions" active_group="Breakpoints">
-  <BreakpointListItem trigger="" line="621" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="1768 Clock Master/src/clockEngine.c" useHWbreakpoint="false"/>
+ <Breakpoints groups="Breakpoints" active_group="Breakpoints">
+  <BreakpointListItem trigger="" line="874" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="1768 Clock Master/src/clockEngine.c" useHWbreakpoint="false"/>
   <Exceptions set="MemManage;UsageFault_Coprocessor;UsageFault_CheckingError;UsageFault_StateError;BusFault;ExceptionEntryReturnFault;HardFault"/>
  </Breakpoints>
  <ExecutionProfileWindow/>
@@ -109,6 +109,7 @@
   <ProjectSessionItem path="Clocks;1768 Clock Master"/>
   <ProjectSessionItem path="Clocks;1768 Clock Master;inc"/>
   <ProjectSessionItem path="Clocks;1768 Clock Master;Source"/>
+  <ProjectSessionItem path="Clocks;1768 Clock Master;System Files"/>
   <SourceCodeControlLogin password="F9BB6682F5D56822" user="Jay Alcock &lt;jay.alcock@me.com>"/>
  </Project>
  <Register1>
@@ -212,9 +213,10 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Twice a Second">
-   <Watchpoint expression="clockMtxPtr" name="clockMtxPtr" radix="-1" linenumber="0" filename=""/>
-   <Watchpoint expression="temp" name="temp" radix="11" linenumber="0" filename=""/>
-   <Watchpoint expression="temp1" name="temp1" radix="11" linenumber="0" filename=""/>
+   <Watchpoint expression="clockMtxPtr" name="clockMtxPtr" radix="-1" linenumber="0" filename="../Clocks"/>
+   <Watchpoint expression="temp" name="temp" radix="11" linenumber="0" filename="../Clocks"/>
+   <Watchpoint expression="temp1" name="temp1" radix="11" linenumber="0" filename="../Clocks"/>
+   <Watchpoint expression="minuteSpeed" name="minuteSpeed" radix="16" linenumber="0" filename="../Clocks"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -228,14 +230,15 @@
  </Watch4>
  <Files>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="29" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="11c24 Clock Slave RTOS/src/main_ctl.c" selected="0" top="3" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1616" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1612" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" selected="0" top="1212" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="40" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="11c24 Clock Slave RTOS/inc/clockDriverRT.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="124" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="11c24 Clock Slave RTOS/src/ccan_rom.c" selected="0" top="80" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="25" y="16" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="109" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1768 Clock Master/src/Clocks-1768.c" selected="0" top="91" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="53" y="130" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1768 Clock Master/src/clockEngine.c" selected="1" top="102" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="6" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" useBinaryEdit="0" left="0" path="1768 Clock Master/inc/clockEngine.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="14" y="287" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1768 Clock Master/inc/clockData.h" selected="0" top="300" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="109" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1768 Clock Master/src/Clocks-1768.c" selected="0" top="80" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="54" y="851" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1768 Clock Master/src/clockEngine.c" selected="0" top="849" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="16" y="28" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" useBinaryEdit="0" left="0" path="1768 Clock Master/inc/clockEngine.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="97" y="12" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1768 Clock Master/inc/clockData.h" selected="0" top="48" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="468" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="1768 Clock Master/src/can.c" selected="1" top="465" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="1768 Clock Master" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="ARM Simulator" buildConfiguration="THUMB Flash Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/jayalcock/Projects/Clocks/11C24 Clock Slave RTOS/Device/inc" debugSearchPath="" autoConnectCapabilities="391615"/>
 </session>
