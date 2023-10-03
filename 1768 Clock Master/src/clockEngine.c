@@ -43,7 +43,7 @@
 #define NUMBER_OF_SLAVES 4
 
 
-#define CONTINUOUS_ROTATE 300
+#define CONTINUOUS_ROTATE 400
 
 // Get the number of elements in any C array
 #define ARRAY_LEN(array) (sizeof(array) / sizeof(array[0]))
@@ -610,7 +610,7 @@ static void matrix_update_clock_angle(clockDataStruct *clockMtxPtr, const uint8_
     
 }
 
-static void slave_function_trigger_tx(const uint8_t clockNum, const uint8_t funcNum, CTL_MESSAGE_QUEUE_t *msgQueuePtr)
+static void slave_function_trigger_tx(const uint8_t clockNum, const uint8_t funcNum)
 {
     /* Function 1 - Home clocks
        Function 2 - 
@@ -669,7 +669,7 @@ static void pattern_continuous_rotation(clockDataStruct *clockMtxPtr, const uint
         slave_position_tx(i, clockMtxPtr->minuteAngle[0][i], clockMtxPtr->minuteAngle[0][i]);
     }
     
-    //slave_function_trigger(0, DRIVECONTINUOUS, msgQueuePtr);
+    slave_function_trigger_tx(0, DRIVECONTINUOUS);
     
     // Start motion
     motion_start_tx(ALL_CLOCKS);   
@@ -697,34 +697,9 @@ static void position_reset(clockDataStruct *clockMtxPtr)
 
 void test_routine(clockDataStruct *clockMtxPtr)
 {
-    static uint16_t min0 = 180;
-    static uint16_t hour0 = 0;
-    static uint16_t min1 = 180;
-    static uint16_t hour1 = 0;
-    static uint16_t min2 = 180;
-    static uint16_t hour2 = 0;
-    static uint16_t min3 = 180;
-    static uint16_t hour3 = 0;
-    static uint16_t min4 = 180;
-    static uint16_t hour4 = 0;
+      
+    uint16_t min0, min1, min2, min3, hour0, hour1, hour2, hour3;
     
-    uint8_t speed0m = 3;
-    uint8_t speed0h = 3;
-    uint8_t speed1m = 3;
-    uint8_t speed1h = 3;
-    uint8_t speed2m = 3;
-    uint8_t speed2h = 3;
-    uint8_t speed3m = 3;
-    uint8_t speed3h = 3;
-    uint8_t dir0m = 0;
-    uint8_t dir0h = 0;
-    uint8_t dir1m = 0;
-    uint8_t dir1h = 0;
-    uint8_t dir2m = 0;
-    uint8_t dir2h = 0;
-    uint8_t dir3m = 0;
-    uint8_t dir3h = 0;
-       
     min0 += 45;
     hour0 += 45;
     min1 += 45;
@@ -733,8 +708,7 @@ void test_routine(clockDataStruct *clockMtxPtr)
     hour2 += 45;
     min3 += 45;
     hour3 += 45;
-    min4 += 45;
-    hour4 += 45;
+
        
         
                     
@@ -810,23 +784,7 @@ void test_routine(clockDataStruct *clockMtxPtr)
         hour3 += 360;
     }
     
-    if(min4 >= 360)
-    {    
-        min4 -= 360;
-    }
-    if(min4 <= 0)
-    {
-        min4 += 360;
-    }
-    
-    if(hour4 >= 360)
-    {    
-        hour4 -= 360;
-    }
-    if(hour4 <= 0)
-    {
-        hour4 += 360;
-    }
+
     
     clockMtxPtr->minuteAngle[0][0] = min0;
     clockMtxPtr->minuteAngle[0][1] = min1;
@@ -837,14 +795,30 @@ void test_routine(clockDataStruct *clockMtxPtr)
     clockMtxPtr->hourAngle[0][2] = hour2;
     clockMtxPtr->hourAngle[0][3] = hour3;
     
-    clockMtxPtr->minuteSpeed[0][0] = speed0m;
-    clockMtxPtr->minuteSpeed[0][1] = speed1m;
-    clockMtxPtr->minuteSpeed[0][2] = speed2m;
-    clockMtxPtr->minuteSpeed[0][3] = speed3m;
-    clockMtxPtr->hourSpeed[0][0] = speed0h;
-    clockMtxPtr->hourSpeed[0][1] = speed1h;
-    clockMtxPtr->hourSpeed[0][2] = speed2h;
-    clockMtxPtr->hourSpeed[0][3] = speed3h;
+    
+    
+    
+    //clockMtxPtr->minuteSpeed[0][0] = speed0m;
+    //clockMtxPtr->minuteSpeed[0][1] = speed1m;
+    //clockMtxPtr->minuteSpeed[0][2] = speed2m;
+    //clockMtxPtr->minuteSpeed[0][3] = speed3m;
+    //clockMtxPtr->hourSpeed[0][0] = speed0h;
+    //clockMtxPtr->hourSpeed[0][1] = speed1h;
+    //clockMtxPtr->hourSpeed[0][2] = speed2h;
+    //clockMtxPtr->hourSpeed[0][3] = speed3h;
+    
+    slave_position_tx(0, clockMtxPtr->minuteAngle[0][0], clockMtxPtr->hourAngle[0][0]);
+    motion_start_tx(0); 
+    ctl_timeout_wait(ctl_get_current_time() + 200);
+    slave_position_tx(1, clockMtxPtr->minuteAngle[0][1], clockMtxPtr->hourAngle[0][1]);
+    motion_start_tx(1); 
+    ctl_timeout_wait(ctl_get_current_time() + 200);
+    slave_position_tx(2, clockMtxPtr->minuteAngle[0][2], clockMtxPtr->hourAngle[0][2]);
+    motion_start_tx(2); 
+    ctl_timeout_wait(ctl_get_current_time() + 200);
+    slave_position_tx(3, clockMtxPtr->minuteAngle[0][3], clockMtxPtr->hourAngle[0][3]);
+    motion_start_tx(3); 
+    ctl_timeout_wait(ctl_get_current_time() + 200);
     
 }
 
@@ -861,7 +835,7 @@ void clock_main_thread(void *msgQueuePtr)
     // Initialise matrix to zeors
     matrix_initialise(&clockMatrix);  
     
-    slave_function_trigger_tx(ALL_CLOCKS, HOMECLOCKS, msgQueuePtr); 
+    slave_function_trigger_tx(ALL_CLOCKS, HOMECLOCKS); 
  
     // Initialise and start the RTC
     rtc_init();
@@ -880,26 +854,23 @@ void clock_main_thread(void *msgQueuePtr)
     
     ctl_timeout_wait(ctl_get_current_time() + 10000);
     
-    //pattern_continuous_rotation(&clockMatrix, 2, CW, msgQueuePtr);  
+    
     
     position_reset(&clockMatrix);
     motion_start_tx(ALL_CLOCKS);
     
+    //ctl_timeout_wait(ctl_get_current_time() + 5000);
+    
+    //pattern_continuous_rotation(&clockMatrix, 2, CW, msgQueuePtr);  
+    
     while(1)
     {
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
+        //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
         
-        //test_routine(&clockMatrix);
+        test_routine(&clockMatrix);
           
         
-        
-        //for(int i = 0; i < 4; i++)
-        //{
-        //    slave_update_speed_direction(i, clockMatrix.minuteSpeed[0][i], clockMatrix.hourSpeed[0][i], clockMatrix.minuteDirection[0][i], clockMatrix.hourDirection[0][i], msgQueuePtr);
-        //    slave_position_tx(i, clockMatrix.minuteAngle[0][i], clockMatrix.minuteAngle[0][i], msgQueuePtr);
-        //}
-
-        //motion_start(ALL_CLOCKS, msgQueuePtr);       
+    
         
         ctl_timeout_wait(ctl_get_current_time() + 2000);
            

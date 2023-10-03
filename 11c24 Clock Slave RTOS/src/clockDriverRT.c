@@ -1454,6 +1454,22 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
             {
                 set_start_stop(ALLCLOCKS, BOTHARMS, START);
             }
+            if(canData->data[0] == 0)
+            {
+                set_start_stop(CLOCK0, BOTHARMS, START);
+            }
+            if(canData->data[0] == 1)
+            {
+                set_start_stop(CLOCK1, BOTHARMS, START);
+            }
+            if(canData->data[0] == 2)
+            {
+                set_start_stop(CLOCK2, BOTHARMS, START);
+            }
+            if(canData->data[0] == 3)
+            {
+                set_start_stop(CLOCK3, BOTHARMS, START);
+            }
     
 
         }
@@ -1466,6 +1482,10 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
             {
                 home_clocks();
             }
+            //if(canData->data[0] == DRIVECONTINUOUS)
+            //{
+            //    drive_continuous(ALLCLOCKS, BOTHARMS);
+            //}
         }
 
     }
@@ -1626,7 +1646,7 @@ void clock_control(void *p)
     ctl_events_init(&clockEvent, 0);
     //ctl_mutex_init(&mutex);
  
-    ctl_events_set_clear(&clockHomeEvent, 1<<9, 0);
+    //ctl_events_set_clear(&clockHomeEvent, 1<<9, 0);
     // Initialise message queue
     //ctl_message_queue_init(&can_RX, rxQueue, 10);
     
