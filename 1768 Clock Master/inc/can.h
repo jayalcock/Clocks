@@ -24,7 +24,7 @@ static void ReplyNormalMessage(CAN_MSG_T *pRcvMsg);
 void CAN_IRQHandler(void);
 
 /* Start CAN Tx public function */
-void startCanTx();
+void startCanTx(CAN_MSG_T *sendMsgBuffPtr);
 
 /* CAN RT thread */ 
 void CAN_Thread(void *msgQueuePtr);

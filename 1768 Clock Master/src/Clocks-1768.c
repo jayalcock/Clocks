@@ -39,7 +39,7 @@ unsigned can_task_stack[1+STACKSIZE+1];
 //unsigned test_task_stack[1+STACKSIZE+1];
 unsigned test_task_stack[100];
 //unsigned clock_task_stack[1+STACKSIZE+1];
-unsigned clock_task_stack[1+600+1];
+unsigned clock_task_stack[1+STACKSIZE+1];
 unsigned uart_task_stack[1+STACKSIZE+1];
 
 // CTL Error Handler
@@ -107,6 +107,7 @@ void test_thread(void *p)
         }
 }
 
+
 int main(void) { 
   
 #if defined (__USE_LPCOPEN)
@@ -141,7 +142,7 @@ int main(void) {
     //Clock Thread
     memset(clock_task_stack, 0xcd, sizeof(clock_task_stack));  // write known values into the stack
     clock_task_stack[0]=clock_task_stack[1+STACKSIZE]=0xfacefeed; // put marker values at the words before/after the stack
-    ctl_task_run(&clock_task, 50, clock_main_thread, &canMsgQueue, "clock_task", 600, clock_task_stack+1, 0);
+    ctl_task_run(&clock_task, 50, clock_main_thread, &canMsgQueue, "clock_task", STACKSIZE, clock_task_stack+1, 0);
     
     //TODO In development
     //UART Thread
@@ -153,27 +154,6 @@ int main(void) {
     Board_LED_Set(1, 0);
     //bool state = false;
 
-    struct TEST_STRUCT{
-        int q;
-        int w;
-    };
-    
-    typedef struct TEST_STRUCT TEST_STRUCT;
-    
-    
-    TEST_STRUCT testOut = {10, 11};
-    TEST_STRUCT testIn;
-    
-
-    ctl_message_queue_post(&canMsgQueue, &testOut, CTL_TIMEOUT_NONE, 0);
-
-   
-   
-    void *testPtr;
-
-    ctl_message_queue_receive(&canMsgQueue, &testPtr, CTL_TIMEOUT_NONE, 0);
-
-    testIn = *(TEST_STRUCT*)testPtr;
     
     ctl_task_set_priority(&main_task, 0); // drop to lowest priority to start created tasks running.
     // Force the counter to be placed into memory

@@ -17,12 +17,18 @@ static const uint16_t timeAngle[13] = {0, 30, 60, 90, 120, 150, 180, 210, 240, 2
 typedef uint16_t digitData[3][6];
 //typedef uint16_t digitData[][6];
 
-//typedef struct 
-//{
-//    digitData minute;
-//    digitData hour;
-                  
-//} referenceData;
+// Default reset angles
+const uint16_t DEFAULT_ANGLE_MIN = 225;
+const uint16_t DEFAULT_ANGLE_HR = 45;
+
+enum clock_constants
+{
+    ROWS = 8,
+    COLUMNS = 15,
+    ARMS = 2,
+    //DEFAULT_ANGLE_MIN = 45,
+    //DEFAULT_ANGLE_HR = 255,
+};
 
 // Number zero representation                           
 digitData ZERO[2] =

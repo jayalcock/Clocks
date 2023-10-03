@@ -31,12 +31,10 @@
  */
 
 #include <stdint.h>
-//#include "core_cm3.h"
 #include "board.h"
 #include "ctl_api.h"
 #include "can.h"
 #include "can_17xx_40xx.h"
-
 
 
 /*****************************************************************************
@@ -68,21 +66,23 @@ static char WelcomeMenu[] = "\n\rHello NXP Semiconductors \r\n"
 							"CAN DEMO : Use CAN to transmit and receive Message from CAN Analyzer\r\n"
 							"CAN bit rate : 500kBit/s\r\n";
 
-                                                        
+   int wait = 0;                                                      
 CAN_MSG_T SendMsgBuf;
 CTL_EVENT_SET_t can_event;
-
+CTL_MUTEX_t bufferMutex;
+CAN_MSG_T *testPtr;
 
 ///* Transmit and receive ring buffers */
-//STATIC RINGBUFF_T txring1, rxring1;
+static RINGBUFF_T txring1, rxring1;
 
 ///* Transmit and receive ring buffer sizes */
-//#define UART_SRB_SIZE 128	/* Send */
-//#define UART_RRB_SIZE 32	/* Receive */
+#define UART_SRB_SIZE 128	/* Send */
+#define UART_RRB_SIZE 32	/* Receive */
 
 ///* Transmit and receive buffers */
-//static uint8_t rxbuff1[UART_RRB_SIZE], txbuff1[UART_SRB_SIZE];                                             
-                                                        
+//static uint8_t rxbuff1[UART_RRB_SIZE], txbuff1[UART_SRB_SIZE];                                           
+static CAN_MSG_T txbuff1[30];
+  
 #if AF_LUT_USED
 #if FULL_CAN_AF_USED
 CAN_STD_ID_ENTRY_T FullCANSection[] = {
@@ -415,9 +415,11 @@ void CAN_IRQHandler(void)
 }
 
 // Start CAN Tx public function
-void startCanTx()
+void startCanTx(CAN_MSG_T *sendMsgBuffPtr)
 {    
-    // Set CAN tx event
+    ctl_mutex_lock(&bufferMutex, CTL_TIMEOUT_NONE, 0);
+    RingBuffer_Insert(&txring1, sendMsgBuffPtr);
+    ctl_mutex_unlock(&bufferMutex);
     ctl_events_set_clear(&can_event, 1<<0, 0);
 }
 
@@ -426,9 +428,13 @@ void CAN_Thread(void *msgQueuePtr)
 {
 	CAN_BUFFER_ID_T TxBuf;
 	CAN_MSG_T SendMsgBuf;
-        void* msgPtr;
-        
+        //void* msgPtr;
+        testPtr = &SendMsgBuf;
+               
+        RingBuffer_Init(&txring1, &txbuff1, sizeof(CAN_MSG_T), 30);
+
         ctl_events_init(&can_event, 0);
+        ctl_mutex_init(&bufferMutex);
         
 	Chip_CAN_Init(LPC_CAN, LPC_CANAF, LPC_CANAF_RAM);
 
@@ -456,10 +462,24 @@ void CAN_Thread(void *msgQueuePtr)
             ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &can_event, 1<<0, CTL_TIMEOUT_NONE, 0);
             
             // Receive message from message queue
-            ctl_message_queue_receive((CTL_MESSAGE_QUEUE_t*) msgQueuePtr, &msgPtr, CTL_TIMEOUT_NONE, 0);
+            //ctl_message_queue_receive((CTL_MESSAGE_QUEUE_t*) msgQueuePtr, &msgPtr, CTL_TIMEOUT_NONE, 0);
+            //RingBuffer_Pop(&txring1, msgPtr);
+            
+           
+            
+            //wait = 1;
+            ctl_mutex_lock(&bufferMutex, CTL_TIMEOUT_NONE, 0);
+            RingBuffer_Pop(&txring1, &SendMsgBuf);
+            //wait = 0;
+            ctl_mutex_unlock(&bufferMutex);
+            
+            if(SendMsgBuf.Data[0] == 0 && SendMsgBuf.ID == 0x200)
+            {
+                wait++;
+            }
             
             // Copy message to local buffer
-            SendMsgBuf = *(CAN_MSG_T*) msgPtr;
+            //SendMsgBuf = *(CAN_MSG_T*) msgPtr;
             
             // Get free tx buffer 
             TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
@@ -468,11 +488,14 @@ void CAN_Thread(void *msgQueuePtr)
             Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
             while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
             //DEBUGSTR("TX Success\r\n");
-            Board_LED_Toggle(1);
+            //Board_LED_Toggle(1);
             
             // Clear can event
-            ctl_events_set_clear(&can_event, 0, 1<<0);
-        
+            if(RingBuffer_IsEmpty(&txring1))
+            {
+                ctl_events_set_clear(&can_event, 0, 1<<0);
+            }
+
         }
 }
 

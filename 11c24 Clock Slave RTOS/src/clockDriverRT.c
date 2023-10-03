@@ -79,7 +79,8 @@
 // Clock functions
 enum clock_functions
 {
-    HOMECLOCKS,          
+    HOMECLOCKS,
+    DRIVECONTINUOUS,     
     
 };   
 
@@ -1424,6 +1425,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
     */
     
     /* Skip if homing procedure active */ 
+    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockHomeEvent, 1<<9, CTL_TIMEOUT_NONE, 0);
     if(!clockHomeEvent & HOMING_ACTIVE)
     {
         /* Update position */ 
@@ -1624,6 +1626,7 @@ void clock_control(void *p)
     ctl_events_init(&clockEvent, 0);
     //ctl_mutex_init(&mutex);
  
+    ctl_events_set_clear(&clockHomeEvent, 1<<9, 0);
     // Initialise message queue
     //ctl_message_queue_init(&can_RX, rxQueue, 10);
     

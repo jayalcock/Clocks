@@ -29,8 +29,8 @@ static CTL_EVENT_SET_t canEvent;
 
 /* Define ringbuffer constants and variables */
 #define SIZEOFRXBUFF 20
-static RINGBUFF_T rxBuff;
-static CCAN_MSG_OBJ_T buff[SIZEOFRXBUFF];
+static RINGBUFF_T rxRing;
+static CCAN_MSG_OBJ_T rxBuff[SIZEOFRXBUFF];
 
 // Clock Numbers
 enum clock_numbers
@@ -100,7 +100,7 @@ void CAN_rx(uint8_t msg_obj_num)
     LPC_CCAN_API->can_receive(&msg_obj);
 
     /* Load into ringbuffer */
-    if(!RingBuffer_Insert(&rxBuff, &msg_obj))
+    if(!RingBuffer_Insert(&rxRing, &msg_obj))
     {
        //asm("BKPT");
     } 
@@ -224,7 +224,7 @@ void comms_func(void *p)
     CCAN_MSG_OBJ_T canMSG;
     
     // Initialize ring buffer
-    RingBuffer_Init(&rxBuff, &buff, sizeof(CCAN_MSG_OBJ_T), SIZEOFRXBUFF);
+    RingBuffer_Init(&rxRing, &rxBuff, sizeof(CCAN_MSG_OBJ_T), SIZEOFRXBUFF);
     
     // Initialise CAN driver
     can_init();
@@ -242,7 +242,7 @@ void comms_func(void *p)
         // Disbale CAN IRQ when receiving from buffer
         NVIC_DisableIRQ(CAN_IRQn);
 
-        RingBuffer_Pop(&rxBuff, &canMSG); 
+        RingBuffer_Pop(&rxRing, &canMSG); 
          
         NVIC_EnableIRQ(CAN_IRQn);
           
@@ -250,7 +250,7 @@ void comms_func(void *p)
         update_from_CAN(&canMSG);
         
         // Clear event flag if buffer empty
-        if(RingBuffer_IsEmpty(&rxBuff))
+        if(RingBuffer_IsEmpty(&rxRing))
         { 
             ctl_events_set_clear(&canEvent, 0, CAN_RX);
         }
