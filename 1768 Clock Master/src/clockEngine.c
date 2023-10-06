@@ -38,7 +38,7 @@
 #define ACCEL_ID    0x202
 #define START_ID    0x203
 #define FUNC_ID     0x204
-#define ALL_CLOCKS  200
+//#define ALL_CLOCKS  200
 
 #define NUMBER_OF_SLAVES 4
 
@@ -58,14 +58,14 @@
 // Initialize clock event set
 static CTL_EVENT_SET_t clockEvent;
 
-enum clock_enum
-{
-    CW,
-    CCW,
-    minuteArm,
-    hourArm,
-    bothArms,
-};
+//enum clock_enum
+//{
+//    CW,
+//    CCW,
+//    minuteArm,
+//    hourArm,
+//    bothArms,
+//};
 
 // Clock functions
 enum clock_functions
@@ -570,9 +570,9 @@ static void motion_start_tx(const uint8_t clockNum)
 //TODO TEST THIS FUNCTION
 static void matrix_update_clock_angle(clockDataStruct *clockMtxPtr, const uint8_t *clockPosRowPtr, const uint8_t *clockPosColPtr, const bool *armPtr, const uint16_t *anglePtr)
 {
-    if(*clockPosRowPtr == ALL_CLOCKS)
+    if(*clockPosRowPtr == ALLCLOCKS)
     {
-        if(*armPtr == minuteArm)
+        if(*armPtr == MINUTEARM)
         {
             for(size_t row = 0; row <  ROWS; row++)
             {
@@ -583,7 +583,7 @@ static void matrix_update_clock_angle(clockDataStruct *clockMtxPtr, const uint8_
                 }   
             }
         }
-        if(*armPtr == hourArm)
+        if(*armPtr == HOURARM)
         {
             for(size_t row = 0; row <  ROWS; row++)
             {
@@ -598,11 +598,11 @@ static void matrix_update_clock_angle(clockDataStruct *clockMtxPtr, const uint8_
      }
      else
      {
-        if(*armPtr == minuteArm)
+        if(*armPtr == MINUTEARM)
         {
             clockMtxPtr->minuteAngle[*clockPosColPtr][*clockPosRowPtr] = *anglePtr;
         }
-        if(*armPtr == hourArm)
+        if(*armPtr == HOURARM)
         {
             clockMtxPtr->hourAngle[*clockPosColPtr][*clockPosRowPtr] = *anglePtr;
         }
@@ -672,7 +672,7 @@ static void pattern_continuous_rotation(clockDataStruct *clockMtxPtr, const uint
     slave_function_trigger_tx(0, DRIVECONTINUOUS);
     
     // Start motion
-    motion_start_tx(ALL_CLOCKS);   
+    motion_start_tx(ALLCLOCKS);   
     
 }
 
@@ -698,7 +698,7 @@ static void position_reset(clockDataStruct *clockMtxPtr)
 void test_routine(clockDataStruct *clockMtxPtr)
 {
       
-    uint16_t min0, min1, min2, min3, hour0, hour1, hour2, hour3;
+    static uint16_t min0, min1, min2, min3, hour0, hour1, hour2, hour3;
     
     min0 += 45;
     hour0 += 45;
@@ -708,8 +708,6 @@ void test_routine(clockDataStruct *clockMtxPtr)
     hour2 += 45;
     min3 += 45;
     hour3 += 45;
-
-       
         
                     
     if(min0 >= 360)
@@ -835,7 +833,7 @@ void clock_main_thread(void *msgQueuePtr)
     // Initialise matrix to zeors
     matrix_initialise(&clockMatrix);  
     
-    slave_function_trigger_tx(ALL_CLOCKS, HOMECLOCKS); 
+    slave_function_trigger_tx(ALLCLOCKS, HOMECLOCKS); 
  
     // Initialise and start the RTC
     rtc_init();
@@ -857,7 +855,7 @@ void clock_main_thread(void *msgQueuePtr)
     
     
     position_reset(&clockMatrix);
-    motion_start_tx(ALL_CLOCKS);
+    motion_start_tx(ALLCLOCKS);
     
     //ctl_timeout_wait(ctl_get_current_time() + 5000);
     
@@ -872,7 +870,7 @@ void clock_main_thread(void *msgQueuePtr)
         
     
         
-        ctl_timeout_wait(ctl_get_current_time() + 2000);
+        ctl_timeout_wait(ctl_get_current_time() + 1000);
            
     }
 }

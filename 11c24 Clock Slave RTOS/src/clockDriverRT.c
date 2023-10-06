@@ -8,7 +8,7 @@
 #include "ccan_rom.h"
 #include "gpio_11xx_2.h"
 #include "ring_buffer.h"
-
+#include "clockData.h"
 
 /*****************************************************************************
  * Private types/enumerations/variables
@@ -85,19 +85,19 @@ enum clock_functions
 };   
 
 
-// Clock Numbers
-enum clock_numbers
-{
-    CLOCK0,          
-    CLOCK1,          
-    CLOCK2,          
-    CLOCK3,          
-    ALLCLOCKS,
-    MINUTEARM, 
-    HOURARM, 
-    BOTHARMS,
+//// Clock Numbers
+//enum clock_numbers
+//{
+//    CLOCK0,          
+//    CLOCK1,          
+//    CLOCK2,          
+//    CLOCK3,          
+//    ALLCLOCKS,
+//    MINUTEARM, 
+//    HOURARM, 
+//    BOTHARMS,
     
-};   
+//};   
 
 enum arm_direction
 {
@@ -1450,23 +1450,23 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         /* Start motion command */
         if (canData->mode_id == STARTMOTION)
         {
-            if(canData->data[0] == 200)
+            if(canData->data[0] == ALLCLOCKS)
             {
                 set_start_stop(ALLCLOCKS, BOTHARMS, START);
             }
-            if(canData->data[0] == 0)
+            if(canData->data[0] == CLOCK0)
             {
                 set_start_stop(CLOCK0, BOTHARMS, START);
             }
-            if(canData->data[0] == 1)
+            if(canData->data[0] == CLOCK1)
             {
                 set_start_stop(CLOCK1, BOTHARMS, START);
             }
-            if(canData->data[0] == 2)
+            if(canData->data[0] == CLOCK2)
             {
                 set_start_stop(CLOCK2, BOTHARMS, START);
             }
-            if(canData->data[0] == 3)
+            if(canData->data[0] == CLOCK3)
             {
                 set_start_stop(CLOCK3, BOTHARMS, START);
             }

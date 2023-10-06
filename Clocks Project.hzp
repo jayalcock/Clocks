@@ -174,6 +174,10 @@
         <file file_name="Device/src/wwdt_11xx.c" />
       </folder>
     </folder>
+    <folder Name="inc">
+      <file file_name="inc/ccan_rom.h" />
+      <file file_name="inc/clockDriver.h" />
+    </folder>
     <folder Name="Script Files">
       <file file_name="$(TargetsDir)/LPC1100/Scripts/LPC1100_Target.js">
         <configuration Name="Common" file_type="Reset Script" />
@@ -213,10 +217,6 @@
         <configuration Name="THUMB RAM Debug" build_exclude_from_build="No" />
       </file>
     </folder>
-    <folder Name="inc">
-      <file file_name="inc/ccan_rom.h" />
-      <file file_name="inc/clockDriver.h" />
-    </folder>
   </project>
   <project Name="11C24 Clock Slave RTOS">
     <configuration
@@ -238,7 +238,7 @@
       arm_target_loader_applicable_loaders="Flash"
       arm_target_loader_default_loader="Flash"
       c_preprocessor_definitions="CORE_M0"
-      c_user_include_directories="$(DeviceIncludePath);$(TargetsDir)/LPC1100/CMSIS/Device/Include;$(PackagesDir)/libraries/libctl/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc"
+      c_user_include_directories="$(DeviceIncludePath);$(TargetsDir)/LPC1100/CMSIS/Device/Include;$(PackagesDir)/libraries/libctl/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc;$(ProjectDir)/../Common"
       debug_register_definition_file="$(DeviceRegisterDefinitionFile)"
       debug_threads_script="$(PackagesDir)/libraries/libctl/source/threads.js"
       gcc_entry_point="Reset_Handler"
@@ -269,6 +269,9 @@
       </file>
       <file file_name="../11C24 Clock Slave RTOS/inc/system_LPC11xx.h" />
     </folder>
+    <folder Name="Common">
+      <file file_name="../Common/clockData.h" />
+    </folder>
     <folder Name="CTL Files">
       <file file_name="$(PackagesDir)/libraries/libctl/source/ctl_board.c" />
       <file file_name="$(TargetsDir)/LPC1100/Source/ctl_lpc1100.c" />
@@ -293,6 +296,7 @@
         <file file_name="Device/src/timer_11xx.c" />
       </folder>
     </folder>
+    <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
     <folder Name="Script Files">
       <file file_name="$(TargetsDir)/LPC1100/Scripts/LPC1100_Target.js">
         <configuration Name="Common" file_type="Reset Script" />
@@ -308,7 +312,6 @@
       <file file_name="LPC11C24FBD48_301_MemoryMap.xml" />
       <file file_name="$(StudioDir)/source/thumb_crt0.s" />
     </folder>
-    <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
   </project>
   <project Name="1768 Clock Master">
     <configuration
@@ -327,7 +330,7 @@
       arm_target_loader_parameter="12000000"
       c_only_additional_options="-fms-extensions"
       c_preprocessor_definitions="USE_PROCESS_STACK;__$(LPC1000_Series)_SERIES;__USE_LPCOPEN;CORE_M3;NESTED_INTERRUPTS;CTL_TASKING"
-      c_user_include_directories="$(TargetsDir)/LPC1000/include/CMSIS;$(TargetsDir)/CMSIS_3/CMSIS/Include;$(TargetsDir)/LPC1000/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc"
+      c_user_include_directories="$(TargetsDir)/LPC1000/include/CMSIS;$(TargetsDir)/CMSIS_3/CMSIS/Include;$(TargetsDir)/LPC1000/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc;$(ProjectDir)/../Common"
       debug_threads_script="$(PackagesDir)/libraries/libctl/source/threads.js"
       libctl="Yes"
       link_include_startup_code="No"
@@ -357,22 +360,25 @@
       c_preprocessor_definitions="STARTUP_FROM_RESET"
       debug_initial_breakpoint=""
       debug_initial_breakpoint_set_option="Never" />
+    <folder Name="Common">
+      <file file_name="../Common/clockData.h" />
+    </folder>
     <folder Name="Device" exclude="" filter="" path="Device" recurse="Yes" />
+    <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
     <folder Name="Source" exclude="" filter="" path="src" recurse="Yes" />
     <folder Name="System Files">
+      <file file_name="$(TargetsDir)/LPC1000/ctl_lpc1700.c" />
+      <file file_name="$(TargetsDir)/mbed_NXP_LPC1768/ctl_mbed_nxp_lpc1768.c" />
       <file file_name="$(TargetsDir)/LPC1000/LPC1000_LinkPatch.js" />
       <file file_name="$(TargetsDir)/LPC1000/LPC1700_Startup.s">
         <configuration Name="THUMB RAM Debug" build_exclude_from_build="No" />
       </file>
-      <file file_name="$(TargetsDir)/LPC1000/ctl_lpc1700.c" />
-      <file file_name="$(TargetsDir)/mbed_NXP_LPC1768/ctl_mbed_nxp_lpc1768.c" />
+      <file file_name="LPC1768_MemoryMap.xml" />
       <file file_name="$(TargetsDir)/mbed_NXP_LPC1768/mbed_NXP_LPC1768_Target.js">
         <configuration Name="Common" file_type="Reset Script" />
       </file>
       <file file_name="$(StudioDir)/source/thumb_crt0.s" />
-      <file file_name="LPC1768_MemoryMap.xml" />
     </folder>
-    <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
   </project>
   <project Name="Kalman">
     <configuration
@@ -408,37 +414,37 @@
       Placement="RAM"
       linker_section_placement_file="$(StudioDir)/targets/sram_placement.xml"
       target_reset_script="SRAMReset()" />
+    <folder Name="inc">
+      <file file_name="inc/cpu.h" />
+      <file file_name="inc/i2c.h" />
+      <file file_name="inc/irq.h" />
+      <file file_name="inc/lpc2148.h" />
+      <file file_name="inc/UART.h" />
+    </folder>
     <folder Name="Source Files">
       <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc" />
-      <file file_name="src/UART.c" />
       <file file_name="src/cpu.c" />
       <file file_name="src/i2c.c" />
       <file file_name="src/irq.c">
         <configuration Name="THUMB RAM Debug" build_exclude_from_build="No" />
       </file>
       <file file_name="main_ctl.c" />
+      <file file_name="src/UART.c" />
     </folder>
     <folder Name="System Files">
+      <file file_name="$(StudioDir)/source/crt0.s" />
       <file file_name="$(PackagesDir)/targets/Philips_LPC210X/LPC210x.c" />
       <file file_name="$(PackagesDir)/targets/Philips_LPC210X/Philips_LPC210X_Startup.s" />
       <file file_name="$(PackagesDir)/targets/Philips_LPC210X/Philips_LPC210X_Target.js">
         <configuration Name="Common" file_type="Reset Script" />
       </file>
+      <file file_name="$(PackagesDir)/libraries/libctl/source/threads.js" />
       <file file_name="$(PackagesDir)/targets/Philips_LPC210X/VIC.c" />
       <file file_name="$(PackagesDir)/targets/Philips_LPC210X/VIC_irq_handler.s">
         <configuration
           Name="Common"
           c_preprocessor_definitions="CTL_TASKING" />
       </file>
-      <file file_name="$(StudioDir)/source/crt0.s" />
-      <file file_name="$(PackagesDir)/libraries/libctl/source/threads.js" />
-    </folder>
-    <folder Name="inc">
-      <file file_name="inc/UART.h" />
-      <file file_name="inc/cpu.h" />
-      <file file_name="inc/i2c.h" />
-      <file file_name="inc/irq.h" />
-      <file file_name="inc/lpc2148.h" />
     </folder>
   </project>
 </solution>
