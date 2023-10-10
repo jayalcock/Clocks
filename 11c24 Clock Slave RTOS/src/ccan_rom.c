@@ -3,11 +3,15 @@
 #include "clockDriverRT.h"
 #include "ring_buffer.h"
 #include "debugio.h"
+#include "clockData.h"
 
 
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
+#define BOARDNUMBER 0
+ 
+ 
 #define TEST_CCAN_BAUD_RATE 500000
 #define CAN_ERROR_NONE 0x00000000UL 
 #define CAN_ERROR_PASS 0x00000001UL 
@@ -32,19 +36,24 @@ static CTL_EVENT_SET_t canEvent;
 static RINGBUFF_T rxRing;
 static CCAN_MSG_OBJ_T rxBuff[SIZEOFRXBUFF];
 
+static uint8_t SLAVE0;
+static uint8_t SLAVE1;
+static uint8_t SLAVE2;
+static uint8_t SLAVE3;
+
 // Clock Numbers
-enum clock_numbers
-{
-    CLOCK0,          
-    CLOCK1,          
-    CLOCK2,          
-    CLOCK3,          
-    ALLCLOCKS,
-    MINUTEARM, 
-    HOURARM, 
-    BOTHARMS,
+//enum clock_numbers
+//{
+//    CLOCK0,          
+//    CLOCK1,          
+//    CLOCK2,          
+//    CLOCK3,          
+//    ALLCLOCKS,
+//    MINUTEARM, 
+//    HOURARM, 
+//    BOTHARMS,
     
-};   
+//};   
 
 
 
@@ -91,7 +100,6 @@ void baudrateCalculate(uint32_t baud_rate, uint32_t *can_api_timing_cfg)
 void CAN_rx(uint8_t msg_obj_num) 
 {   
     ctl_enter_isr(); 
-    //NVIC_DisableIRQ(CAN_IRQn);
        
     ///* Determine which CAN message has been received */
     msg_obj.msgobj = msg_obj_num;
@@ -99,13 +107,24 @@ void CAN_rx(uint8_t msg_obj_num)
     /* Now load up the msg_obj structure with the CAN message */
     LPC_CCAN_API->can_receive(&msg_obj);
 
-    /* Load into ringbuffer */
-    if(!RingBuffer_Insert(&rxRing, &msg_obj))
+    /* Check to see if data is relevant to this board */
+    if(msg_obj.mode_id == 0x200)
+    { 
+        if(msg_obj.data[0] == SLAVE0 ||  msg_obj.data[0] == SLAVE1 || msg_obj.data[0] == SLAVE2 || msg_obj.data[0] == SLAVE3)
+        {
+             /* Load into ringbuffer */
+            if(!RingBuffer_Insert(&rxRing, &msg_obj))
+            {
+               //asm("BKPT");
+            } 
+       }
+    }
+    else
     {
-       //asm("BKPT");
-    } 
+        /* Load into ringbuffer */
+        RingBuffer_Insert(&rxRing, &msg_obj);
+    }
 
-    //NVIC_EnableIRQ(CAN_IRQn);
     
     /* Set event flag for processing in main loop */
     ctl_events_set_clear(&canEvent, CAN_RX, 0);
@@ -223,6 +242,12 @@ void comms_func(void *p)
     unsigned int v=0;
     CCAN_MSG_OBJ_T canMSG;
     
+    // Determine clock numbers
+    SLAVE0 = get_clock_numbers(BOARDNUMBER, 0);
+    SLAVE1 = get_clock_numbers(BOARDNUMBER, 1);
+    SLAVE2 = get_clock_numbers(BOARDNUMBER, 2);
+    SLAVE3 = get_clock_numbers(BOARDNUMBER, 3);
+    
     // Initialize ring buffer
     RingBuffer_Init(&rxRing, &rxBuff, sizeof(CCAN_MSG_OBJ_T), SIZEOFRXBUFF);
     
@@ -239,12 +264,28 @@ void comms_func(void *p)
 
         Board_LED_Toggle(0);  
         
-        // Disbale CAN IRQ when receiving from buffer
+        // Disbale CAN IRQ, receive from buffer, reenable
         NVIC_DisableIRQ(CAN_IRQn);
-
         RingBuffer_Pop(&rxRing, &canMSG); 
-         
         NVIC_EnableIRQ(CAN_IRQn);
+          
+        if(canMSG.data[0] == SLAVE0 && canMSG.mode_id == 0x200)
+        {
+            canMSG.data[0] = 0;
+        }
+        if(canMSG.data[0] == SLAVE1 && canMSG.mode_id == 0x200)
+        {
+            canMSG.data[0] = 1;
+        }
+        if(canMSG.data[0] == SLAVE2 && canMSG.mode_id == 0x200)
+        {
+            canMSG.data[0] = 2;
+        }
+        if(canMSG.data[0] == SLAVE3 && canMSG.mode_id == 0x200)
+        {
+            canMSG.data[0] = 3;
+        }
+        
           
         // Send commands/position to clocks
         update_from_CAN(&canMSG);

@@ -270,6 +270,7 @@
       <file file_name="../11C24 Clock Slave RTOS/inc/system_LPC11xx.h" />
     </folder>
     <folder Name="Common">
+      <file file_name="../Common/clockData.c" />
       <file file_name="../Common/clockData.h" />
     </folder>
     <folder Name="CTL Files">
@@ -361,6 +362,7 @@
       debug_initial_breakpoint=""
       debug_initial_breakpoint_set_option="Never" />
     <folder Name="Common">
+      <file file_name="../Common/clockData.c" />
       <file file_name="../Common/clockData.h" />
     </folder>
     <folder Name="Device" exclude="" filter="" path="Device" recurse="Yes" />

@@ -40,7 +40,7 @@
 #define FUNC_ID     0x204
 //#define ALL_CLOCKS  200
 
-#define NUMBER_OF_SLAVES 4
+#define NUMBER_OF_SLAVES 120
 
 
 #define CONTINUOUS_ROTATE 400
@@ -67,13 +67,7 @@ static CTL_EVENT_SET_t clockEvent;
 //    bothArms,
 //};
 
-// Clock functions
-enum clock_functions
-{
-    HOMECLOCKS,
-    DRIVECONTINUOUS    
-    
-};    
+ 
 
 // ESP WIFI Commands
 static const char* RESET_CHIP = "AT+RESTORE\r\n";
@@ -137,6 +131,7 @@ static void clock_matrix_number_load(clockDataStruct *clockMtxPtr, const uint8_t
     @return Nothing
     
 */
+
 static void time_load_into_matrix(clockDataStruct *clockMtxPtr)
 {
     uint8_t digitA, digitB, digitC, digitD, twoDigHr, twoDigMin;
@@ -184,102 +179,102 @@ static void time_load_into_matrix(clockDataStruct *clockMtxPtr)
     switch (digitA)
     {
         case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_A, ZERO);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(0));
             break;
         case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_A, ONE);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(1));
             break;
         case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_A, TWO);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(2));
             break;
         case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_A, THREE);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(3));
             break;
         case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_A, FOUR);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(4));
             break;
         case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_A, FIVE);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(5));
             break;
         case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_A, SIX);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(6));
             break;
         case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_A, SEVEN);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(7));
             break;
         case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_A, EIGHT);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(8));
             break;
         case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_A, NINE);
+            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(9));
             break;
     }
         
     switch (digitB)
     {
         case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_B, ZERO);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(0));
             break;
         case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_B, ONE);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(1));
             break;
         case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_B, TWO);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(2));
             break;
         case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_B, THREE);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(3));
             break;
         case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_B, FOUR);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(4));
             break;
         case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_B, FIVE);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(5));
             break;
         case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_B, SIX);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(6));
             break;
         case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_B, SEVEN);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(7));
             break;
         case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_B, EIGHT);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(8));
             break;
         case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_B, NINE);
+            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(9));
             break;
     }
         
     switch (digitC)
     {
         case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_C, ZERO);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(0));
             break;
         case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_C, ONE);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(1));
             break;
         case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_C, TWO);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(2));
             break;
         case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_C, THREE);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(3));
             break;
         case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_C, FOUR);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(4));
             break;
         case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_C, FIVE);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(5));
             break;
         case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_C, SIX);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(6));
             break;
         case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_C, SEVEN);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(7));
             break;
         case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_C, EIGHT);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(8));
             break;
         case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_C, NINE);
+            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(9));
             break;
     }
 
@@ -287,34 +282,34 @@ static void time_load_into_matrix(clockDataStruct *clockMtxPtr)
     switch (digitD)
     {
         case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_D, ZERO);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(0));
             break;
         case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_D, ONE);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(1));
             break;
         case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_D, TWO);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(2));
             break;
         case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_D, THREE);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(3));
             break;
         case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_D, FOUR);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(4));
             break;
         case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_D, FIVE);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(5));
             break;
         case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_D, SIX);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(6));
             break;
         case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_D, SEVEN);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(7));
             break;
         case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_D, EIGHT);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(8));
             break;
         case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_D, NINE);
+            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(9));
             break;
     }
     
@@ -669,7 +664,7 @@ static void pattern_continuous_rotation(clockDataStruct *clockMtxPtr, const uint
         slave_position_tx(i, clockMtxPtr->minuteAngle[0][i], clockMtxPtr->minuteAngle[0][i]);
     }
     
-    slave_function_trigger_tx(0, DRIVECONTINUOUS);
+    slave_function_trigger_tx(0, VEL_CONTROL);
     
     // Start motion
     motion_start_tx(ALLCLOCKS);   
@@ -807,16 +802,16 @@ void test_routine(clockDataStruct *clockMtxPtr)
     
     slave_position_tx(0, clockMtxPtr->minuteAngle[0][0], clockMtxPtr->hourAngle[0][0]);
     motion_start_tx(0); 
-    ctl_timeout_wait(ctl_get_current_time() + 200);
+    ctl_timeout_wait(ctl_get_current_time() + 150);
     slave_position_tx(1, clockMtxPtr->minuteAngle[0][1], clockMtxPtr->hourAngle[0][1]);
     motion_start_tx(1); 
-    ctl_timeout_wait(ctl_get_current_time() + 200);
+    ctl_timeout_wait(ctl_get_current_time() + 150);
     slave_position_tx(2, clockMtxPtr->minuteAngle[0][2], clockMtxPtr->hourAngle[0][2]);
     motion_start_tx(2); 
-    ctl_timeout_wait(ctl_get_current_time() + 200);
+    ctl_timeout_wait(ctl_get_current_time() + 150);
     slave_position_tx(3, clockMtxPtr->minuteAngle[0][3], clockMtxPtr->hourAngle[0][3]);
     motion_start_tx(3); 
-    ctl_timeout_wait(ctl_get_current_time() + 200);
+    ctl_timeout_wait(ctl_get_current_time() + 150);
     
 }
 
@@ -833,14 +828,14 @@ void clock_main_thread(void *msgQueuePtr)
     // Initialise matrix to zeors
     matrix_initialise(&clockMatrix);  
     
-    slave_function_trigger_tx(ALLCLOCKS, HOMECLOCKS); 
+    slave_function_trigger_tx(ALLCLOCKS, HOME_CLOCKS); 
  
     // Initialise and start the RTC
     rtc_init();
     
-    RTC_time_set(20, 5, 55);
+    RTC_time_set(0, 5, 55);
     
-    time_load_into_matrix(&clockMatrix);
+    
     
     #if RESET_WIFI
         ESP_command(RESET_CHIP, ONE_SECOND, 0);
@@ -857,7 +852,16 @@ void clock_main_thread(void *msgQueuePtr)
     position_reset(&clockMatrix);
     motion_start_tx(ALLCLOCKS);
     
-    //ctl_timeout_wait(ctl_get_current_time() + 5000);
+    ctl_timeout_wait(ctl_get_current_time() + 3000);
+    
+    time_load_into_matrix(&clockMatrix);
+    for(uint8_t i = 0; i < NUMBER_OF_SLAVES; i++)
+    {
+        slave_position_tx(i, clockMatrix.minuteAngle[0][i], clockMatrix.hourAngle[0][i]);  
+    }
+    motion_start_tx(ALLCLOCKS);
+    
+    
     
     //pattern_continuous_rotation(&clockMatrix, 2, CW, msgQueuePtr);  
     
@@ -865,7 +869,7 @@ void clock_main_thread(void *msgQueuePtr)
     {
         //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, 0x0, CTL_TIMEOUT_NONE, 0);
         
-        test_routine(&clockMatrix);
+        //test_routine(&clockMatrix);
           
         
     

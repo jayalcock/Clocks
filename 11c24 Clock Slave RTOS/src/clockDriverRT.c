@@ -27,8 +27,8 @@
 #define RESETPIN        1
 
 // Clock numbers
-#define HOMEPOSHOUR     0
-#define HOMEPOSMIN      180
+#define HOMEPOSHOUR     90
+#define HOMEPOSMIN      270
 
 // Clock specific trigger constants
 #define RUN_ALL_CLOCKS  1<<0
@@ -40,7 +40,6 @@
 #define RUN_CLOCK2_HOUR 1<<6
 #define RUN_CLOCK3_MIN  1<<7
 #define RUN_CLOCK3_HOUR 1<<8
-#define HOME_CLOCKS     1<<9
 #define CLOCK0_MIN_AT_POS   1<<10
 #define CLOCK0_HOUR_AT_POS  1<<11
 #define CLOCK1_MIN_AT_POS   1<<12
@@ -67,8 +66,6 @@
 #define CLOCK3_MIN_HOME     1<<7
 #define CLOCK3_HOUR_HOME    1<<8
 
-
-
 // Can message types
 #define POSITION        0x200 
 #define SPEED           0x201 
@@ -77,12 +74,12 @@
 #define TRIGGERFUNC     0x204
 
 // Clock functions
-enum clock_functions
-{
-    HOMECLOCKS,
-    DRIVECONTINUOUS,     
+//enum clock_functions
+//{
+//    HOMECLOCKS,
+//    DRIVECONTINUOUS,     
     
-};   
+//};   
 
 
 //// Clock Numbers
@@ -111,12 +108,6 @@ enum start_stop
     START,
 };
 
-// Control modes
-enum control_mode
-{
-    POS_CTRL,
-    VEL_CTRL,
-};
 
 // Initialise objects
 // Events
@@ -131,6 +122,7 @@ static CCAN_MSG_OBJ_T rx_buffer[RXBUFFSIZE];
 // File scope variables
 const static uint16_t speed[] = {100, 200, 400, 800, 1600, 3200};
 static uint32_t timerFreq;
+
 
 // Population of motor data structs with initial values
 static motorStruct motorData[] =
@@ -189,37 +181,6 @@ static motorStruct motorData[] =
 /*****************************************************************************
  * Private functions
  ****************************************************************************/
- 
- /*
- Testing function 
-
- */
-#if TESTING
-void clock_testing(void)
-{
-    localControl = 1;
-    
-    motorData[CLOCK0].min.angle = 0;
-    motorData[CLOCK0].hour.angle = 0;
-    motorData[CLOCK1].min.angle = 0;
-    motorData[CLOCK1].hour.angle = 0;
-    motorData[CLOCK2].min.angle = 0;
-    motorData[CLOCK2].hour.angle = 0;
-    motorData[CLOCK3].min.angle = 0;
-    motorData[CLOCK3].hour.angle = 0;
-    
-    motorData[CLOCK0].min.angleDesired = 45;
-    motorData[CLOCK0].hour.angleDesired = 45;
-    motorData[CLOCK1].min.angleDesired = 45;
-    motorData[CLOCK1].hour.angleDesired = 45;
-    motorData[CLOCK2].min.angleDesired = 45;
-    motorData[CLOCK2].hour.angleDesired = 45;
-    motorData[CLOCK3].min.angleDesired = 45;
-    motorData[CLOCK3].hour.angleDesired = 45;
-
-}
-#endif
-  
 
 /* 
   @brief    32-bit timer 0 interrupt handler - minutre arm speed control 
@@ -1047,7 +1008,7 @@ static void set_control_mode(const uint8_t clockNum, const uint8_t arm, const ui
         if(arm == MINUTEARM | arm == BOTHARMS)
         {
             motorData[clockNum].min.controlMode = mode;
-            if(mode == POS_CTRL)
+            if(mode == POS_CONTROL)
             {
                 motorData[clockNum].min.steps = 0;
             }
@@ -1055,7 +1016,7 @@ static void set_control_mode(const uint8_t clockNum, const uint8_t arm, const ui
         else if(arm == HOURARM | arm == BOTHARMS)
         {
             motorData[clockNum].hour.controlMode = mode;
-            if(mode == POS_CTRL)
+            if(mode == POS_CONTROL)
             {
                 motorData[clockNum].hour.steps = 0;
             }
@@ -1269,14 +1230,11 @@ static void home_clocks(void)
     CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
     CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME);
     
-    
     // Clear interrupts 
     Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
         motorData[CLOCK1].hour.hallPin | motorData[CLOCK1].min.hallPin |
         motorData[CLOCK2].hour.hallPin | motorData[CLOCK2].min.hallPin |
         motorData[CLOCK3].hour.hallPin | motorData[CLOCK3].min.hallPin); 
-        
-    
     
     // Enable GPIO interrupts
     Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
@@ -1287,8 +1245,8 @@ static void home_clocks(void)
     // Stop all motion
     set_start_stop(ALLCLOCKS, BOTHARMS, STOP);  
     
-    // Set control mode to position control
-    set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CTRL);
+    // Set control mode to velocity control
+    set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CONTROL);
     
     // Set direction CW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CW);
@@ -1316,6 +1274,7 @@ static void home_clocks(void)
     motorData[CLOCK3].min.angle = 0;
     motorData[CLOCK3].hour.angle = 0;
     
+    // Clear arm home event
     ctl_events_set_clear(&clockHomeEvent, 0,  
         CLOCK0_MIN_HOME | CLOCK0_HOUR_HOME |
         CLOCK1_MIN_HOME | CLOCK1_HOUR_HOME |
@@ -1326,7 +1285,7 @@ static void home_clocks(void)
     // Start motion and run CW for 50 degrees to pass other side of hall sensing area        
     set_arm_angle(ALLCLOCKS, BOTHARMS, 50);
     update_stepcount(ALLCLOCKS);
-    set_control_mode(ALLCLOCKS, BOTHARMS, POS_CTRL);
+    set_control_mode(ALLCLOCKS, BOTHARMS, POS_CONTROL);
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     ctl_timeout_wait(ctl_get_current_time() + 1000);
     
@@ -1338,7 +1297,7 @@ static void home_clocks(void)
     
     // Set direction CCW
     set_arm_direction(ALLCLOCKS, BOTHARMS, CCW);
-    set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CTRL);
+    set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CONTROL);
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     
     // Drive CCW until hall is hit
@@ -1349,14 +1308,14 @@ static void home_clocks(void)
     
     
     // Calculate home position
-    motorData[CLOCK0].min.angle = (motorData[CLOCK0].min.angle / 2) + 180;
-    motorData[CLOCK0].hour.angle = motorData[CLOCK0].hour.angle / 2;
-    motorData[CLOCK1].min.angle = (motorData[CLOCK1].min.angle / 2) + 180;
-    motorData[CLOCK1].hour.angle = motorData[CLOCK1].hour.angle / 2;
-    motorData[CLOCK2].min.angle = (motorData[CLOCK2].min.angle / 2) + 180;
-    motorData[CLOCK2].hour.angle = motorData[CLOCK2].hour.angle / 2;
-    motorData[CLOCK3].min.angle = (motorData[CLOCK3].min.angle / 2) + 180;
-    motorData[CLOCK3].hour.angle = motorData[CLOCK3].hour.angle / 2;
+    motorData[CLOCK0].min.angle = (motorData[CLOCK0].min.angle / 2) + HOMEPOSMIN;
+    motorData[CLOCK0].hour.angle = (motorData[CLOCK0].hour.angle / 2) + HOMEPOSHOUR;
+    motorData[CLOCK1].min.angle = (motorData[CLOCK1].min.angle / 2) + HOMEPOSMIN;
+    motorData[CLOCK1].hour.angle = (motorData[CLOCK1].hour.angle / 2) + HOMEPOSHOUR;
+    motorData[CLOCK2].min.angle = (motorData[CLOCK2].min.angle / 2) + HOMEPOSMIN;
+    motorData[CLOCK2].hour.angle = (motorData[CLOCK2].hour.angle / 2) + HOMEPOSHOUR;
+    motorData[CLOCK3].min.angle = (motorData[CLOCK3].min.angle / 2) + HOMEPOSMIN;
+    motorData[CLOCK3].hour.angle = (motorData[CLOCK3].hour.angle / 2) + HOMEPOSHOUR;
     
     ctl_events_set_clear(&clockHomeEvent, 0,  
         CLOCK0_MIN_HOME | CLOCK0_HOUR_HOME |
@@ -1366,7 +1325,7 @@ static void home_clocks(void)
     
     
     // Set to position control to drive arms to homed position 
-    set_control_mode(ALLCLOCKS, BOTHARMS, POS_CTRL);
+    set_control_mode(ALLCLOCKS, BOTHARMS, POS_CONTROL);
      
     // Set desired angle for all arms to 0/12 oclock
     set_arm_angle(CLOCK0, MINUTEARM, HOMEPOSMIN);
@@ -1425,17 +1384,19 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
     */
     
     /* Skip if homing procedure active */ 
-    //ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockHomeEvent, 1<<9, CTL_TIMEOUT_NONE, 0);
+    
+
+        
     if(!clockHomeEvent & HOMING_ACTIVE)
     {
         /* Update position */ 
         if(canData->mode_id == POSITION)
         {
-       
+   
             motorData[canData->data[0]].min.angleDesired = ((canData->data[1] << 8) | (canData->data[2])); // minute
             motorData[canData->data[0]].hour.angleDesired = ((canData->data[3] << 8) | (canData->data[4])); // hour
             update_stepcount(canData->data[0]);
-    
+
         }
 
         /* Update speed and direction */
@@ -1446,7 +1407,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
             motorData[canData->data[0]].min.dir = (canData->data[3]); 
             motorData[canData->data[0]].hour.dir = (canData->data[4]); 
         }
-        
+    
         /* Start motion command */
         if (canData->mode_id == STARTMOTION)
         {
@@ -1470,7 +1431,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
             {
                 set_start_stop(CLOCK3, BOTHARMS, START);
             }
-    
+
 
         }
 
@@ -1478,20 +1439,41 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         if (canData->mode_id == TRIGGERFUNC)
         {
             // Trigger homing procedure
-            if(canData->data[0] == HOMECLOCKS)
+            if(canData->data[0] == HOME_CLOCKS)
             {
                 home_clocks();
             }
-            //if(canData->data[0] == DRIVECONTINUOUS)
-            //{
-            //    drive_continuous(ALLCLOCKS, BOTHARMS);
-            //}
+            if(canData->data[0] == VEL_CONTROL)
+            {
+                set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CONTROL);
+                //set_start_stop(ALLCLOCKS, BOTHARMS, START);
+            }
+            if(canData->data[0] == 3)
+            {
+                set_control_mode(ALLCLOCKS, BOTHARMS, POS_CONTROL);
+                //set_start_stop(ALLCLOCKS, BOTHARMS, START);
+            }
         }
 
     }
+
 }
 
-
+static void init_clock_system(void)
+{
+    
+    // Initialise GPIO 
+    gpio_init();
+    
+    // Initialise peripheral timers
+    timer_init();
+    
+    // Initialise clock control events
+    ctl_events_init(&clockControlEvent, 0);
+    ctl_events_init(&clockHomeEvent, 0);
+    ctl_events_init(&clockEvent, 0);
+    
+}
 
 
 /*****************************************************************************
@@ -1513,7 +1495,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 0 hour arm
         if(clockEvent & RUN_CLOCK0_HOUR)
         {
-            if(motorData[CLOCK0].hour.controlMode == VEL_CTRL)
+            if(motorData[CLOCK0].hour.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK0, HOURARM);
             }
@@ -1527,7 +1509,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 0 minute arm 
         if(clockEvent & RUN_CLOCK0_MIN)
         {
-            if(motorData[CLOCK0].min.controlMode == VEL_CTRL)
+            if(motorData[CLOCK0].min.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK0, MINUTEARM);
             }
@@ -1542,7 +1524,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 1 hour arm 
         if(clockEvent & RUN_CLOCK1_HOUR)
         {
-            if(motorData[CLOCK1].hour.controlMode == VEL_CTRL)
+            if(motorData[CLOCK1].hour.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK1, HOURARM);
             }
@@ -1556,7 +1538,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 1 minute arm
         if(clockEvent & RUN_CLOCK1_MIN)
         {
-            if(motorData[CLOCK1].min.controlMode == VEL_CTRL)
+            if(motorData[CLOCK1].min.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK1, MINUTEARM);
             }
@@ -1571,7 +1553,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 2 hour arm
         if(clockEvent & RUN_CLOCK2_HOUR)
         {
-            if(motorData[CLOCK2].hour.controlMode == VEL_CTRL)
+            if(motorData[CLOCK2].hour.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK2, HOURARM);
             }
@@ -1585,7 +1567,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 2 minute arm
         if(clockEvent & RUN_CLOCK2_MIN)
         {
-            if(motorData[CLOCK2].min.controlMode == VEL_CTRL)
+            if(motorData[CLOCK2].min.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK2, MINUTEARM);
             }
@@ -1600,7 +1582,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 3 hour arm
         if(clockEvent & RUN_CLOCK3_HOUR)
         {
-            if(motorData[CLOCK3].hour.controlMode == VEL_CTRL)
+            if(motorData[CLOCK3].hour.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK3, HOURARM);
             }
@@ -1614,7 +1596,7 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
         // Step clock 3 minute arm
         if(clockEvent & RUN_CLOCK3_MIN)
         {
-            if(motorData[CLOCK3].min.controlMode == VEL_CTRL)
+            if(motorData[CLOCK3].min.controlMode == VEL_CONTROL)
             {
                 drive_continuous(CLOCK3, MINUTEARM);
             }
@@ -1635,35 +1617,8 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData)
 void clock_control(void *p)
 {
     unsigned int v = 0;
-    //void *rxQueue [10];
-    //void *rxPtr;
-    //uint8_t i;
-    //CCAN_MSG_OBJ_T can_RX_data;
-    
-    // Initialise clock control events
-    ctl_events_init(&clockControlEvent, 0);
-    ctl_events_init(&clockHomeEvent, 0);
-    ctl_events_init(&clockEvent, 0);
-    //ctl_mutex_init(&mutex);
- 
-    //ctl_events_set_clear(&clockHomeEvent, 1<<9, 0);
-    // Initialise message queue
-    //ctl_message_queue_init(&can_RX, rxQueue, 10);
-    
-    //ctl_message_queue_setup_events(&can_RX, &clockControlEvent, BUFFER_NOT_EMPTY, BUFFER_NOT_FULL);
-    
-    // Initialise GPIO 
-    gpio_init();
-    
-    // Initialise peripheral timers
-    timer_init();
-    
-    // Initialise ring buffer
-    //RingBuffer_Init(&rxBuffer, &rx_buffer, sizeof(can_RX_data), RXBUFFSIZE);
-        
-    #if TESTING
-        clock_testing();
-    #endif
+
+    init_clock_system();
      
     while(1)
     {

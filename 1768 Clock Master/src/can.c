@@ -488,7 +488,7 @@ void CAN_Thread(void *msgQueuePtr)
             Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
             while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
             //DEBUGSTR("TX Success\r\n");
-            //Board_LED_Toggle(1);
+            Board_LED_Toggle(1);
             
             // Clear can event
             if(RingBuffer_IsEmpty(&txring1))
