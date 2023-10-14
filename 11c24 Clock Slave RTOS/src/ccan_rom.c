@@ -9,7 +9,7 @@
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
-#define BOARDNUMBER 0
+#define BOARDNUMBER 5
  
  
 #define TEST_CCAN_BAUD_RATE 500000
@@ -24,7 +24,6 @@
 #define CAN_ERROR_BIT0 0x00000080UL 
 #define CAN_ERROR_CRC 0x00000100UL
 
-
 #define CAN_RX 1<<0
 #define CAN_TX 1<<1
 
@@ -32,7 +31,7 @@ static CCAN_MSG_OBJ_T msg_obj;
 static CTL_EVENT_SET_t canEvent;
 
 /* Define ringbuffer constants and variables */
-#define SIZEOFRXBUFF 20
+#define SIZEOFRXBUFF 200
 static RINGBUFF_T rxRing;
 static CCAN_MSG_OBJ_T rxBuff[SIZEOFRXBUFF];
 
@@ -41,25 +40,12 @@ static uint8_t SLAVE1;
 static uint8_t SLAVE2;
 static uint8_t SLAVE3;
 
-// Clock Numbers
-//enum clock_numbers
-//{
-//    CLOCK0,          
-//    CLOCK1,          
-//    CLOCK2,          
-//    CLOCK3,          
-//    ALLCLOCKS,
-//    MINUTEARM, 
-//    HOURARM, 
-//    BOTHARMS,
-    
-//};   
-
-
 
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
+ 
+ 
 
 /*****************************************************************************
  * Private functions
@@ -242,6 +228,8 @@ void comms_func(void *p)
     unsigned int v=0;
     CCAN_MSG_OBJ_T canMSG;
     
+    int testBuff = 0;
+    
     // Determine clock numbers
     SLAVE0 = get_clock_numbers(BOARDNUMBER, 0);
     SLAVE1 = get_clock_numbers(BOARDNUMBER, 1);
@@ -285,8 +273,7 @@ void comms_func(void *p)
         {
             canMSG.data[0] = 3;
         }
-        
-          
+    
         // Send commands/position to clocks
         update_from_CAN(&canMSG);
         

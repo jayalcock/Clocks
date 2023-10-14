@@ -174,6 +174,15 @@ static void time_load_into_matrix(clockDataStruct *clockMtxPtr)
         digitD = twoDigMin - 20;
     }
     
+    // Set all arms to "unused angle"
+    for(uint8_t i = 0; i < ROWS; i++)
+    {
+        for(uint8_t j = 0; j < COLUMNS; j++)
+        {
+            clockMtxPtr->minuteAngle[j][i] = UNUSED_ANGLE;
+            clockMtxPtr->hourAngle[j][i] = UNUSED_ANGLE;
+        }
+    }
     
     // Load each value from actual time into matrix for display    
     switch (digitA)
@@ -821,6 +830,7 @@ void clock_main_thread(void *msgQueuePtr)
     
     // Initialise clock matrix - 1x hour, 1x minute
     static clockDataStruct clockMatrix;
+    uint16_t clockNum = 0;
     
     // Initialise event set
     ctl_events_init(&clockEvent, 0);
@@ -833,7 +843,7 @@ void clock_main_thread(void *msgQueuePtr)
     // Initialise and start the RTC
     rtc_init();
     
-    RTC_time_set(0, 5, 55);
+    RTC_time_set(9, 35, 55);
     
     
     
@@ -850,15 +860,23 @@ void clock_main_thread(void *msgQueuePtr)
     
     
     position_reset(&clockMatrix);
+    
     motion_start_tx(ALLCLOCKS);
     
     ctl_timeout_wait(ctl_get_current_time() + 3000);
     
     time_load_into_matrix(&clockMatrix);
-    for(uint8_t i = 0; i < NUMBER_OF_SLAVES; i++)
+    
+    for(uint8_t i = 0; i < ROWS; i++)
     {
-        slave_position_tx(i, clockMatrix.minuteAngle[0][i], clockMatrix.hourAngle[0][i]);  
+        for(uint8_t j = 0; j < COLUMNS; j++)
+        {
+            slave_position_tx(clockNum++, clockMatrix.minuteAngle[j][i], clockMatrix.hourAngle[j][i]);
+        }
     }
+    //clockNum = 0;
+    
+    
     motion_start_tx(ALLCLOCKS);
     
     

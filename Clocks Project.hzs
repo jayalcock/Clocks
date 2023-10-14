@@ -104,6 +104,7 @@
  <Project>
   <ProjectSessionItem path="Clocks"/>
   <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS"/>
+  <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;Common"/>
   <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;inc"/>
   <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;Source"/>
   <ProjectSessionItem path="Clocks;1768 Clock Master"/>
@@ -214,6 +215,7 @@
  <Watch1>
   <Watches active="1" update="Twice a Second">
    <Watchpoint expression="motorData" name="motorData" radix="10" linenumber="0" filename="../Clocks"/>
+   <Watchpoint expression="clockMatrix" name="clockMatrix" radix="16" linenumber="857" filename="1768 Clock Master/src/clockEngine.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -226,17 +228,19 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="29" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="8" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="37" y="1470" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" top="1432" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="29" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="5" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1375" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" top="1290" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="40" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/clockDriverRT.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="252" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" top="179" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="21" y="11" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" top="11" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="25" y="16" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="111" useTextEdit="1" path="1768 Clock Master/src/Clocks-1768.c" left="0" top="106" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="555" useTextEdit="1" path="1768 Clock Master/src/clockEngine.c" left="0" top="523" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="110" useTextEdit="1" path="1768 Clock Master/src/Clocks-1768.c" left="0" top="86" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="856" useTextEdit="1" path="1768 Clock Master/src/clockEngine.c" left="0" top="794" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="42" y="28" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" path="1768 Clock Master/inc/clockEngine.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="35" y="21" useTextEdit="1" path="1768 Clock Master/inc/clockData.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="41" y="26" useTextEdit="1" path="1768 Clock Master/inc/can.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="423" useTextEdit="1" path="1768 Clock Master/src/can.c" left="0" selected="1" top="407" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="470" useTextEdit="1" path="1768 Clock Master/src/can.c" left="0" top="416" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="254" useTextEdit="1" path="../../../Library/Rowley Associates Limited/CrossWorks for ARM/v4/packages/libraries/libctl/include/ctl.h" left="0" top="222" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="Common/clockData.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="Common/clockData.c" left="0" selected="1" top="0" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="1768 Clock Master" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="CMSIS-DAP" buildConfiguration="THUMB Flash Release" sessionSettings="" debugSearchFileMap="/Applications/CrossWorks for ARM 4.8/source/thumb_crt0.s&#xa;" fileDialogInitialDirectory="/Users/jayalcock/Projects/Clocks/11C24 Clock Slave RTOS/Device/inc" debugSearchPath="" autoConnectCapabilities="388991"/>
+ <ARMCrossStudioWindow activeProject="11C24 Clock Slave RTOS" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="SEGGER J-Link" buildConfiguration="THUMB Flash Release" sessionSettings="" debugSearchFileMap="/Applications/CrossWorks for ARM 4.8/source/thumb_crt0.s&#xa;" fileDialogInitialDirectory="/Users/jayalcock/Projects/Clocks/11C24 Clock Slave RTOS/Device/inc" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

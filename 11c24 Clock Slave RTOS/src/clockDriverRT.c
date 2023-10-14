@@ -27,8 +27,8 @@
 #define RESETPIN        1
 
 // Clock numbers
-#define HOMEPOSHOUR     90
-#define HOMEPOSMIN      270
+#define HOMEPOSHOUR     270
+#define HOMEPOSMIN      90
 
 // Clock specific trigger constants
 #define RUN_ALL_CLOCKS  1<<0

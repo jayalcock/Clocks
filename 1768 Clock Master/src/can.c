@@ -66,7 +66,7 @@ static char WelcomeMenu[] = "\n\rHello NXP Semiconductors \r\n"
 							"CAN DEMO : Use CAN to transmit and receive Message from CAN Analyzer\r\n"
 							"CAN bit rate : 500kBit/s\r\n";
 
-   int wait = 0;                                                      
+                                             
 CAN_MSG_T SendMsgBuf;
 CTL_EVENT_SET_t can_event;
 CTL_MUTEX_t bufferMutex;
@@ -472,11 +472,6 @@ void CAN_Thread(void *msgQueuePtr)
             RingBuffer_Pop(&txring1, &SendMsgBuf);
             //wait = 0;
             ctl_mutex_unlock(&bufferMutex);
-            
-            if(SendMsgBuf.Data[0] == 0 && SendMsgBuf.ID == 0x200)
-            {
-                wait++;
-            }
             
             // Copy message to local buffer
             //SendMsgBuf = *(CAN_MSG_T*) msgPtr;
