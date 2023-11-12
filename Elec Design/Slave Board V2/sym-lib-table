@@ -1,4 +1,0 @@
-(sym_lib_table
-  (lib (name "LPC11xxx")(type "Legacy")(uri "/Users/jayalcock/Projects/Kicad Libraries/eagle/lpc1100v1.1.lib")(options "")(descr ""))
-  (lib (name "VID28-05")(type "Legacy")(uri "/Users/jayalcock/Projects/Clocks/Elec Design/Libraries/Vid_Stepper_Lib_v2.lib")(options "")(descr ""))
-)

@@ -56,7 +56,11 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "silk_over_copper|208479000|196055000|a4a4b086-d5e3-4764-9718-6889bce50060|3a49fab6-2c2e-4662-829b-faa416880d13",
+        "silk_over_copper|208579000|196055000|9b37d644-06d6-491b-9ac9-2297cfdb5e8c|3a49fab6-2c2e-4662-829b-faa416880d13",
+        "silk_over_copper|208679000|196055000|7c3f2790-bdbd-4db4-bbf6-a84775f2c746|3a49fab6-2c2e-4662-829b-faa416880d13"
+      ],
       "meta": {
         "version": 2
       },
@@ -397,7 +401,7 @@
       "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
-      "simulation_model_issue": "error",
+      "simulation_model_issue": "ignore",
       "unannotated": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",

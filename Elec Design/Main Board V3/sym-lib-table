@@ -1,5 +1,0 @@
-(sym_lib_table
-  (version 7)
-  (lib (name "2023-07-09_23-52-42")(type "KiCad")(uri "${KIPRJMOD}/Libs/Inductor/2023-07-09_23-52-42.kicad_sym")(options "")(descr ""))
-  (lib (name "ESP32-C3-MINI-1-N4")(type "KiCad")(uri "${KIPRJMOD}/Libs/Wifi/ESP32-C3-MINI-1-N4.kicad_sym")(options "")(descr ""))
-)
