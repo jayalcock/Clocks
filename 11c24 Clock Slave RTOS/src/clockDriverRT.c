@@ -71,30 +71,7 @@
 #define SPEED           0x201 
 #define ACCELERATION    0x202 
 #define STARTMOTION     0x203 
-#define TRIGGERFUNC     0x204
-
-// Clock functions
-//enum clock_functions
-//{
-//    HOMECLOCKS,
-//    DRIVECONTINUOUS,     
-    
-//};   
-
-
-//// Clock Numbers
-//enum clock_numbers
-//{
-//    CLOCK0,          
-//    CLOCK1,          
-//    CLOCK2,          
-//    CLOCK3,          
-//    ALLCLOCKS,
-//    MINUTEARM, 
-//    HOURARM, 
-//    BOTHARMS,
-    
-//};   
+#define TRIGGERFUNC     0x204 
 
 enum arm_direction
 {

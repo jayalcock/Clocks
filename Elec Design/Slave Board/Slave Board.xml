@@ -1,0 +1,2183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>/Users/jayalcock/Nextcloud/Projects/Clocks/Elec Design/Slave Board/Slave Board.kicad_sch</source>
+    <date>Sunday, November 06, 2022 at 01:44:41 am</date>
+    <tool>Eeschema (6.0.6-0)</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>Slave Board.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="C1">
+      <value>18pF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.yageo.com/upload/media/product/productsearch/datasheet/mlcc/UPY-GP_NP0_16V-to-50V_18.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/yageo/CC0805JRNPO9BN180/302836</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/yageo/CC0805JRNPO9BN180/302836"/>
+      <property name="Rated V" value="50V"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0e9bf9fe-8d14-4e76-b811-cbf6867fde00</tstamps>
+    </comp>
+    <comp ref="C2">
+      <value>18pF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.yageo.com/upload/media/product/productsearch/datasheet/mlcc/UPY-GP_NP0_16V-to-50V_18.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/yageo/CC0805JRNPO9BN180/302836</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/yageo/CC0805JRNPO9BN180/302836"/>
+      <property name="Rated V" value="50V"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>711b620d-7031-4353-8f69-8815b92164ff</tstamps>
+    </comp>
+    <comp ref="C3">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8e78834a-c740-450d-8395-d31a8b2ad765</tstamps>
+    </comp>
+    <comp ref="C4">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3aded76c-f15b-4d7b-93c3-e91c087930cc</tstamps>
+    </comp>
+    <comp ref="C5">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9c6ba13e-6b3b-4a70-aed4-28f35d66eae3</tstamps>
+    </comp>
+    <comp ref="C6">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>777ca844-299a-43fa-b9e1-cb54e1bb2d97</tstamps>
+    </comp>
+    <comp ref="C7">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e1c4f83f-53ca-4399-98d9-c56c228b7d1c</tstamps>
+    </comp>
+    <comp ref="C8">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bb85da99-f6f5-4965-8520-e96e1e50c443</tstamps>
+    </comp>
+    <comp ref="C9">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e6560759-9da9-4420-827c-981ac79adf7b</tstamps>
+    </comp>
+    <comp ref="C10">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>282cb74d-47c2-4c0a-a1e6-de02f1db973a</tstamps>
+    </comp>
+    <comp ref="C11">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2b6a0468-ac35-4d03-8985-307a2afacf42</tstamps>
+    </comp>
+    <comp ref="C12">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2658b3bd-64d2-4735-8a4e-f8c05634cbf2</tstamps>
+    </comp>
+    <comp ref="C13">
+      <value>0.01uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://www.samsungsem.com/kr/support/product-search/mlcc/CL21B103KBANNNC.jsp</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B103KBANNNC/3886673"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e51fa9de-5ffd-462c-92c8-e4e87425b2f5</tstamps>
+    </comp>
+    <comp ref="C14">
+      <value>10uF</value>
+      <footprint>Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
+      <fields>
+        <field name="Rated V">25V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Rated V" value="25V"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>602b9e14-533b-45f8-afb0-9e93119eb499</tstamps>
+    </comp>
+    <comp ref="C15">
+      <value>10uF</value>
+      <footprint>Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
+      <fields>
+        <field name="Rated V">25V</field>
+        <field name="Rated V ">25V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Rated V " value="25V"/>
+      <property name="Rated V" value="25V"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f5b42181-e92d-4d9a-bbfa-624a226786b9</tstamps>
+    </comp>
+    <comp ref="C16">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>825773a0-eeb7-4135-ab81-d8a9f2becb7e</tstamps>
+    </comp>
+    <comp ref="C17">
+      <value>10uF</value>
+      <footprint>Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder</footprint>
+      <fields>
+        <field name="Rated V">25V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Rated V" value="25V"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>43ec76f3-3927-41fd-ace5-5114dd37a386</tstamps>
+    </comp>
+    <comp ref="C18">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d4bd5e28-a15d-4b73-8490-0c20245b689e</tstamps>
+    </comp>
+    <comp ref="C19">
+      <value>1nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://datasheets.kyocera-avx.com/C0GNP0-Dielectric.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/kyocera-avx/08055A102JAT2A/563438</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/kyocera-avx/08055A102JAT2A/563438"/>
+      <property name="Rated V" value="50V"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6c31cb75-bd31-47bf-a9d6-b1e2b7a88e67</tstamps>
+    </comp>
+    <comp ref="C20">
+      <value>47uF</value>
+      <footprint>Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</footprint>
+      <datasheet>https://industrial.panasonic.com/cdbs/www-data/pdf/RDF0000/ABA0000C1041.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/panasonic-electronic-components/EEA-GA1A470B/2513280</field>
+        <field name="PN">EEA-GA1A470B</field>
+        <field name="Rated V">10V</field>
+      </fields>
+      <libsource lib="Device" part="C_Polarized" description="Polarized capacitor"/>
+      <property name="DK page" value=""/>
+      <property name="PN" value="EEA-GA1A470B"/>
+      <property name="Rated V" value="10V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/panasonic-electronic-components/EEA-GA1A470B/2513280"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>76b9c2b8-3719-48e3-9de5-7d326e200848</tstamps>
+    </comp>
+    <comp ref="C21">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>30851d48-5773-4947-8ced-f151264194d8</tstamps>
+    </comp>
+    <comp ref="C22">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ddfbee87-4747-4d02-b87f-a6095634e097</tstamps>
+    </comp>
+    <comp ref="C23">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d11c2e04-fda7-4f38-821f-7fefa37eca2e</tstamps>
+    </comp>
+    <comp ref="C24">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a0b873fe-c422-4255-9995-1ae08a8d8d0d</tstamps>
+    </comp>
+    <comp ref="C25">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder</footprint>
+      <datasheet>https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661</field>
+        <field name="Rated V">50V</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="DK Page" value=""/>
+      <property name="Rated V" value="50V"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>075804ac-e983-4cd2-861b-3a844fd428b9</tstamps>
+    </comp>
+    <comp ref="D1">
+      <value>1N5819HW-7-F</value>
+      <footprint>digikey-footprints:SOD-123</footprint>
+      <datasheet>https://www.diodes.com/assets/Datasheets/ds30217.pdf</datasheet>
+      <fields>
+        <field name="Category">Discrete Semiconductor Products</field>
+        <field name="DK_Datasheet_Link">https://www.diodes.com/assets/Datasheets/ds30217.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/diodes-incorporated/1N5819HW-7-F/1N5819HW-FDICT-ND/815283</field>
+        <field name="Description">DIODE SCHOTTKY 40V 1A SOD123</field>
+        <field name="Digi-Key_PN">1N5819HW-FDICT-ND</field>
+        <field name="Family">Diodes - Rectifiers - Single</field>
+        <field name="MPN">1N5819HW-7-F</field>
+        <field name="Manufacturer">Diodes Incorporated</field>
+        <field name="Status">Active</field>
+      </fields>
+      <libsource lib="dk_Diodes-Rectifiers-Single" part="1N5819HW-7-F" description="DIODE SCHOTTKY 40V 1A SOD123"/>
+      <property name="Digi-Key_PN" value="1N5819HW-FDICT-ND"/>
+      <property name="MPN" value="1N5819HW-7-F"/>
+      <property name="Category" value="Discrete Semiconductor Products"/>
+      <property name="Family" value="Diodes - Rectifiers - Single"/>
+      <property name="DK_Datasheet_Link" value="https://www.diodes.com/assets/Datasheets/ds30217.pdf"/>
+      <property name="DK_Detail_Page" value="/product-detail/en/diodes-incorporated/1N5819HW-7-F/1N5819HW-FDICT-ND/815283"/>
+      <property name="Description" value="DIODE SCHOTTKY 40V 1A SOD123"/>
+      <property name="Manufacturer" value="Diodes Incorporated"/>
+      <property name="Status" value="Active"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3e19f96c-986e-4ea7-a024-8917b2a0b230</tstamps>
+    </comp>
+    <comp ref="D2">
+      <value>LED Low current</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>https://www.sunledusa.com/products/spec/XZCM2CRK53WA-8VF.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/sunled/XZCM2CRK53WA-8VF/10449772</field>
+      </fields>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="DK Page" value=""/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/sunled/XZCM2CRK53WA-8VF/10449772"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>63f9579f-53f0-4ec8-ac0d-969d125dedc6</tstamps>
+    </comp>
+    <comp ref="D3">
+      <value>LED Low current</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>https://www.sunledusa.com/products/spec/XZCM2CRK53WA-8VF.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/sunled/XZCM2CRK53WA-8VF/10449772</field>
+      </fields>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="DK Page" value=""/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/sunled/XZCM2CRK53WA-8VF/10449772"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>48071b68-c771-4543-9a80-c6ceef3f82d4</tstamps>
+    </comp>
+    <comp ref="D4">
+      <value>LED Low current</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>https://www.sunledusa.com/products/spec/XZCM2CRK53WA-8VF.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.com/en/products/detail/sunled/XZCM2CRK53WA-8VF/10449772</field>
+      </fields>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="DK Page" value=""/>
+      <property name="DK_Detail_Page" value="https://www.digikey.com/en/products/detail/sunled/XZCM2CRK53WA-8VF/10449772"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e548838a-e9d4-4989-82b1-186833b0b712</tstamps>
+    </comp>
+    <comp ref="J1">
+      <value>JTAG</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Vertical</footprint>
+      <libsource lib="Connector_Generic" part="Conn_02x10_Odd_Even" description="Generic connector, double row, 02x10, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>aa0e1484-0b11-4ba7-b7c0-58831db867cb</tstamps>
+    </comp>
+    <comp ref="J2">
+      <value>OSTTC020162</value>
+      <footprint>digikey-footprints:Term_Block_1x2_P5mm</footprint>
+      <datasheet>http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</datasheet>
+      <fields>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="DK_Datasheet_Link">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/on-shore-technology-inc/OSTTC020162/ED2600-ND/614549</field>
+        <field name="Description">TERM BLK 2POS SIDE ENTRY 5MM PCB</field>
+        <field name="Digi-Key_PN">ED2600-ND</field>
+        <field name="Family">Terminal Blocks - Wire to Board</field>
+        <field name="MPN">OSTTC020162</field>
+        <field name="Manufacturer">On Shore Technology Inc.</field>
+        <field name="Status">Active</field>
+      </fields>
+      <libsource lib="dk_Terminal-Blocks-Wire-to-Board" part="OSTTC020162" description="TERM BLK 2POS SIDE ENTRY 5MM PCB"/>
+      <property name="Digi-Key_PN" value="ED2600-ND"/>
+      <property name="MPN" value="OSTTC020162"/>
+      <property name="Category" value="Connectors, Interconnects"/>
+      <property name="Family" value="Terminal Blocks - Wire to Board"/>
+      <property name="DK_Datasheet_Link" value="http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf"/>
+      <property name="DK_Detail_Page" value="/product-detail/en/on-shore-technology-inc/OSTTC020162/ED2600-ND/614549"/>
+      <property name="Description" value="TERM BLK 2POS SIDE ENTRY 5MM PCB"/>
+      <property name="Manufacturer" value="On Shore Technology Inc."/>
+      <property name="Status" value="Active"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0a8f5312-6588-480f-9bf4-3c5ae3df2227</tstamps>
+    </comp>
+    <comp ref="J3">
+      <value>OSTTC030162</value>
+      <footprint>digikey-footprints:Term_Block_1x3_P5mm</footprint>
+      <datasheet>http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</datasheet>
+      <fields>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="DK_Datasheet_Link">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/on-shore-technology-inc/OSTTC030162/ED2601-ND/614550</field>
+        <field name="Description">TERM BLK 3POS SIDE ENTRY 5MM PCB</field>
+        <field name="Digi-Key_PN">ED2601-ND</field>
+        <field name="Family">Terminal Blocks - Wire to Board</field>
+        <field name="MPN">OSTTC030162</field>
+        <field name="Manufacturer">On Shore Technology Inc.</field>
+        <field name="Status">Active</field>
+      </fields>
+      <libsource lib="dk_Terminal-Blocks-Wire-to-Board" part="OSTTC030162" description="TERM BLK 3POS SIDE ENTRY 5MM PCB"/>
+      <property name="Digi-Key_PN" value="ED2601-ND"/>
+      <property name="MPN" value="OSTTC030162"/>
+      <property name="Category" value="Connectors, Interconnects"/>
+      <property name="Family" value="Terminal Blocks - Wire to Board"/>
+      <property name="DK_Datasheet_Link" value="http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf"/>
+      <property name="DK_Detail_Page" value="/product-detail/en/on-shore-technology-inc/OSTTC030162/ED2601-ND/614550"/>
+      <property name="Description" value="TERM BLK 3POS SIDE ENTRY 5MM PCB"/>
+      <property name="Manufacturer" value="On Shore Technology Inc."/>
+      <property name="Status" value="Active"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6aa1a54f-16b3-472c-911f-6c5a2d4108c5</tstamps>
+    </comp>
+    <comp ref="J4">
+      <value>OSTTC020162</value>
+      <footprint>digikey-footprints:Term_Block_1x2_P5mm</footprint>
+      <datasheet>http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</datasheet>
+      <fields>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="DK_Datasheet_Link">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/on-shore-technology-inc/OSTTC020162/ED2600-ND/614549</field>
+        <field name="Description">TERM BLK 2POS SIDE ENTRY 5MM PCB</field>
+        <field name="Digi-Key_PN">ED2600-ND</field>
+        <field name="Family">Terminal Blocks - Wire to Board</field>
+        <field name="MPN">OSTTC020162</field>
+        <field name="Manufacturer">On Shore Technology Inc.</field>
+        <field name="Status">Active</field>
+      </fields>
+      <libsource lib="dk_Terminal-Blocks-Wire-to-Board" part="OSTTC020162" description="TERM BLK 2POS SIDE ENTRY 5MM PCB"/>
+      <property name="Digi-Key_PN" value="ED2600-ND"/>
+      <property name="MPN" value="OSTTC020162"/>
+      <property name="Category" value="Connectors, Interconnects"/>
+      <property name="Family" value="Terminal Blocks - Wire to Board"/>
+      <property name="DK_Datasheet_Link" value="http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf"/>
+      <property name="DK_Detail_Page" value="/product-detail/en/on-shore-technology-inc/OSTTC020162/ED2600-ND/614549"/>
+      <property name="Description" value="TERM BLK 2POS SIDE ENTRY 5MM PCB"/>
+      <property name="Manufacturer" value="On Shore Technology Inc."/>
+      <property name="Status" value="Active"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bc34135d-3bb7-409f-8335-2f62b735ebc5</tstamps>
+    </comp>
+    <comp ref="J5">
+      <value>OSTTC030162</value>
+      <footprint>digikey-footprints:Term_Block_1x3_P5mm</footprint>
+      <datasheet>http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</datasheet>
+      <fields>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="DK_Datasheet_Link">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/on-shore-technology-inc/OSTTC030162/ED2601-ND/614550</field>
+        <field name="Description">TERM BLK 3POS SIDE ENTRY 5MM PCB</field>
+        <field name="Digi-Key_PN">ED2601-ND</field>
+        <field name="Family">Terminal Blocks - Wire to Board</field>
+        <field name="MPN">OSTTC030162</field>
+        <field name="Manufacturer">On Shore Technology Inc.</field>
+        <field name="Status">Active</field>
+      </fields>
+      <libsource lib="dk_Terminal-Blocks-Wire-to-Board" part="OSTTC030162" description="TERM BLK 3POS SIDE ENTRY 5MM PCB"/>
+      <property name="Digi-Key_PN" value="ED2601-ND"/>
+      <property name="MPN" value="OSTTC030162"/>
+      <property name="Category" value="Connectors, Interconnects"/>
+      <property name="Family" value="Terminal Blocks - Wire to Board"/>
+      <property name="DK_Datasheet_Link" value="http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf"/>
+      <property name="DK_Detail_Page" value="/product-detail/en/on-shore-technology-inc/OSTTC030162/ED2601-ND/614550"/>
+      <property name="Description" value="TERM BLK 3POS SIDE ENTRY 5MM PCB"/>
+      <property name="Manufacturer" value="On Shore Technology Inc."/>
+      <property name="Status" value="Active"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9625f43a-6e06-4cbd-bcd7-8f0fde57ddbf</tstamps>
+    </comp>
+    <comp ref="J6">
+      <value>0022232041</value>
+      <footprint>digikey-footprints:PinHeader_1x4_P2.54mm_Drill1.02mm</footprint>
+      <datasheet>https://www.molex.com/pdm_docs/sd/022232041_sd.pdf</datasheet>
+      <fields>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="DK_Datasheet_Link">https://www.molex.com/pdm_docs/sd/022232041_sd.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/molex/0022232041/WM4202-ND/26671</field>
+        <field name="Description">CONN HEADER VERT 4POS 2.54MM</field>
+        <field name="Digi-Key_PN">WM4202-ND</field>
+        <field name="Family">Rectangular Connectors - Headers, Male Pins</field>
+        <field name="MPN">0022232041</field>
+        <field name="Manufacturer">Molex</field>
+        <field name="Status">Active</field>
+      </fields>
+      <libsource lib="dk_Rectangular-Connectors-Headers-Male-Pins" part="0022232041" description="CONN HEADER VERT 4POS 2.54MM"/>
+      <property name="Digi-Key_PN" value="WM4202-ND"/>
+      <property name="MPN" value="0022232041"/>
+      <property name="Category" value="Connectors, Interconnects"/>
+      <property name="Family" value="Rectangular Connectors - Headers, Male Pins"/>
+      <property name="DK_Datasheet_Link" value="https://www.molex.com/pdm_docs/sd/022232041_sd.pdf"/>
+      <property name="DK_Detail_Page" value="/product-detail/en/molex/0022232041/WM4202-ND/26671"/>
+      <property name="Description" value="CONN HEADER VERT 4POS 2.54MM"/>
+      <property name="Manufacturer" value="Molex"/>
+      <property name="Status" value="Active"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8e5a3bcb-f680-48fb-93c3-e8f0023cd770</tstamps>
+    </comp>
+    <comp ref="M1">
+      <value>VID28-05</value>
+      <footprint>ClockLibrary:VID28-05</footprint>
+      <libsource lib="Motor" part="VID28-05" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>af1e4127-505c-436d-a701-f563f34885f1</tstamps>
+    </comp>
+    <comp ref="M2">
+      <value>VID28-05</value>
+      <footprint>ClockLibrary:VID28-05</footprint>
+      <libsource lib="Motor" part="VID28-05" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0d801174-1e88-4c29-8235-aae48c3e2167</tstamps>
+    </comp>
+    <comp ref="M3">
+      <value>VID28-05</value>
+      <footprint>ClockLibrary:VID28-05</footprint>
+      <libsource lib="" part="VID28-05_1" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>da6e1093-21c1-4e69-a2a4-5c4c4a0307c3</tstamps>
+    </comp>
+    <comp ref="M4">
+      <value>VID28-05</value>
+      <footprint>ClockLibrary:VID28-05</footprint>
+      <libsource lib="" part="VID28-05_2" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>205706de-3f2a-4221-b382-b1f97fb7417f</tstamps>
+    </comp>
+    <comp ref="R1">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cfb46b87-ec41-4fcf-8b2d-649f486be1d8</tstamps>
+    </comp>
+    <comp ref="R2">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>583e60f5-66f2-4454-923a-a5161f163a5b</tstamps>
+    </comp>
+    <comp ref="R3">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>49ea27d2-e073-40da-abfb-ba5a847f6e65</tstamps>
+    </comp>
+    <comp ref="R4">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0ff44a95-1944-47ec-bfbe-9f970e071ff4</tstamps>
+    </comp>
+    <comp ref="R5">
+      <value>60R</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.yageo.com/upload/media/product/productsearch/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/yageo/RC0805FR-0760R4L/728073</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/yageo/RC0805FR-0760R4L/728073"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8921ffc4-9134-446e-bad5-ba41ca93ee33</tstamps>
+    </comp>
+    <comp ref="R6">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>67a9e0a8-4075-47dc-b802-c3718335e1a0</tstamps>
+    </comp>
+    <comp ref="R7">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b8cb81a2-9237-4fbe-b3f7-7e322cde8bd7</tstamps>
+    </comp>
+    <comp ref="R8">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9c5a4155-0ee8-4824-92fe-423564f5b41a</tstamps>
+    </comp>
+    <comp ref="R9">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>16c8c549-e2e5-4d50-967f-771b9454eff2</tstamps>
+    </comp>
+    <comp ref="R10">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f28842dd-854f-435f-9cd4-b4376273688c</tstamps>
+    </comp>
+    <comp ref="R11">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>388207e6-828d-47fb-98f8-c98c58511e1c</tstamps>
+    </comp>
+    <comp ref="R12">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2ca2947e-c95e-41b0-8bfb-3600bff331f6</tstamps>
+    </comp>
+    <comp ref="R13">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cf4555c4-bd21-49a3-a771-636f0372222b</tstamps>
+    </comp>
+    <comp ref="R14">
+      <value>750R</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a7dfcd64-2166-43ec-a2c0-bd9c87066d76</tstamps>
+    </comp>
+    <comp ref="R15">
+      <value>50R</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5babd6d6-2e21-4bd9-ae3e-dc1ebad67f37</tstamps>
+    </comp>
+    <comp ref="R16">
+      <value>50R</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f1a32a3a-3675-412d-8ab3-59166fb19959</tstamps>
+    </comp>
+    <comp ref="R17">
+      <value>60R</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.yageo.com/upload/media/product/productsearch/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/yageo/RC0805FR-0760R4L/728073</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/yageo/RC0805FR-0760R4L/728073"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bb282276-aa88-4487-994a-670dd8ca4b52</tstamps>
+    </comp>
+    <comp ref="R18">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5cc6831b-6539-433c-972e-625ddcead8ba</tstamps>
+    </comp>
+    <comp ref="R19">
+      <value>50R</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fb0a174f-4ea4-4437-9f1e-e546cf233bec</tstamps>
+    </comp>
+    <comp ref="R20">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a00f0157-83aa-48fe-84ef-e29b28956d3b</tstamps>
+    </comp>
+    <comp ref="R21">
+      <value>1k6</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>47732a16-6d9d-4d10-b310-87dee4307157</tstamps>
+    </comp>
+    <comp ref="R22">
+      <value>750R</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder</footprint>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>df2b8cf0-8081-4158-a3a1-80cdeed85a74</tstamps>
+    </comp>
+    <comp ref="R23">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <datasheet>https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</datasheet>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676</field>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="DK_Datasheet_Link" value="https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&amp;lang=en&amp;cur=CAD"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>38e023bb-0447-428f-992a-23b19ad7b32d</tstamps>
+    </comp>
+    <comp ref="SW1">
+      <value>SW_SPST</value>
+      <footprint>digikey-footprints:Switch_Tactile_SMD_6x6mm_PTS645</footprint>
+      <datasheet>http://www.apem.com/int/index.php?controller=attachment&amp;id_attachment=1371</datasheet>
+      <fields>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/c-k/PTS645SL50SMTR92-LFS/1279107</field>
+      </fields>
+      <libsource lib="Switch" part="SW_MEC_5E" description="MEC 5E single pole normally-open tactile switch"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/c-k/PTS645SL50SMTR92-LFS/1279107"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>333d21f1-203b-49dc-86a6-b3637925512c</tstamps>
+    </comp>
+    <comp ref="U1">
+      <value>LPC11C22_24-LQFP48</value>
+      <footprint>Package_QFP:LQFP-48_7x7mm_P0.5mm</footprint>
+      <libsource lib="LPC11xxx" part="LPC11C22_24-LQFP48" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cc5d49c2-1c66-44ad-8513-31aae6a5e6bc</tstamps>
+    </comp>
+    <comp ref="U2">
+      <value>VID6606</value>
+      <footprint>Package_SO:SOIC-28W_7.5x18.7mm_P1.27mm</footprint>
+      <libsource lib="Driver_Motor" part="VID6606" description="Stepper motor driver"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>19848628-2a6c-4fe6-b175-0a04d2018bc2</tstamps>
+    </comp>
+    <comp ref="U3">
+      <value>VID6606</value>
+      <footprint>Package_SO:SOIC-28W_7.5x18.7mm_P1.27mm</footprint>
+      <libsource lib="Driver_Motor" part="VID6606" description="Stepper motor driver"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>342cfa37-fb88-4810-875e-197b59d3c4a7</tstamps>
+    </comp>
+    <comp ref="U4">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8926fb95-fd80-444c-9ccb-3b235a53a249</tstamps>
+    </comp>
+    <comp ref="U5">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>656201ba-a198-4fba-abb5-02bd13c6f0f8</tstamps>
+    </comp>
+    <comp ref="U6">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b81c6f0a-8233-43dc-af8f-02c5b9606007</tstamps>
+    </comp>
+    <comp ref="U7">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c6a02672-6a82-4702-83cf-029317ca7340</tstamps>
+    </comp>
+    <comp ref="U8">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>07001bc7-a515-49c2-928a-e9ef1517b9ee</tstamps>
+    </comp>
+    <comp ref="U9">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9c05c4a5-427a-4896-b7f7-813fc3ef2ba1</tstamps>
+    </comp>
+    <comp ref="U10">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>de17507e-2e6f-43c4-9e35-68010bec2436</tstamps>
+    </comp>
+    <comp ref="U11">
+      <value>DRV5033AJxDBZ</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/drv5033.pdf</datasheet>
+      <libsource lib="Sensor_Magnetic" part="DRV5033AJxDBZ" description="±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2c91fe30-1570-45a5-9f21-065c9f7a9fb5</tstamps>
+    </comp>
+    <comp ref="U12">
+      <value>NCP718xSN500</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-5</footprint>
+      <datasheet>https://www.onsemi.com/pub/Collateral/NCP718-D.PDF</datasheet>
+      <libsource lib="Regulator_Linear" part="NCP718xSN500" description="300-mA, Wide Input Voltage, Low-IQ LDO, 5.0V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9b6a2e24-9c0d-47ce-aed5-f30af5fd8272</tstamps>
+    </comp>
+    <comp ref="U13">
+      <value>NCP718xSN330</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-5</footprint>
+      <datasheet>https://www.onsemi.com/pub/Collateral/NCP718-D.PDF</datasheet>
+      <libsource lib="Regulator_Linear" part="NCP718xSN330" description="300-mA, Wide Input Voltage, Low-IQ LDO, 3.3V, SOT-23"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>dde11f2e-2f29-4074-a0f2-e92c28ea5cb4</tstamps>
+    </comp>
+    <comp ref="Y1">
+      <value>12MHz/12pF</value>
+      <footprint>Crystal:Crystal_SMD_HC49-SD</footprint>
+      <fields>
+        <field name="DK_Datasheet_Link">https://www.jauch.com/downloadfile/5d5283eb8ea55300421fd84937fcba163/jauch_datasheet_j49smh.pdf</field>
+        <field name="DK_Detail_Page">https://www.digikey.ca/en/products/detail/jauch-quartz/J49SMH-A-G-G-K-12M0/10416135</field>
+      </fields>
+      <libsource lib="Device" part="Crystal" description="Two pin crystal"/>
+      <property name="DK_Datasheet_Link" value="https://www.jauch.com/downloadfile/5d5283eb8ea55300421fd84937fcba163/jauch_datasheet_j49smh.pdf"/>
+      <property name="DK_Detail_Page" value="https://www.digikey.ca/en/products/detail/jauch-quartz/J49SMH-A-G-G-K-12M0/10416135"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="Slave Board.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9ad7d480-d6fc-411e-a008-4a541fa73cbf</tstamps>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="" part="VID28-05_1">
+      <fields>
+        <field name="Reference">M</field>
+        <field name="Value">VID28-05_1</field>
+      </fields>
+      <pins>
+        <pin num="A1" name="" type="input"/>
+        <pin num="A2" name="" type="input"/>
+        <pin num="A3" name="" type="input"/>
+        <pin num="A4" name="" type="input"/>
+        <pin num="B1" name="" type="input"/>
+        <pin num="B2" name="" type="input"/>
+        <pin num="B3" name="" type="input"/>
+        <pin num="B4" name="" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="" part="VID28-05_2">
+      <fields>
+        <field name="Reference">M</field>
+        <field name="Value">VID28-05_2</field>
+      </fields>
+      <pins>
+        <pin num="A1" name="" type="input"/>
+        <pin num="A2" name="" type="input"/>
+        <pin num="A3" name="" type="input"/>
+        <pin num="A4" name="" type="input"/>
+        <pin num="B1" name="" type="input"/>
+        <pin num="B2" name="" type="input"/>
+        <pin num="B3" name="" type="input"/>
+        <pin num="B4" name="" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_02x10_Odd_Even">
+      <description>Generic connector, double row, 02x10, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_2x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_02x10_Odd_Even</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+        <pin num="11" name="Pin_11" type="passive"/>
+        <pin num="12" name="Pin_12" type="passive"/>
+        <pin num="13" name="Pin_13" type="passive"/>
+        <pin num="14" name="Pin_14" type="passive"/>
+        <pin num="15" name="Pin_15" type="passive"/>
+        <pin num="16" name="Pin_16" type="passive"/>
+        <pin num="17" name="Pin_17" type="passive"/>
+        <pin num="18" name="Pin_18" type="passive"/>
+        <pin num="19" name="Pin_19" type="passive"/>
+        <pin num="20" name="Pin_20" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C">
+      <description>Unpolarized capacitor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>C_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C_Polarized">
+      <description>Polarized capacitor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>CP_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C_Polarized</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="Crystal">
+      <description>Two pin crystal</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Crystal*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">Y</field>
+        <field name="Value">Crystal</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="LED">
+      <description>Light emitting diode</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>LED*</fp>
+        <fp>LED_SMD:*</fp>
+        <fp>LED_THT:*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">LED</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="R">
+      <description>Resistor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>R_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+        <field name="Datasheet">~</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Driver_Motor" part="VID6606">
+      <description>Stepper motor driver</description>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">VID6606</field>
+        <field name="Footprint">Package_SO:SOIC-28W_7.5x18.7mm_P1.27mm</field>
+      </fields>
+      <pins>
+        <pin num="1" name="VDD" type="input"/>
+        <pin num="2" name="CW/~{CCWB}" type="input"/>
+        <pin num="3" name="F(SCX)B" type="input"/>
+        <pin num="4" name="OUT3A" type="output"/>
+        <pin num="5" name="OUT4A" type="output"/>
+        <pin num="6" name="OUT2A" type="output"/>
+        <pin num="7" name="OUT1A" type="output"/>
+        <pin num="8" name="OUT1D" type="output"/>
+        <pin num="9" name="OUT2D" type="output"/>
+        <pin num="10" name="OUT4D" type="output"/>
+        <pin num="11" name="OUT3D" type="output"/>
+        <pin num="12" name="VSS" type="input"/>
+        <pin num="13" name="CW/~{CCWC}" type="input"/>
+        <pin num="14" name="F(SCX)C" type="input"/>
+        <pin num="15" name="VDD1" type="input"/>
+        <pin num="16" name="CW/~{CCWD}" type="input"/>
+        <pin num="17" name="F(SCX)D" type="input"/>
+        <pin num="18" name="OUT3C" type="output"/>
+        <pin num="19" name="OUT4C" type="output"/>
+        <pin num="20" name="OUT2C" type="output"/>
+        <pin num="21" name="OUT1C" type="output"/>
+        <pin num="22" name="OUT1B" type="output"/>
+        <pin num="23" name="OUT2B" type="output"/>
+        <pin num="24" name="OUT4B" type="output"/>
+        <pin num="25" name="OUT3B" type="output"/>
+        <pin num="26" name="~{RESET}" type="input"/>
+        <pin num="27" name="CW/~{CCWA}" type="input"/>
+        <pin num="28" name="F(SCX)A" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="LPC11xxx" part="LPC11C22_24-LQFP48">
+      <footprints>
+        <fp>*LQFP48*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U1</field>
+        <field name="Value">LPC11C22_24-LQFP48</field>
+        <field name="Footprint">Package_QFP:LQFP-48_7x7mm_P0.5mm</field>
+      </fields>
+      <pins>
+        <pin num="1" name="PIO2_6" type="bidirectional"/>
+        <pin num="2" name="PIO2_0/~{DTR}/SSEL1" type="bidirectional"/>
+        <pin num="3" name="~{RESET}/PIO0_0" type="bidirectional"/>
+        <pin num="4" name="PIO0_1/CLKOUT/CT32B0_MAT2" type="bidirectional"/>
+        <pin num="5" name="VSS" type="power_in"/>
+        <pin num="6" name="XTALIN" type="passive"/>
+        <pin num="7" name="XTALOUT" type="passive"/>
+        <pin num="8" name="VDD" type="power_in"/>
+        <pin num="9" name="PIO1_8/CT16B1_CAP0" type="bidirectional"/>
+        <pin num="10" name="PIO0_2/SSEL0/CT16B0_CAP0" type="bidirectional"/>
+        <pin num="11" name="PIO2_7" type="bidirectional"/>
+        <pin num="12" name="PIO2_8" type="bidirectional"/>
+        <pin num="13" name="PIO2_1/~{DSR}/SCK1" type="bidirectional"/>
+        <pin num="14" name="PIO0_3" type="bidirectional"/>
+        <pin num="15" name="PIO0_4/SCL" type="bidirectional"/>
+        <pin num="16" name="PIO0_5/SDA" type="bidirectional"/>
+        <pin num="17" name="VDD_CAN" type="power_in"/>
+        <pin num="18" name="CANL" type="bidirectional"/>
+        <pin num="19" name="CANH" type="bidirectional"/>
+        <pin num="20" name="VCC" type="power_in"/>
+        <pin num="21" name="GND" type="power_in"/>
+        <pin num="22" name="STB" type="input"/>
+        <pin num="23" name="PIO0_6/SCK0" type="bidirectional"/>
+        <pin num="24" name="PIO0_7/~{CTS}" type="bidirectional"/>
+        <pin num="25" name="PIO2_10" type="bidirectional"/>
+        <pin num="26" name="PIO2_2/~{DCD}/MISO1" type="bidirectional"/>
+        <pin num="27" name="PIO0_8/MISO0/CT16B0_MAT0" type="bidirectional"/>
+        <pin num="28" name="PIO0_9/MOSI0/CT16B0_MAT1" type="bidirectional"/>
+        <pin num="29" name="SWCLK/PIO0_10/SCK0/CT16B0_MAT2" type="bidirectional"/>
+        <pin num="30" name="PIO1_10/AD6/CT16B1_MAT1" type="bidirectional"/>
+        <pin num="31" name="PIO2_11/SCK0" type="input"/>
+        <pin num="32" name="R/PIO0_11/AD0/CT32B0_MAT3" type="bidirectional"/>
+        <pin num="33" name="R/PIO1_0/AD1/CT32B1_CAP0" type="bidirectional"/>
+        <pin num="34" name="R/PIO1_1/AD2/CT32B1_MAT0" type="bidirectional"/>
+        <pin num="35" name="R/PIO1_2/AD3/CT32B1_MAT1" type="bidirectional"/>
+        <pin num="36" name="PIO3_0/~{DTR}" type="bidirectional"/>
+        <pin num="37" name="PIO3_1/~{DSR}" type="bidirectional"/>
+        <pin num="38" name="PIO2_3/~{RI}/MOSI1" type="bidirectional"/>
+        <pin num="39" name="SWDIO/PIO1_3/AD4/CT32B1_MAT2" type="bidirectional"/>
+        <pin num="40" name="PIO1_4/AD5/CT32B1_MAT3/WAKEUP" type="bidirectional"/>
+        <pin num="41" name="VSS" type="power_in"/>
+        <pin num="42" name="PIO1_11/AD7" type="bidirectional"/>
+        <pin num="43" name="PIO3_2/~{DCD}" type="bidirectional"/>
+        <pin num="44" name="VDD" type="power_in"/>
+        <pin num="45" name="PIO1_5/~{RTS}/CT32B0_CAP0" type="bidirectional"/>
+        <pin num="46" name="PIO1_6/RXD/CT32B0_MAT0" type="bidirectional"/>
+        <pin num="47" name="PIO1_7/TXD/CT32B0_MAT1" type="bidirectional"/>
+        <pin num="48" name="PIO3_3/~{RI}" type="bidirectional"/>
+      </pins>
+    </libpart>
+    <libpart lib="Motor" part="VID28-05">
+      <fields>
+        <field name="Reference">M</field>
+        <field name="Value">VID28-05</field>
+      </fields>
+      <pins>
+        <pin num="A1" name="" type="input"/>
+        <pin num="A2" name="" type="input"/>
+        <pin num="A3" name="" type="input"/>
+        <pin num="A4" name="" type="input"/>
+        <pin num="B1" name="" type="input"/>
+        <pin num="B2" name="" type="input"/>
+        <pin num="B3" name="" type="input"/>
+        <pin num="B4" name="" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="Regulator_Linear" part="NCP718xSN330">
+      <description>300-mA, Wide Input Voltage, Low-IQ LDO, 3.3V, SOT-23</description>
+      <docs>https://www.onsemi.com/pub/Collateral/NCP718-D.PDF</docs>
+      <footprints>
+        <fp>SOT?23*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">NCP718xSN330</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-5</field>
+        <field name="Datasheet">https://www.onsemi.com/pub/Collateral/NCP718-D.PDF</field>
+      </fields>
+      <pins>
+        <pin num="1" name="IN" type="power_in"/>
+        <pin num="2" name="GND" type="power_in"/>
+        <pin num="3" name="EN" type="input"/>
+        <pin num="4" name="NC" type="no_connect"/>
+        <pin num="5" name="OUT" type="power_out"/>
+      </pins>
+    </libpart>
+    <libpart lib="Regulator_Linear" part="NCP718xSN500">
+      <description>300-mA, Wide Input Voltage, Low-IQ LDO, 5.0V, SOT-23</description>
+      <docs>https://www.onsemi.com/pub/Collateral/NCP718-D.PDF</docs>
+      <footprints>
+        <fp>SOT?23*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">NCP718xSN500</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-5</field>
+        <field name="Datasheet">https://www.onsemi.com/pub/Collateral/NCP718-D.PDF</field>
+      </fields>
+      <pins>
+        <pin num="1" name="IN" type="power_in"/>
+        <pin num="2" name="GND" type="power_in"/>
+        <pin num="3" name="EN" type="input"/>
+        <pin num="4" name="NC" type="no_connect"/>
+        <pin num="5" name="OUT" type="power_out"/>
+      </pins>
+    </libpart>
+    <libpart lib="Sensor_Magnetic" part="DRV5033AJxDBZ">
+      <description>±6.9 / ±3.5 mT, 20-kHz, 2-38V, SOT-23</description>
+      <docs>https://www.ti.com/lit/ds/symlink/drv5033.pdf</docs>
+      <footprints>
+        <fp>SOT?23*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">DRV5033AJxDBZ</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/drv5033.pdf</field>
+      </fields>
+      <pins>
+        <pin num="1" name="VCC" type="power_in"/>
+        <pin num="2" name="OUT" type="output"/>
+        <pin num="3" name="GND" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="Switch" part="SW_MEC_5E">
+      <description>MEC 5E single pole normally-open tactile switch</description>
+      <docs>http://www.apem.com/int/index.php?controller=attachment&amp;id_attachment=1371</docs>
+      <footprints>
+        <fp>SW*MEC*5G*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_MEC_5E</field>
+        <field name="Datasheet">http://www.apem.com/int/index.php?controller=attachment&amp;id_attachment=1371</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="K" type="passive"/>
+        <pin num="4" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="dk_Diodes-Rectifiers-Single" part="1N5819HW-7-F">
+      <description>DIODE SCHOTTKY 40V 1A SOD123</description>
+      <docs>https://www.diodes.com/assets/Datasheets/ds30217.pdf</docs>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">1N5819HW-7-F</field>
+        <field name="Footprint">digikey-footprints:SOD-123</field>
+        <field name="Datasheet">https://www.diodes.com/assets/Datasheets/ds30217.pdf</field>
+        <field name="Digi-Key_PN">1N5819HW-FDICT-ND</field>
+        <field name="MPN">1N5819HW-7-F</field>
+        <field name="Category">Discrete Semiconductor Products</field>
+        <field name="Family">Diodes - Rectifiers - Single</field>
+        <field name="DK_Datasheet_Link">https://www.diodes.com/assets/Datasheets/ds30217.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/diodes-incorporated/1N5819HW-7-F/1N5819HW-FDICT-ND/815283</field>
+        <field name="Description">DIODE SCHOTTKY 40V 1A SOD123</field>
+        <field name="Manufacturer">Diodes Incorporated</field>
+        <field name="Status">Active</field>
+      </fields>
+      <pins>
+        <pin num="A" name="" type="passive"/>
+        <pin num="K" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="dk_Rectangular-Connectors-Headers-Male-Pins" part="0022232041">
+      <description>CONN HEADER VERT 4POS 2.54MM</description>
+      <docs>https://www.molex.com/pdm_docs/sd/022232041_sd.pdf</docs>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">0022232041</field>
+        <field name="Footprint">digikey-footprints:PinHeader_1x4_P2.54mm_Drill1.02mm</field>
+        <field name="Datasheet">https://www.molex.com/pdm_docs/sd/022232041_sd.pdf</field>
+        <field name="Digi-Key_PN">WM4202-ND</field>
+        <field name="MPN">0022232041</field>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="Family">Rectangular Connectors - Headers, Male Pins</field>
+        <field name="DK_Datasheet_Link">https://www.molex.com/pdm_docs/sd/022232041_sd.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/molex/0022232041/WM4202-ND/26671</field>
+        <field name="Description">CONN HEADER VERT 4POS 2.54MM</field>
+        <field name="Manufacturer">Molex</field>
+        <field name="Status">Active</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+        <pin num="3" name="" type="passive"/>
+        <pin num="4" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="dk_Terminal-Blocks-Wire-to-Board" part="OSTTC020162">
+      <description>TERM BLK 2POS SIDE ENTRY 5MM PCB</description>
+      <docs>http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</docs>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">OSTTC020162</field>
+        <field name="Footprint">digikey-footprints:Term_Block_1x2_P5mm</field>
+        <field name="Datasheet">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="Digi-Key_PN">ED2600-ND</field>
+        <field name="MPN">OSTTC020162</field>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="Family">Terminal Blocks - Wire to Board</field>
+        <field name="DK_Datasheet_Link">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/on-shore-technology-inc/OSTTC020162/ED2600-ND/614549</field>
+        <field name="Description">TERM BLK 2POS SIDE ENTRY 5MM PCB</field>
+        <field name="Manufacturer">On Shore Technology Inc.</field>
+        <field name="Status">Active</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="dk_Terminal-Blocks-Wire-to-Board" part="OSTTC030162">
+      <description>TERM BLK 3POS SIDE ENTRY 5MM PCB</description>
+      <docs>http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</docs>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">OSTTC030162</field>
+        <field name="Footprint">digikey-footprints:Term_Block_1x3_P5mm</field>
+        <field name="Datasheet">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="Digi-Key_PN">ED2601-ND</field>
+        <field name="MPN">OSTTC030162</field>
+        <field name="Category">Connectors, Interconnects</field>
+        <field name="Family">Terminal Blocks - Wire to Board</field>
+        <field name="DK_Datasheet_Link">http://www.on-shore.com/wp-content/uploads/OSTTCXX0162.pdf</field>
+        <field name="DK_Detail_Page">/product-detail/en/on-shore-technology-inc/OSTTC030162/ED2601-ND/614550</field>
+        <field name="Description">TERM BLK 3POS SIDE ENTRY 5MM PCB</field>
+        <field name="Manufacturer">On Shore Technology Inc.</field>
+        <field name="Status">Active</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+        <pin num="3" name="" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector_Generic">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols//Connector_Generic.kicad_sym</uri>
+    </library>
+    <library logical="Device">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols//Device.kicad_sym</uri>
+    </library>
+    <library logical="Driver_Motor">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols//Driver_Motor.kicad_sym</uri>
+    </library>
+    <library logical="LPC11xxx">
+      <uri>/Users/jayalcock/Projects/Kicad Libraries/eagle/lpc1100v1.1.lib</uri>
+    </library>
+    <library logical="Motor">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols//Motor.kicad_sym</uri>
+    </library>
+    <library logical="Regulator_Linear">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols//Regulator_Linear.kicad_sym</uri>
+    </library>
+    <library logical="Sensor_Magnetic">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols//Sensor_Magnetic.kicad_sym</uri>
+    </library>
+    <library logical="Switch">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols//Switch.kicad_sym</uri>
+    </library>
+    <library logical="dk_Diodes-Rectifiers-Single">
+      <uri>/Users/jayalcock/Projects/Kicad Libraries/Digikey/digikey-symbols/dk_Diodes-Rectifiers-Single.lib</uri>
+    </library>
+    <library logical="dk_Rectangular-Connectors-Headers-Male-Pins">
+      <uri>/Users/jayalcock/Projects/Kicad Libraries/Digikey/digikey-symbols/dk_Rectangular-Connectors-Headers-Male-Pins.lib</uri>
+    </library>
+    <library logical="dk_Terminal-Blocks-Wire-to-Board">
+      <uri>/Users/jayalcock/Projects/Kicad Libraries/Digikey/digikey-symbols/dk_Terminal-Blocks-Wire-to-Board.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="+3.3V">
+      <node ref="C10" pin="1" pintype="passive"/>
+      <node ref="C11" pin="1" pintype="passive"/>
+      <node ref="C12" pin="1" pintype="passive"/>
+      <node ref="C13" pin="1" pintype="passive"/>
+      <node ref="C16" pin="2" pintype="passive"/>
+      <node ref="C17" pin="1" pintype="passive"/>
+      <node ref="C25" pin="1" pintype="passive"/>
+      <node ref="C3" pin="1" pintype="passive"/>
+      <node ref="C4" pin="1" pintype="passive"/>
+      <node ref="C6" pin="1" pintype="passive"/>
+      <node ref="C7" pin="1" pintype="passive"/>
+      <node ref="C8" pin="1" pintype="passive"/>
+      <node ref="C9" pin="1" pintype="passive"/>
+      <node ref="J1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="J6" pin="2" pintype="passive"/>
+      <node ref="R1" pin="1" pintype="passive"/>
+      <node ref="R10" pin="1" pintype="passive"/>
+      <node ref="R11" pin="1" pintype="passive"/>
+      <node ref="R12" pin="1" pintype="passive"/>
+      <node ref="R13" pin="1" pintype="passive"/>
+      <node ref="R14" pin="1" pintype="passive"/>
+      <node ref="R6" pin="1" pintype="passive"/>
+      <node ref="R7" pin="1" pintype="passive"/>
+      <node ref="R8" pin="1" pintype="passive"/>
+      <node ref="R9" pin="1" pintype="passive"/>
+      <node ref="U1" pin="17" pinfunction="VDD_CAN" pintype="power_in"/>
+      <node ref="U1" pin="44" pinfunction="VDD" pintype="power_in"/>
+      <node ref="U1" pin="8" pinfunction="VDD" pintype="power_in"/>
+      <node ref="U10" pin="1" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U11" pin="1" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U13" pin="5" pinfunction="OUT" pintype="power_out"/>
+      <node ref="U4" pin="1" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U5" pin="1" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U6" pin="1" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U7" pin="1" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U8" pin="1" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U9" pin="1" pinfunction="VCC" pintype="power_in"/>
+    </net>
+    <net code="2" name="+5V">
+      <node ref="C15" pin="1" pintype="passive"/>
+      <node ref="C20" pin="1" pintype="passive"/>
+      <node ref="C21" pin="1" pintype="passive"/>
+      <node ref="C22" pin="1" pintype="passive"/>
+      <node ref="C23" pin="1" pintype="passive"/>
+      <node ref="C24" pin="1" pintype="passive"/>
+      <node ref="C5" pin="1" pintype="passive"/>
+      <node ref="J6" pin="3" pintype="passive"/>
+      <node ref="R18" pin="1" pintype="passive"/>
+      <node ref="R21" pin="1" pintype="passive"/>
+      <node ref="U1" pin="20" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U12" pin="5" pinfunction="OUT" pintype="power_out"/>
+      <node ref="U13" pin="1" pinfunction="IN" pintype="power_in"/>
+      <node ref="U13" pin="3" pinfunction="EN" pintype="input"/>
+      <node ref="U2" pin="1" pinfunction="VDD" pintype="input"/>
+      <node ref="U2" pin="15" pinfunction="VDD1" pintype="input"/>
+      <node ref="U3" pin="1" pinfunction="VDD" pintype="input"/>
+      <node ref="U3" pin="15" pinfunction="VDD1" pintype="input"/>
+    </net>
+    <net code="3" name="/A1">
+      <node ref="M1" pin="A1" pintype="input"/>
+      <node ref="U2" pin="7" pinfunction="OUT1A" pintype="output"/>
+    </net>
+    <net code="4" name="/A2">
+      <node ref="M1" pin="A2" pintype="input"/>
+      <node ref="U2" pin="6" pinfunction="OUT2A" pintype="output"/>
+    </net>
+    <net code="5" name="/A3">
+      <node ref="M1" pin="A3" pintype="input"/>
+      <node ref="U2" pin="4" pinfunction="OUT3A" pintype="output"/>
+    </net>
+    <net code="6" name="/A4">
+      <node ref="M1" pin="A4" pintype="input"/>
+      <node ref="U2" pin="5" pinfunction="OUT4A" pintype="output"/>
+    </net>
+    <net code="7" name="/A5">
+      <node ref="M1" pin="B4" pintype="input"/>
+      <node ref="U2" pin="22" pinfunction="OUT1B" pintype="output"/>
+    </net>
+    <net code="8" name="/A6">
+      <node ref="M1" pin="B3" pintype="input"/>
+      <node ref="U2" pin="23" pinfunction="OUT2B" pintype="output"/>
+    </net>
+    <net code="9" name="/A7">
+      <node ref="M1" pin="B2" pintype="input"/>
+      <node ref="U2" pin="25" pinfunction="OUT3B" pintype="output"/>
+    </net>
+    <net code="10" name="/A8">
+      <node ref="M1" pin="B1" pintype="input"/>
+      <node ref="U2" pin="24" pinfunction="OUT4B" pintype="output"/>
+    </net>
+    <net code="12" name="/B1">
+      <node ref="M2" pin="A1" pintype="input"/>
+      <node ref="U2" pin="21" pinfunction="OUT1C" pintype="output"/>
+    </net>
+    <net code="13" name="/B2">
+      <node ref="M2" pin="A2" pintype="input"/>
+      <node ref="U2" pin="20" pinfunction="OUT2C" pintype="output"/>
+    </net>
+    <net code="14" name="/B3">
+      <node ref="M2" pin="A3" pintype="input"/>
+      <node ref="U2" pin="18" pinfunction="OUT3C" pintype="output"/>
+    </net>
+    <net code="15" name="/B4">
+      <node ref="M2" pin="A4" pintype="input"/>
+      <node ref="U2" pin="19" pinfunction="OUT4C" pintype="output"/>
+    </net>
+    <net code="16" name="/B5">
+      <node ref="M2" pin="B4" pintype="input"/>
+      <node ref="U2" pin="8" pinfunction="OUT1D" pintype="output"/>
+    </net>
+    <net code="17" name="/B6">
+      <node ref="M2" pin="B3" pintype="input"/>
+      <node ref="U2" pin="9" pinfunction="OUT2D" pintype="output"/>
+    </net>
+    <net code="18" name="/B7">
+      <node ref="M2" pin="B2" pintype="input"/>
+      <node ref="U2" pin="11" pinfunction="OUT3D" pintype="output"/>
+    </net>
+    <net code="19" name="/B8">
+      <node ref="M2" pin="B1" pintype="input"/>
+      <node ref="U2" pin="10" pinfunction="OUT4D" pintype="output"/>
+    </net>
+    <net code="21" name="/C1">
+      <node ref="M3" pin="A1" pintype="input"/>
+      <node ref="U3" pin="7" pinfunction="OUT1A" pintype="output"/>
+    </net>
+    <net code="22" name="/C2">
+      <node ref="M3" pin="A2" pintype="input"/>
+      <node ref="U3" pin="6" pinfunction="OUT2A" pintype="output"/>
+    </net>
+    <net code="23" name="/C3">
+      <node ref="M3" pin="A3" pintype="input"/>
+      <node ref="U3" pin="4" pinfunction="OUT3A" pintype="output"/>
+    </net>
+    <net code="24" name="/C4">
+      <node ref="M3" pin="A4" pintype="input"/>
+      <node ref="U3" pin="5" pinfunction="OUT4A" pintype="output"/>
+    </net>
+    <net code="25" name="/C5">
+      <node ref="M3" pin="B4" pintype="input"/>
+      <node ref="U3" pin="22" pinfunction="OUT1B" pintype="output"/>
+    </net>
+    <net code="26" name="/C6">
+      <node ref="M3" pin="B3" pintype="input"/>
+      <node ref="U3" pin="23" pinfunction="OUT2B" pintype="output"/>
+    </net>
+    <net code="27" name="/C7">
+      <node ref="M3" pin="B2" pintype="input"/>
+      <node ref="U3" pin="25" pinfunction="OUT3B" pintype="output"/>
+    </net>
+    <net code="28" name="/C8">
+      <node ref="M3" pin="B1" pintype="input"/>
+      <node ref="U3" pin="24" pinfunction="OUT4B" pintype="output"/>
+    </net>
+    <net code="29" name="/CANH">
+      <node ref="J3" pin="1" pintype="passive"/>
+      <node ref="J5" pin="1" pintype="passive"/>
+      <node ref="R5" pin="1" pintype="passive"/>
+      <node ref="U1" pin="19" pinfunction="CANH" pintype="bidirectional"/>
+    </net>
+    <net code="30" name="/CANL">
+      <node ref="J3" pin="2" pintype="passive"/>
+      <node ref="J5" pin="2" pintype="passive"/>
+      <node ref="R17" pin="1" pintype="passive"/>
+      <node ref="U1" pin="18" pinfunction="CANL" pintype="bidirectional"/>
+    </net>
+    <net code="31" name="/CW{slash}~{CCWA} - 1">
+      <node ref="U1" pin="10" pinfunction="PIO0_2/SSEL0/CT16B0_CAP0" pintype="bidirectional"/>
+      <node ref="U2" pin="27" pinfunction="CW/~{CCWA}" pintype="input"/>
+    </net>
+    <net code="32" name="/CW{slash}~{CCWA} - 2">
+      <node ref="U1" pin="40" pinfunction="PIO1_4/AD5/CT32B1_MAT3/WAKEUP" pintype="bidirectional"/>
+      <node ref="U3" pin="27" pinfunction="CW/~{CCWA}" pintype="input"/>
+    </net>
+    <net code="33" name="/CW{slash}~{CCWB} - 1">
+      <node ref="U1" pin="15" pinfunction="PIO0_4/SCL" pintype="bidirectional"/>
+      <node ref="U2" pin="2" pinfunction="CW/~{CCWB}" pintype="input"/>
+    </net>
+    <net code="34" name="/CW{slash}~{CCWB} - 2">
+      <node ref="U1" pin="46" pinfunction="PIO1_6/RXD/CT32B0_MAT0" pintype="bidirectional"/>
+      <node ref="U3" pin="2" pinfunction="CW/~{CCWB}" pintype="input"/>
+    </net>
+    <net code="35" name="/CW{slash}~{CCWC} - 1 ">
+      <node ref="U1" pin="23" pinfunction="PIO0_6/SCK0" pintype="bidirectional"/>
+      <node ref="U2" pin="13" pinfunction="CW/~{CCWC}" pintype="input"/>
+    </net>
+    <net code="36" name="/CW{slash}~{CCWC} - 2">
+      <node ref="U1" pin="9" pinfunction="PIO1_8/CT16B1_CAP0" pintype="bidirectional"/>
+      <node ref="U3" pin="13" pinfunction="CW/~{CCWC}" pintype="input"/>
+    </net>
+    <net code="37" name="/CW{slash}~{CCWD} - 1">
+      <node ref="U1" pin="27" pinfunction="PIO0_8/MISO0/CT16B0_MAT0" pintype="bidirectional"/>
+      <node ref="U2" pin="16" pinfunction="CW/~{CCWD}" pintype="input"/>
+    </net>
+    <net code="38" name="/CW{slash}~{CCWD} - 2">
+      <node ref="U1" pin="42" pinfunction="PIO1_11/AD7" pintype="bidirectional"/>
+      <node ref="U3" pin="16" pinfunction="CW/~{CCWD}" pintype="input"/>
+    </net>
+    <net code="40" name="/D1">
+      <node ref="M4" pin="A1" pintype="input"/>
+      <node ref="U3" pin="21" pinfunction="OUT1C" pintype="output"/>
+    </net>
+    <net code="41" name="/D2">
+      <node ref="M4" pin="A2" pintype="input"/>
+      <node ref="U3" pin="20" pinfunction="OUT2C" pintype="output"/>
+    </net>
+    <net code="42" name="/D3">
+      <node ref="M4" pin="A3" pintype="input"/>
+      <node ref="U3" pin="18" pinfunction="OUT3C" pintype="output"/>
+    </net>
+    <net code="43" name="/D4">
+      <node ref="M4" pin="A4" pintype="input"/>
+      <node ref="U3" pin="19" pinfunction="OUT4C" pintype="output"/>
+    </net>
+    <net code="44" name="/D5">
+      <node ref="M4" pin="B4" pintype="input"/>
+      <node ref="U3" pin="8" pinfunction="OUT1D" pintype="output"/>
+    </net>
+    <net code="45" name="/D6">
+      <node ref="M4" pin="B3" pintype="input"/>
+      <node ref="U3" pin="9" pinfunction="OUT2D" pintype="output"/>
+    </net>
+    <net code="46" name="/D7">
+      <node ref="M4" pin="B2" pintype="input"/>
+      <node ref="U3" pin="11" pinfunction="OUT3D" pintype="output"/>
+    </net>
+    <net code="47" name="/D8">
+      <node ref="M4" pin="B1" pintype="input"/>
+      <node ref="U3" pin="10" pinfunction="OUT4D" pintype="output"/>
+    </net>
+    <net code="49" name="/Driver Reset">
+      <node ref="R23" pin="1" pintype="passive"/>
+      <node ref="U1" pin="4" pinfunction="PIO0_1/CLKOUT/CT32B0_MAT2" pintype="bidirectional"/>
+      <node ref="U2" pin="26" pinfunction="~{RESET}" pintype="input"/>
+      <node ref="U3" pin="26" pinfunction="~{RESET}" pintype="input"/>
+    </net>
+    <net code="50" name="/F(SCX)A - 1 ">
+      <node ref="U1" pin="14" pinfunction="PIO0_3" pintype="bidirectional"/>
+      <node ref="U2" pin="28" pinfunction="F(SCX)A" pintype="input"/>
+    </net>
+    <net code="51" name="/F(SCX)A - 2">
+      <node ref="U1" pin="45" pinfunction="PIO1_5/~{RTS}/CT32B0_CAP0" pintype="bidirectional"/>
+      <node ref="U3" pin="28" pinfunction="F(SCX)A" pintype="input"/>
+    </net>
+    <net code="52" name="/F(SCX)B - 1 ">
+      <node ref="U1" pin="16" pinfunction="PIO0_5/SDA" pintype="bidirectional"/>
+      <node ref="U2" pin="3" pinfunction="F(SCX)B" pintype="input"/>
+    </net>
+    <net code="53" name="/F(SCX)B - 2">
+      <node ref="U1" pin="47" pinfunction="PIO1_7/TXD/CT32B0_MAT1" pintype="bidirectional"/>
+      <node ref="U3" pin="3" pinfunction="F(SCX)B" pintype="input"/>
+    </net>
+    <net code="54" name="/F(SCX)C - 1 ">
+      <node ref="U1" pin="24" pinfunction="PIO0_7/~{CTS}" pintype="bidirectional"/>
+      <node ref="U2" pin="14" pinfunction="F(SCX)C" pintype="input"/>
+    </net>
+    <net code="55" name="/F(SCX)C - 2">
+      <node ref="U1" pin="30" pinfunction="PIO1_10/AD6/CT16B1_MAT1" pintype="bidirectional"/>
+      <node ref="U3" pin="14" pinfunction="F(SCX)C" pintype="input"/>
+    </net>
+    <net code="56" name="/F(SCX)D - 1 ">
+      <node ref="U1" pin="28" pinfunction="PIO0_9/MOSI0/CT16B0_MAT1" pintype="bidirectional"/>
+      <node ref="U2" pin="17" pinfunction="F(SCX)D" pintype="input"/>
+    </net>
+    <net code="57" name="/F(SCX)D - 2">
+      <node ref="U1" pin="2" pinfunction="PIO2_0/~{DTR}/SSEL1" pintype="bidirectional"/>
+      <node ref="U3" pin="17" pinfunction="F(SCX)D" pintype="input"/>
+    </net>
+    <net code="58" name="/HAll A Hour - 1">
+      <node ref="R6" pin="2" pintype="passive"/>
+      <node ref="U1" pin="26" pinfunction="PIO2_2/~{DCD}/MISO1" pintype="bidirectional"/>
+      <node ref="U4" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="59" name="/HAll A Hour - 2">
+      <node ref="R8" pin="2" pintype="passive"/>
+      <node ref="U1" pin="12" pinfunction="PIO2_8" pintype="bidirectional"/>
+      <node ref="U6" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="60" name="/HAll A Min - 1 ">
+      <node ref="R7" pin="2" pintype="passive"/>
+      <node ref="U1" pin="13" pinfunction="PIO2_1/~{DSR}/SCK1" pintype="bidirectional"/>
+      <node ref="U5" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="61" name="/HAll A Min - 2">
+      <node ref="R9" pin="2" pintype="passive"/>
+      <node ref="U1" pin="11" pinfunction="PIO2_7" pintype="bidirectional"/>
+      <node ref="U7" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="62" name="/HAll B Hour - 1">
+      <node ref="R13" pin="2" pintype="passive"/>
+      <node ref="U1" pin="1" pinfunction="PIO2_6" pintype="bidirectional"/>
+      <node ref="U11" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="63" name="/HAll B Hour - 2">
+      <node ref="R12" pin="2" pintype="passive"/>
+      <node ref="U1" pin="31" pinfunction="PIO2_11/SCK0" pintype="input"/>
+      <node ref="U10" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="64" name="/HAll B Min - 1">
+      <node ref="R10" pin="2" pintype="passive"/>
+      <node ref="U1" pin="38" pinfunction="PIO2_3/~{RI}/MOSI1" pintype="bidirectional"/>
+      <node ref="U8" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="65" name="/HAll B Min - 2">
+      <node ref="R11" pin="2" pintype="passive"/>
+      <node ref="U1" pin="25" pinfunction="PIO2_10" pintype="bidirectional"/>
+      <node ref="U9" pin="2" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="66" name="/RESET">
+      <node ref="J1" pin="15" pinfunction="Pin_15" pintype="passive"/>
+      <node ref="R16" pin="1" pintype="passive"/>
+    </net>
+    <net code="67" name="/SWCLK ">
+      <node ref="R15" pin="2" pintype="passive"/>
+      <node ref="U1" pin="29" pinfunction="SWCLK/PIO0_10/SCK0/CT16B0_MAT2" pintype="bidirectional"/>
+    </net>
+    <net code="68" name="/SWDIO">
+      <node ref="R19" pin="2" pintype="passive"/>
+      <node ref="U1" pin="39" pinfunction="SWDIO/PIO1_3/AD4/CT32B1_MAT2" pintype="bidirectional"/>
+    </net>
+    <net code="69" name="GND">
+      <node ref="C1" pin="1" pintype="passive"/>
+      <node ref="C10" pin="2" pintype="passive"/>
+      <node ref="C11" pin="2" pintype="passive"/>
+      <node ref="C12" pin="2" pintype="passive"/>
+      <node ref="C13" pin="2" pintype="passive"/>
+      <node ref="C14" pin="2" pintype="passive"/>
+      <node ref="C15" pin="2" pintype="passive"/>
+      <node ref="C16" pin="1" pintype="passive"/>
+      <node ref="C17" pin="2" pintype="passive"/>
+      <node ref="C18" pin="1" pintype="passive"/>
+      <node ref="C19" pin="2" pintype="passive"/>
+      <node ref="C2" pin="2" pintype="passive"/>
+      <node ref="C20" pin="2" pintype="passive"/>
+      <node ref="C21" pin="2" pintype="passive"/>
+      <node ref="C22" pin="2" pintype="passive"/>
+      <node ref="C23" pin="2" pintype="passive"/>
+      <node ref="C24" pin="2" pintype="passive"/>
+      <node ref="C25" pin="2" pintype="passive"/>
+      <node ref="C3" pin="2" pintype="passive"/>
+      <node ref="C4" pin="2" pintype="passive"/>
+      <node ref="C5" pin="2" pintype="passive"/>
+      <node ref="C6" pin="2" pintype="passive"/>
+      <node ref="C7" pin="2" pintype="passive"/>
+      <node ref="C8" pin="2" pintype="passive"/>
+      <node ref="C9" pin="2" pintype="passive"/>
+      <node ref="D2" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="D3" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="J1" pin="10" pinfunction="Pin_10" pintype="passive"/>
+      <node ref="J1" pin="12" pinfunction="Pin_12" pintype="passive"/>
+      <node ref="J1" pin="14" pinfunction="Pin_14" pintype="passive"/>
+      <node ref="J1" pin="16" pinfunction="Pin_16" pintype="passive"/>
+      <node ref="J1" pin="18" pinfunction="Pin_18" pintype="passive"/>
+      <node ref="J1" pin="20" pinfunction="Pin_20" pintype="passive"/>
+      <node ref="J1" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="J1" pin="6" pinfunction="Pin_6" pintype="passive"/>
+      <node ref="J1" pin="8" pinfunction="Pin_8" pintype="passive"/>
+      <node ref="J2" pin="2" pintype="passive"/>
+      <node ref="J3" pin="3" pintype="passive"/>
+      <node ref="J4" pin="2" pintype="passive"/>
+      <node ref="J5" pin="3" pintype="passive"/>
+      <node ref="J6" pin="1" pintype="passive"/>
+      <node ref="R2" pin="2" pintype="passive"/>
+      <node ref="R23" pin="2" pintype="passive"/>
+      <node ref="R3" pin="2" pintype="passive"/>
+      <node ref="R4" pin="2" pintype="passive"/>
+      <node ref="SW1" pin="3" pinfunction="K" pintype="passive"/>
+      <node ref="SW1" pin="4" pinfunction="A" pintype="passive"/>
+      <node ref="U1" pin="21" pinfunction="GND" pintype="power_in"/>
+      <node ref="U1" pin="22" pinfunction="STB" pintype="input"/>
+      <node ref="U1" pin="41" pinfunction="VSS" pintype="power_in"/>
+      <node ref="U1" pin="5" pinfunction="VSS" pintype="power_in"/>
+      <node ref="U10" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U11" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U12" pin="2" pinfunction="GND" pintype="power_in"/>
+      <node ref="U13" pin="2" pinfunction="GND" pintype="power_in"/>
+      <node ref="U2" pin="12" pinfunction="VSS" pintype="input"/>
+      <node ref="U3" pin="12" pinfunction="VSS" pintype="input"/>
+      <node ref="U4" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U5" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U6" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U7" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U8" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U9" pin="3" pinfunction="GND" pintype="power_in"/>
+    </net>
+    <net code="70" name="Net-(C1-Pad2)">
+      <node ref="C1" pin="2" pintype="passive"/>
+      <node ref="U1" pin="6" pinfunction="XTALIN" pintype="passive"/>
+      <node ref="Y1" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="71" name="Net-(C2-Pad1)">
+      <node ref="C2" pin="1" pintype="passive"/>
+      <node ref="U1" pin="7" pinfunction="XTALOUT" pintype="passive"/>
+      <node ref="Y1" pin="1" pinfunction="1" pintype="passive"/>
+    </net>
+    <net code="72" name="Net-(C18-Pad2)">
+      <node ref="C18" pin="2" pintype="passive"/>
+      <node ref="R16" pin="2" pintype="passive"/>
+      <node ref="R18" pin="2" pintype="passive"/>
+      <node ref="R20" pin="1" pintype="passive"/>
+      <node ref="U1" pin="3" pinfunction="~{RESET}/PIO0_0" pintype="bidirectional"/>
+    </net>
+    <net code="73" name="Net-(C19-Pad1)">
+      <node ref="C19" pin="1" pintype="passive"/>
+      <node ref="R17" pin="2" pintype="passive"/>
+      <node ref="R5" pin="2" pintype="passive"/>
+    </net>
+    <net code="74" name="Net-(D1-PadA)">
+      <node ref="D1" pin="A" pintype="passive"/>
+      <node ref="J2" pin="1" pintype="passive"/>
+      <node ref="J4" pin="1" pintype="passive"/>
+    </net>
+    <net code="75" name="Net-(D2-Pad2)">
+      <node ref="D2" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R21" pin="2" pintype="passive"/>
+    </net>
+    <net code="76" name="Net-(D3-Pad2)">
+      <node ref="D3" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R14" pin="2" pintype="passive"/>
+    </net>
+    <net code="77" name="Net-(D4-Pad2)">
+      <node ref="D4" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R22" pin="2" pintype="passive"/>
+    </net>
+    <net code="78" name="Net-(J1-Pad7)">
+      <node ref="J1" pin="7" pinfunction="Pin_7" pintype="passive"/>
+      <node ref="R1" pin="2" pintype="passive"/>
+      <node ref="R19" pin="1" pintype="passive"/>
+    </net>
+    <net code="79" name="Net-(J1-Pad9)">
+      <node ref="J1" pin="9" pinfunction="Pin_9" pintype="passive"/>
+      <node ref="R15" pin="1" pintype="passive"/>
+      <node ref="R4" pin="1" pintype="passive"/>
+    </net>
+    <net code="80" name="Net-(J1-Pad11)">
+      <node ref="J1" pin="11" pinfunction="Pin_11" pintype="passive"/>
+      <node ref="R3" pin="1" pintype="passive"/>
+    </net>
+    <net code="81" name="Net-(J1-Pad17)">
+      <node ref="J1" pin="17" pinfunction="Pin_17" pintype="passive"/>
+      <node ref="R2" pin="1" pintype="passive"/>
+    </net>
+    <net code="82" name="Net-(R20-Pad2)">
+      <node ref="R20" pin="2" pintype="passive"/>
+      <node ref="SW1" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="SW1" pin="2" pinfunction="2" pintype="passive"/>
+    </net>
+    <net code="83" name="Net-(R22-Pad1)">
+      <node ref="R22" pin="1" pintype="passive"/>
+      <node ref="U1" pin="36" pinfunction="PIO3_0/~{DTR}" pintype="bidirectional"/>
+    </net>
+    <net code="84" name="VBUS">
+      <node ref="C14" pin="1" pintype="passive"/>
+      <node ref="D1" pin="K" pintype="passive"/>
+      <node ref="J6" pin="4" pintype="passive"/>
+      <node ref="U12" pin="1" pinfunction="IN" pintype="power_in"/>
+      <node ref="U12" pin="3" pinfunction="EN" pintype="input"/>
+    </net>
+    <net code="85" name="unconnected-(J1-Pad3)">
+      <node ref="J1" pin="3" pinfunction="Pin_3" pintype="passive+no_connect"/>
+    </net>
+    <net code="86" name="unconnected-(J1-Pad5)">
+      <node ref="J1" pin="5" pinfunction="Pin_5" pintype="passive+no_connect"/>
+    </net>
+    <net code="87" name="unconnected-(J1-Pad13)">
+      <node ref="J1" pin="13" pinfunction="Pin_13" pintype="passive+no_connect"/>
+    </net>
+    <net code="88" name="unconnected-(J1-Pad19)">
+      <node ref="J1" pin="19" pinfunction="Pin_19" pintype="passive+no_connect"/>
+    </net>
+    <net code="89" name="unconnected-(U1-Pad32)">
+      <node ref="U1" pin="32" pinfunction="R/PIO0_11/AD0/CT32B0_MAT3" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="90" name="unconnected-(U1-Pad33)">
+      <node ref="U1" pin="33" pinfunction="R/PIO1_0/AD1/CT32B1_CAP0" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="91" name="unconnected-(U1-Pad34)">
+      <node ref="U1" pin="34" pinfunction="R/PIO1_1/AD2/CT32B1_MAT0" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="92" name="unconnected-(U1-Pad35)">
+      <node ref="U1" pin="35" pinfunction="R/PIO1_2/AD3/CT32B1_MAT1" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="93" name="unconnected-(U1-Pad37)">
+      <node ref="U1" pin="37" pinfunction="PIO3_1/~{DSR}" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="94" name="unconnected-(U1-Pad43)">
+      <node ref="U1" pin="43" pinfunction="PIO3_2/~{DCD}" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="95" name="unconnected-(U1-Pad48)">
+      <node ref="U1" pin="48" pinfunction="PIO3_3/~{RI}" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="96" name="unconnected-(U12-Pad4)">
+      <node ref="U12" pin="4" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="97" name="unconnected-(U13-Pad4)">
+      <node ref="U13" pin="4" pinfunction="NC" pintype="no_connect"/>
+    </net>
+  </nets>
+</export>

@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "Clocks Library")(type "KiCad")(uri "/home/jay/Nextcloud/Projects/Clocks/Elec Design/Libraries/Library.pretty/Clocks Library.pretty")(options "")(descr ""))
+)

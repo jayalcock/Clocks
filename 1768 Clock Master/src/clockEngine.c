@@ -518,7 +518,7 @@ static void uart_ntp_rx()//uint8_t *hour, uint8_t *min, uint8_t *sec)
     ESP_command(DISCONNECT_FROM_IP, ONE_SECOND, 0);
 }
 
-// Update position of slave clocks over CAN bus
+// Send updated position of slave clocks over CAN bus
 static void slave_position_tx(const uint8_t clockNum, const uint16_t minuteAngle, const uint16_t hourAngle)
 {
     CAN_MSG_T sendMsgBuff;
@@ -531,13 +531,11 @@ static void slave_position_tx(const uint8_t clockNum, const uint16_t minuteAngle
     sendMsgBuff.Data[2] = minuteAngle & 0xFF;
     sendMsgBuff.Data[3] = hourAngle >> 8;
     sendMsgBuff.Data[4] = hourAngle & 0xFF;
-
-    //ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
     
     startCanTx(&sendMsgBuff);
 }
 
-// Update speed and direction of clocks via can bus
+// Send updated speed and direction of clocks via can bus
 static void slave_speed_direction_tx(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir)
 {
     CAN_MSG_T sendMsgBuff;
@@ -550,13 +548,11 @@ static void slave_speed_direction_tx(const uint8_t clockNum, const uint8_t minut
     sendMsgBuff.Data[2] = hourSpeed;
     sendMsgBuff.Data[3] = minDir;
     sendMsgBuff.Data[4] = hourDir;
-
-    //ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
     
     startCanTx(&sendMsgBuff);
 }
 
-// UStart movement of clocks via can bus
+// Send start movement command via can bus
 static void motion_start_tx(const uint8_t clockNum)
 {
     CAN_MSG_T sendMsgBuff;
@@ -565,9 +561,7 @@ static void motion_start_tx(const uint8_t clockNum)
     sendMsgBuff.DLC = 1;
     sendMsgBuff.Type = 0;
     sendMsgBuff.Data[0] = clockNum;
-    
-    //ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
-    
+        
     startCanTx(&sendMsgBuff);
 }
 
@@ -614,10 +608,12 @@ static void matrix_update_clock_angle(clockDataStruct *clockMtxPtr, const uint8_
     
 }
 
+// Trigger a function in slave node
 static void slave_function_trigger_tx(const uint8_t clockNum, const uint8_t funcNum)
 {
     /* Function 1 - Home clocks
-       Function 2 - 
+       Function 2 - Velocity control 
+       Function 3 - Position control 
     
     */
     
@@ -627,9 +623,7 @@ static void slave_function_trigger_tx(const uint8_t clockNum, const uint8_t func
     sendMsgBuff.DLC = 1;
     sendMsgBuff.Type = 0;
     sendMsgBuff.Data[0] = funcNum;
-    
-    //ctl_message_queue_post(msgQueuePtr, &sendMsgBuff, CTL_TIMEOUT_NONE, 0);
-    
+        
     startCanTx(&sendMsgBuff);
 }
 
