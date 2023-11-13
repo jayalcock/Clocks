@@ -7285,8 +7285,8 @@
     (property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676" (at 237.49 198.755 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid e7de241c-d158-42f9-a13f-2f1548a1385d))
-    (pin "2" (uuid abe48400-1296-4192-a1ff-0d3c9c97a9ce))
+    (pin "1" (uuid a94bd0ae-a557-4d04-b101-3a3a24dee9f8))
+    (pin "2" (uuid d2b8354d-35f0-4fba-bbc8-c1574d96f5c7))
     (instances
       (project "Slave Board"
         (path "/1d9bb2ee-6cce-4dc6-9479-bffa6635df30"
