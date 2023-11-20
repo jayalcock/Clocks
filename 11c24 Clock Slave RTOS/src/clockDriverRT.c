@@ -591,10 +591,11 @@ static void gpio_init(void)
     
     // Set up stepper driver GPIO - stepper reset control 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_1, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN)); // Pulldown per VID6606 datasheet 
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 1);  // Reset
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, RESETPORT, RESETPIN);  // Reset
     
-    // Set reset pin high 
+    // Set driver reset pin high 
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, RESETPORT, RESETPIN); 
+
 }
 
 static void timer_init(void)

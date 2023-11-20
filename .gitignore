@@ -9,6 +9,7 @@ Clocks Project.hzs
 *Mech*
 *Images
 *-backups/
+*.lck
 
 # General
 .DS_Store
