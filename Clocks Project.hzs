@@ -240,10 +240,10 @@
  </Watch4>
  <Files>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="17" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="506" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="1" selected="1" top="83" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="61" y="560" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" top="475" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="40" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/clockDriverRT.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="24" y="33" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" top="6" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="25" y="16" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="18" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" left="0" selected="1" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="22" y="39" useTextEdit="1" path="Common/clockData.h" left="0" top="2" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="23" y="32" useTextEdit="1" path="Common/clockData.c" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="0" y="110" useTextEdit="1" path="1768 Clock Master/src/Clocks-1768.c" left="0" top="88" codecName="Default"/>
