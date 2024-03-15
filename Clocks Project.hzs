@@ -240,7 +240,7 @@
  </Watch4>
  <Files>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="17" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="897" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" selected="1" top="1051" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="51" y="903" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" selected="1" top="20" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="40" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/clockDriverRT.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="24" y="33" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" top="6" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="23" y="19" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" left="0" top="1" codecName="Default"/>
