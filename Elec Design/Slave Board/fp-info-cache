@@ -1,4 +1,4 @@
-22839037996310988
+22840749862431451
 1x2 terminal block
 CONN2_282834-2_TEC
 
@@ -84804,6 +84804,13 @@ SW_L102021ML04Q
 0
 3
 3
+Switches
+SW_SPST_ SKRPASE010
+
+
+0
+4
+4
 Symbol
 CE-Logo_8.5x6mm_SilkScreen
 CE marking
