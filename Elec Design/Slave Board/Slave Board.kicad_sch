@@ -3607,23 +3607,22 @@
 				)
 			)
 		)
-		(symbol "Switch:SW_MEC_5E"
+		(symbol "Switch:SW_SPST"
 			(pin_names
-				(offset 1.016) hide)
+				(offset 0) hide)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "SW"
-				(at 0.635 5.715 0)
+				(at 0 3.175 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left)
 				)
 			)
-			(property "Value" "SW_MEC_5E"
-				(at 0 -3.175 0)
+			(property "Value" "SW_SPST"
+				(at 0 -2.54 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -3631,24 +3630,6 @@
 				)
 			)
 			(property "Footprint" ""
-				(at 0 7.62 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "http://www.apem.com/int/index.php?controller=attachment&id_attachment=1371"
-				(at 0 7.62 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "MEC 5E single pole normally-open tactile switch"
 				(at 0 0 0)
 				(effects
 					(font
@@ -3657,7 +3638,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "switch normally-open pushbutton push-button"
+			(property "Datasheet" "~"
 				(at 0 0 0)
 				(effects
 					(font
@@ -3666,7 +3647,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "SW*MEC*5G*"
+			(property "Description" "Single Pole Single Throw (SPST) switch"
 				(at 0 0 0)
 				(effects
 					(font
@@ -3675,9 +3656,18 @@
 					(hide yes)
 				)
 			)
-			(symbol "SW_MEC_5E_0_1"
+			(property "ki_keywords" "switch lever"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SW_SPST_0_0"
 				(circle
-					(center -1.778 2.54)
+					(center -2.032 0)
 					(radius 0.508)
 					(stroke
 						(width 0)
@@ -3689,43 +3679,7 @@
 				)
 				(polyline
 					(pts
-						(xy -2.286 3.81) (xy 2.286 3.81)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 3.81) (xy 0 5.588)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.54 0) (xy -2.54 2.54) (xy -2.286 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.54 0) (xy 2.54 2.54) (xy 2.286 2.54)
+						(xy -1.524 0.254) (xy 1.524 1.778)
 					)
 					(stroke
 						(width 0)
@@ -3736,7 +3690,7 @@
 					)
 				)
 				(circle
-					(center 1.778 2.54)
+					(center 2.032 0)
 					(radius 0.508)
 					(stroke
 						(width 0)
@@ -3746,10 +3700,12 @@
 						(type none)
 					)
 				)
+			)
+			(symbol "SW_SPST_1_1"
 				(pin passive line
-					(at -5.08 2.54 0)
+					(at -5.08 0 0)
 					(length 2.54)
-					(name "1"
+					(name "A"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3765,9 +3721,9 @@
 					)
 				)
 				(pin passive line
-					(at -5.08 0 0)
+					(at 5.08 0 180)
 					(length 2.54)
-					(name "2"
+					(name "B"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3775,42 +3731,6 @@
 						)
 					)
 					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 0 180)
-					(length 2.54)
-					(name "K"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 2.54 180)
-					(length 2.54)
-					(name "A"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -5678,6 +5598,12 @@
 		(uuid "10e90b33-c8fb-4c91-baea-85cdb2897833")
 	)
 	(junction
+		(at 210.82 119.38)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "16ab80d5-2c6f-4ff6-baa9-f90891e50539")
+	)
+	(junction
 		(at 482.6 201.93)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5762,12 +5688,6 @@
 		(uuid "4d2713de-8c25-41af-900a-fc227346ef67")
 	)
 	(junction
-		(at 232.537 120.015)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "53a786cc-328d-4f37-9fa7-ed2efb759b43")
-	)
-	(junction
 		(at 223.52 196.85)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5802,12 +5722,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5d2a5cbe-ef9b-42c1-9357-21dce27c0cc2")
-	)
-	(junction
-		(at 211.455 120.015)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "5e86c4e4-8ae5-423f-8087-c14b63d02a66")
 	)
 	(junction
 		(at 259.715 62.865)
@@ -5964,12 +5878,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a2e68d3b-e380-49f8-a787-b88241afdc67")
-	)
-	(junction
-		(at 248.031 120.015)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a86d8ba5-b7ba-4b89-99a7-d9c001355e92")
 	)
 	(junction
 		(at 421.64 213.36)
@@ -7589,6 +7497,16 @@
 		)
 		(uuid "12fddfa4-8641-405d-a57e-a0d170d8d286")
 	)
+	(wire
+		(pts
+			(xy 210.82 136.525) (xy 211.455 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1300e7dc-c4fd-4de1-98fb-b943f43b5421")
+	)
 	(bus
 		(pts
 			(xy 344.17 271.78) (xy 344.17 275.59)
@@ -7801,7 +7719,7 @@
 	)
 	(wire
 		(pts
-			(xy 191.135 120.015) (xy 191.135 125.095)
+			(xy 190.5 119.38) (xy 190.5 124.46)
 		)
 		(stroke
 			(width 0)
@@ -7871,7 +7789,7 @@
 	)
 	(wire
 		(pts
-			(xy 211.455 100.33) (xy 211.455 109.22)
+			(xy 210.82 99.695) (xy 210.82 108.585)
 		)
 		(stroke
 			(width 0)
@@ -8391,6 +8309,16 @@
 	)
 	(wire
 		(pts
+			(xy 227.33 119.38) (xy 234.95 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "39238fb8-69d0-4068-9ac5-e81f0fa8bdbb")
+	)
+	(wire
+		(pts
 			(xy 77.47 290.83) (xy 86.36 290.83)
 		)
 		(stroke
@@ -8889,16 +8817,6 @@
 		)
 		(uuid "4fb74255-29a9-4c1f-a2ff-e41c3ae5af3f")
 	)
-	(wire
-		(pts
-			(xy 227.203 120.015) (xy 232.537 120.015)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4fdefdc0-61ad-4c69-83e7-9bdb3bb8bc1d")
-	)
 	(bus
 		(pts
 			(xy 270.51 186.69) (xy 270.51 195.58)
@@ -8978,6 +8896,16 @@
 			(type default)
 		)
 		(uuid "52bc90b7-3445-467e-8f84-31c15b13e1b8")
+	)
+	(wire
+		(pts
+			(xy 252.73 119.38) (xy 245.11 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "52d52c72-b06d-4639-a85d-a6e713ec71b3")
 	)
 	(wire
 		(pts
@@ -9161,7 +9089,7 @@
 	)
 	(wire
 		(pts
-			(xy 195.58 120.015) (xy 191.135 120.015)
+			(xy 194.945 119.38) (xy 190.5 119.38)
 		)
 		(stroke
 			(width 0)
@@ -9461,16 +9389,6 @@
 	)
 	(wire
 		(pts
-			(xy 245.237 122.555) (xy 248.031 122.555)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6e687366-2173-4359-b24a-83159837c5c9")
-	)
-	(wire
-		(pts
 			(xy 403.86 151.13) (xy 403.86 152.4)
 		)
 		(stroke
@@ -9671,7 +9589,7 @@
 	)
 	(wire
 		(pts
-			(xy 211.455 116.84) (xy 211.455 120.015)
+			(xy 210.82 116.205) (xy 210.82 119.38)
 		)
 		(stroke
 			(width 0)
@@ -10831,6 +10749,16 @@
 	)
 	(wire
 		(pts
+			(xy 252.73 119.38) (xy 252.73 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a5816462-9876-48e8-9f74-95580d7f1abd")
+	)
+	(wire
+		(pts
 			(xy 113.665 254.635) (xy 113.665 257.175)
 		)
 		(stroke
@@ -10838,16 +10766,6 @@
 			(type default)
 		)
 		(uuid "a5ba5c4b-60e5-4f13-9d4b-33e4d17c915e")
-	)
-	(wire
-		(pts
-			(xy 235.077 122.555) (xy 232.537 122.555)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a693895d-0301-426c-9623-303caef20762")
 	)
 	(bus
 		(pts
@@ -11301,16 +11219,6 @@
 	)
 	(wire
 		(pts
-			(xy 248.031 122.555) (xy 248.031 120.015)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "be31de3e-c586-4c0e-b445-102ac7a2a32b")
-	)
-	(wire
-		(pts
 			(xy 153.67 316.23) (xy 153.67 334.01)
 		)
 		(stroke
@@ -11529,16 +11437,6 @@
 		)
 		(uuid "c3f6c89f-84e3-45af-934a-3fc97f737b8d")
 	)
-	(wire
-		(pts
-			(xy 245.237 120.015) (xy 248.031 120.015)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c4b1ed20-c71b-457a-b772-402fddf2d0a1")
-	)
 	(bus
 		(pts
 			(xy 332.74 157.48) (xy 332.74 161.29)
@@ -11751,7 +11649,7 @@
 	)
 	(wire
 		(pts
-			(xy 211.455 120.015) (xy 211.455 137.16)
+			(xy 210.82 119.38) (xy 210.82 136.525)
 		)
 		(stroke
 			(width 0)
@@ -11831,7 +11729,7 @@
 	)
 	(wire
 		(pts
-			(xy 211.455 120.015) (xy 203.2 120.015)
+			(xy 210.82 119.38) (xy 202.565 119.38)
 		)
 		(stroke
 			(width 0)
@@ -11891,7 +11789,7 @@
 	)
 	(wire
 		(pts
-			(xy 211.455 120.015) (xy 219.583 120.015)
+			(xy 210.82 119.38) (xy 219.71 119.38)
 		)
 		(stroke
 			(width 0)
@@ -12009,16 +11907,6 @@
 		)
 		(uuid "daea4bc5-4f3c-4dd4-92d2-b207ff1b82b4")
 	)
-	(wire
-		(pts
-			(xy 232.537 120.015) (xy 235.077 120.015)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "db068a9f-cf33-479c-9257-bf8855e1f727")
-	)
 	(bus
 		(pts
 			(xy 231.14 250.19) (xy 268.732 250.19)
@@ -12038,16 +11926,6 @@
 			(type default)
 		)
 		(uuid "dbcb7bed-2cdb-4eff-bdac-984b71739d15")
-	)
-	(wire
-		(pts
-			(xy 232.537 122.555) (xy 232.537 120.015)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "dbe39a11-9dee-4007-aa79-0c876cbc15d6")
 	)
 	(wire
 		(pts
@@ -12198,16 +12076,6 @@
 			(type default)
 		)
 		(uuid "e15e89a2-876a-4345-afde-367328c3ec6a")
-	)
-	(wire
-		(pts
-			(xy 248.031 120.015) (xy 252.095 120.015)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e2bc2507-363d-4f08-bd1e-d7dc3c30d9e0")
 	)
 	(wire
 		(pts
@@ -12528,16 +12396,6 @@
 			(type default)
 		)
 		(uuid "edfb7c52-33d2-4c87-9949-9e436d991acc")
-	)
-	(wire
-		(pts
-			(xy 252.095 120.015) (xy 252.095 124.46)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ee3ca8a4-0bf8-4726-aab8-d3833ac1f38f")
 	)
 	(bus
 		(pts
@@ -14699,7 +14557,7 @@
 				)
 			)
 		)
-		(property "Footprint" "NR6028T4R7M:IND_NR6028T4R7M"
+		(property "Footprint" "Inductors:IND_NR6028T4R7M"
 			(at 267.97 45.72 0)
 			(effects
 				(font
@@ -14907,7 +14765,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 211.455 100.33 0)
+		(at 210.82 99.695 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -14916,7 +14774,7 @@
 		(fields_autoplaced yes)
 		(uuid "0c8adebf-e7e6-40c0-93b1-d6e4d7fe7b6b")
 		(property "Reference" "#PWR0124"
-			(at 211.455 104.14 0)
+			(at 210.82 103.505 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14925,7 +14783,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 211.455 95.25 0)
+			(at 210.82 94.615 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14933,7 +14791,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 211.455 100.33 0)
+			(at 210.82 99.695 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14942,7 +14800,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 211.455 100.33 0)
+			(at 210.82 99.695 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14951,7 +14809,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 211.455 100.33 0)
+			(at 210.82 99.695 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15082,7 +14940,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 109.22 233.9848 0)
 			(effects
 				(font
@@ -15235,7 +15093,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 402.082 257.81 90)
 			(effects
 				(font
@@ -15801,7 +15659,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 522.9352 309.88 0)
 			(effects
 				(font
@@ -15896,7 +15754,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 445.4652 204.47 0)
 			(effects
 				(font
@@ -16129,7 +15987,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 445.4652 309.88 0)
 			(effects
 				(font
@@ -16365,7 +16223,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 479.552 300.99 90)
 			(effects
 				(font
@@ -16524,7 +16382,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 251.1552 193.04 0)
 			(effects
 				(font
@@ -16587,89 +16445,6 @@
 			(project "Slave Board"
 				(path "/1d9bb2ee-6cce-4dc6-9479-bffa6635df30"
 					(reference "C21")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Switch:SW_MEC_5E")
-		(at 240.157 122.555 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "333d21f1-203b-49dc-86a6-b3637925512c")
-		(property "Reference" "SW1"
-			(at 240.157 116.205 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "SW_SPST"
-			(at 240.157 118.745 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Switches:SW_SPST_ SKRPASE010"
-			(at 240.157 114.935 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2005150044_ALPSALPINE-SKRPASE010_C470427.pdf"
-			(at 240.157 114.935 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 240.157 122.555 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DK_Detail_Page" "https://jlcpcb.com/partdetail/Alpsalpine-SKRPASE010/C470427"
-			(at 240.157 122.555 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8a1dbed1-f52c-4d30-a71d-1e6896ce7cfa")
-		)
-		(pin "2"
-			(uuid "4b0c66eb-92f8-4693-a171-396351aa1755")
-		)
-		(pin "3"
-			(uuid "4c7e932d-ebd5-4303-948a-8c4ccf244c1c")
-		)
-		(pin "4"
-			(uuid "e69bd6a0-6545-442d-8e69-f78452c39478")
-		)
-		(instances
-			(project "Slave Board"
-				(path "/1d9bb2ee-6cce-4dc6-9479-bffa6635df30"
-					(reference "SW1")
 					(unit 1)
 				)
 			)
@@ -16892,7 +16667,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC?" "N"
+		(property "JLC PN" "C64982"
 			(at 147.32 48.26 0)
 			(effects
 				(font
@@ -16950,7 +16725,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 402.082 300.99 90)
 			(effects
 				(font
@@ -17150,7 +16925,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 87.3252 243.84 0)
 			(effects
 				(font
@@ -17538,6 +17313,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLC PN" "C2992620"
+			(at 290.195 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "5357e32b-3dd0-4b83-bf03-fae8525004ae")
 		)
@@ -17740,6 +17524,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLC PN" "C2992620"
+			(at 277.495 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "544d0475-8240-452d-906f-c090ed1da736")
 		)
@@ -17881,7 +17674,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 230.378 173.355 90)
 			(effects
 				(font
@@ -18098,7 +17891,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 176.53 56.5149 0)
 			(effects
 				(font
@@ -18183,7 +17976,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 211.455 113.03 0)
+		(at 210.82 112.395 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18192,7 +17985,7 @@
 		(fields_autoplaced yes)
 		(uuid "5cc6831b-6539-433c-972e-625ddcead8ba")
 		(property "Reference" "R18"
-			(at 213.995 111.7599 0)
+			(at 213.36 111.1249 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18201,7 +17994,7 @@
 			)
 		)
 		(property "Value" "100k"
-			(at 213.995 114.2999 0)
+			(at 213.36 113.6649 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18209,8 +18002,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 209.677 113.03 90)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 209.042 112.395 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18219,7 +18012,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&lang=en&cur=CAD"
-			(at 211.455 113.03 0)
+			(at 210.82 112.395 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18228,7 +18021,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 211.455 113.03 0)
+			(at 210.82 112.395 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18237,7 +18030,7 @@
 			)
 		)
 		(property "DK_Datasheet_Link" "https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&lang=en&cur=CAD"
-			(at 211.455 113.03 0)
+			(at 210.82 112.395 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18246,7 +18039,7 @@
 			)
 		)
 		(property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"
-			(at 211.455 113.03 0)
+			(at 210.82 112.395 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18368,7 +18161,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "10 pin jtag:CONN_3220-10-0100-00_CNC"
+		(property "Footprint" "digikey-footprints:PinHeader_2x5_P1.27mm_Drill.7mm"
 			(at 104.775 144.78 0)
 			(effects
 				(font
@@ -18560,7 +18353,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 480.822 156.21 90)
 			(effects
 				(font
@@ -18777,7 +18570,7 @@
 				)
 			)
 		)
-		(property "Footprint" "digikey-footprints:Term_Block_1x3_P5mm"
+		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-5.0-H_1x03_P5.00mm_Horizontal"
 			(at 132.08 321.31 0)
 			(effects
 				(font
@@ -18932,7 +18725,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 199.7202 346.075 0)
 			(effects
 				(font
@@ -19059,7 +18852,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 191.135 125.095 0)
+		(at 190.5 124.46 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -19068,7 +18861,7 @@
 		(fields_autoplaced yes)
 		(uuid "706ae157-6790-453a-9d7a-d759fc3e3fb6")
 		(property "Reference" "#PWR0126"
-			(at 191.135 131.445 0)
+			(at 190.5 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19077,7 +18870,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 191.135 130.175 0)
+			(at 190.5 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19085,7 +18878,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 191.135 125.095 0)
+			(at 190.5 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19094,7 +18887,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 191.135 125.095 0)
+			(at 190.5 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19103,7 +18896,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 191.135 125.095 0)
+			(at 190.5 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19222,7 +19015,7 @@
 				(justify bottom)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 101.6 243.5352 0)
 			(effects
 				(font
@@ -19411,7 +19204,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 524.2052 165.1 0)
 			(effects
 				(font
@@ -19506,7 +19299,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 231.267 173.355 90)
 			(effects
 				(font
@@ -20015,7 +19808,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 114.6302 267.97 0)
 			(effects
 				(font
@@ -20177,7 +19970,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 191.897 327.66 90)
 			(effects
 				(font
@@ -20534,16 +20327,17 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0022232041"
+		(property "Value" "~"
 			(at 402.59 40.6399 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
 			)
 		)
-		(property "Footprint" "digikey-footprints:PinHeader_1x4_P2.54mm_Drill1.02mm"
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
 			(at 394.335 38.1 0)
 			(effects
 				(font
@@ -20553,7 +20347,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.molex.com/pdm_docs/sd/022232041_sd.pdf"
+		(property "Datasheet" "https://www.we-online.com/components/products/datasheet/6130xx11121.pdf"
 			(at 391.795 38.1 0)
 			(effects
 				(font
@@ -20573,7 +20367,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digi-Key_PN" "WM4202-ND"
+		(property "Digi-Key_PN" "732-5317-ND"
 			(at 389.255 38.1 0)
 			(effects
 				(font
@@ -20583,7 +20377,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "0022232041"
+		(property "MPN" "61300411121"
 			(at 386.715 38.1 0)
 			(effects
 				(font
@@ -20593,7 +20387,7 @@
 				(hide yes)
 			)
 		)
-		(property "Category" "Connectors, Interconnects"
+		(property "Category" ""
 			(at 384.175 38.1 0)
 			(effects
 				(font
@@ -20603,7 +20397,7 @@
 				(hide yes)
 			)
 		)
-		(property "Family" "Rectangular Connectors - Headers, Male Pins"
+		(property "Family" ""
 			(at 381.635 38.1 0)
 			(effects
 				(font
@@ -20613,7 +20407,7 @@
 				(hide yes)
 			)
 		)
-		(property "DK_Datasheet_Link" "https://www.molex.com/pdm_docs/sd/022232041_sd.pdf"
+		(property "DK_Datasheet_Link" ""
 			(at 379.095 38.1 0)
 			(effects
 				(font
@@ -20623,7 +20417,7 @@
 				(hide yes)
 			)
 		)
-		(property "DK_Detail_Page" "/product-detail/en/molex/0022232041/WM4202-ND/26671"
+		(property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/würth-elektronik/61300411121/4846827"
 			(at 376.555 38.1 0)
 			(effects
 				(font
@@ -20633,7 +20427,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Molex"
+		(property "Manufacturer" ""
 			(at 371.475 38.1 0)
 			(effects
 				(font
@@ -20643,7 +20437,7 @@
 				(hide yes)
 			)
 		)
-		(property "Status" "Active"
+		(property "Status" ""
 			(at 368.935 38.1 0)
 			(effects
 				(font
@@ -20701,7 +20495,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 78.4352 243.84 0)
 			(effects
 				(font
@@ -21061,7 +20855,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "digikey-footprints:Term_Block_1x3_P5mm"
+		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-5.0-H_1x03_P5.00mm_Horizontal"
 			(at 148.59 334.01 0)
 			(effects
 				(font
@@ -21477,7 +21271,8 @@
 	)
 	(symbol
 		(lib_id "Device:Crystal")
-		(at 119.38 238.76 90)
+		(at 119.38 238.76 270)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -21485,7 +21280,7 @@
 		(dnp no)
 		(uuid "9ad7d480-d6fc-411e-a008-4a541fa73cbf")
 		(property "Reference" "Y1"
-			(at 123.19 237.4899 90)
+			(at 115.57 237.4899 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21494,7 +21289,7 @@
 			)
 		)
 		(property "Value" "12MHz/12pF"
-			(at 123.19 240.0299 90)
+			(at 115.57 240.0299 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21664,7 +21459,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 479.552 257.81 90)
 			(effects
 				(font
@@ -21751,7 +21546,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 122.8852 275.59 0)
 			(effects
 				(font
@@ -21821,7 +21616,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 223.393 120.015 90)
+		(at 223.52 119.38 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -21830,7 +21625,7 @@
 		(fields_autoplaced yes)
 		(uuid "a00f0157-83aa-48fe-84ef-e29b28956d3b")
 		(property "Reference" "R20"
-			(at 223.393 113.665 90)
+			(at 223.52 113.03 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21838,15 +21633,15 @@
 			)
 		)
 		(property "Value" "100R"
-			(at 223.393 116.205 90)
+			(at 223.52 115.57 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 223.393 121.793 90)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 223.52 121.158 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21855,7 +21650,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&lang=en&cur=CAD"
-			(at 223.393 120.015 0)
+			(at 223.52 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21864,7 +21659,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 223.393 120.015 0)
+			(at 223.52 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21873,7 +21668,7 @@
 			)
 		)
 		(property "DK_Datasheet_Link" "https://www.digikey.ca/en/htmldatasheets/production/781422/0/0/1/rmcf0805ft20m0.html?site=CA&lang=en&cur=CAD"
-			(at 223.393 120.015 0)
+			(at 223.52 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21882,7 +21677,7 @@
 			)
 		)
 		(property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/stackpole-electronics-inc/RMCF0805FT10K0/1760676"
-			(at 223.393 120.015 0)
+			(at 223.52 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21932,7 +21727,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 258.1402 296.545 0)
 			(effects
 				(font
@@ -22149,7 +21944,7 @@
 				)
 			)
 		)
-		(property "Value" "0.1uF"
+		(property "Value" "100nF"
 			(at 225.425 24.765 90)
 			(effects
 				(font
@@ -22265,7 +22060,7 @@
 				)
 			)
 		)
-		(property "Footprint" "digikey-footprints:Terminal_Block_D1.3mm_P5mm"
+		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-5.0-H_1x02_P5.00mm_Horizontal"
 			(at 100.965 53.34 0)
 			(effects
 				(font
@@ -22548,7 +22343,7 @@
 				)
 			)
 		)
-		(property "Footprint" "HTSOP-J8_ROM"
+		(property "Footprint" "Buck Converter:HTSOP-J8_ROM"
 			(at 192.405 45.72 0)
 			(effects
 				(font
@@ -22816,7 +22611,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 402.082 156.21 90)
 			(effects
 				(font
@@ -22904,7 +22699,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 201.422 327.66 90)
 			(effects
 				(font
@@ -22982,7 +22777,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 522.9352 266.7 0)
 			(effects
 				(font
@@ -23656,6 +23451,24 @@
 				(hide yes)
 			)
 		)
+		(property "MPN" "LPC11C24FBD48"
+			(at 165.1 240.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLC PN" "C1020252"
+			(at 165.1 240.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "4195098e-e078-4716-822b-572c08c91672")
 		)
@@ -23903,7 +23716,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 480.822 195.58 90)
 			(effects
 				(font
@@ -24063,7 +23876,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 258.1402 193.04 0)
 			(effects
 				(font
@@ -24199,7 +24012,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 199.39 120.015 90)
+		(at 198.755 119.38 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -24207,7 +24020,7 @@
 		(dnp no)
 		(uuid "d4bd5e28-a15d-4b73-8490-0c20245b689e")
 		(property "Reference" "C18"
-			(at 201.295 115.57 90)
+			(at 200.66 114.935 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24216,7 +24029,7 @@
 			)
 		)
 		(property "Value" "100nF"
-			(at 202.565 113.03 90)
+			(at 201.93 112.395 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24224,8 +24037,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 203.2 119.0498 0)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 202.565 118.4148 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24234,7 +24047,7 @@
 			)
 		)
 		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL21B104KBCNNN_Spec.pdf"
-			(at 199.39 120.015 0)
+			(at 198.755 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24243,7 +24056,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 199.39 120.015 0)
+			(at 198.755 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24252,7 +24065,7 @@
 			)
 		)
 		(property "DK Page" ""
-			(at 199.39 120.015 0)
+			(at 198.755 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24261,7 +24074,7 @@
 			)
 		)
 		(property "Rated V" "50V"
-			(at 199.009 109.601 90)
+			(at 198.374 108.966 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24269,7 +24082,7 @@
 			)
 		)
 		(property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/samsung-electro-mechanics/CL21B104KBCNNNC/3886661"
-			(at 199.39 120.015 0)
+			(at 198.755 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24584,7 +24397,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://connect.kemet.com:7667/gateway/IntelliData-ComponentDocumentation/1.0/download/datasheet/C0603C104K5RECAUTO"
+		(property "Datasheet" ""
 			(at 158.115 55.245 0)
 			(effects
 				(font
@@ -24602,7 +24415,7 @@
 				(hide yes)
 			)
 		)
-		(property "Rated V" "50V"
+		(property "Rated V" "35V"
 			(at 163.703 58.547 0)
 			(effects
 				(font
@@ -24610,7 +24423,7 @@
 				)
 			)
 		)
-		(property "MPN" "C0603C104K5RECAUTO"
+		(property "MPN" "GRM188R6YA106MA73J"
 			(at 158.115 55.245 0)
 			(effects
 				(font
@@ -24619,7 +24432,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC?" "N"
+		(property "JLC PN" "C2244191"
 			(at 158.115 55.245 0)
 			(effects
 				(font
@@ -24742,7 +24555,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 251.1552 296.545 0)
 			(effects
 				(font
@@ -24985,7 +24798,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 208.534 282.702 90)
 			(effects
 				(font
@@ -25054,7 +24867,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 445.4652 165.1 0)
 			(effects
 				(font
@@ -25290,6 +25103,92 @@
 		)
 	)
 	(symbol
+		(lib_id "Switch:SW_SPST")
+		(at 240.03 119.38 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e4b04a39-bba4-4721-b1e4-cf72556438b5")
+		(property "Reference" "SW1"
+			(at 240.03 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SW_SPST"
+			(at 240.03 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS810"
+			(at 240.03 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 240.03 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Single Pole Single Throw (SPST) switch"
+			(at 240.03 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "PTS810SJS250SMTRLFS"
+			(at 240.03 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLC PN" "C221897"
+			(at 240.03 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "0ab6623b-22b8-4d42-9b9c-9666858bcf63")
+		)
+		(pin "1"
+			(uuid "5802ff11-78d5-4504-af9d-40ac85b4ebe2")
+		)
+		(instances
+			(project "Slave Board"
+				(path "/1d9bb2ee-6cce-4dc6-9479-bffa6635df30"
+					(reference "SW1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 523.24 200.66 0)
 		(unit 1)
@@ -25316,7 +25215,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 524.2052 204.47 0)
 			(effects
 				(font
@@ -25499,7 +25398,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 445.4652 266.7 0)
 			(effects
 				(font
@@ -25595,7 +25494,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "digikey-footprints:Terminal_Block_D1.3mm_P5mm"
+		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-5.0-H_1x02_P5.00mm_Horizontal"
 			(at 125.095 39.37 0)
 			(effects
 				(font
@@ -25861,7 +25760,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 252.095 124.46 0)
+		(at 252.73 123.19 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -25870,7 +25769,7 @@
 		(fields_autoplaced yes)
 		(uuid "ee3be636-8b2c-453b-91eb-3ba6afa57f1c")
 		(property "Reference" "#PWR0129"
-			(at 252.095 130.81 0)
+			(at 252.73 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25879,7 +25778,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 252.095 129.54 0)
+			(at 252.73 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25887,7 +25786,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 252.095 124.46 0)
+			(at 252.73 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25896,7 +25795,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 252.095 124.46 0)
+			(at 252.73 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25905,7 +25804,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 252.095 124.46 0)
+			(at 252.73 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26065,7 +25964,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 402.082 195.58 90)
 			(effects
 				(font
