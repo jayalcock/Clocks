@@ -14602,6 +14602,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLC PN" "C77758"
+			(at 267.97 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "56c1b21a-92e6-4d8a-a1cf-9f89b3a78ca7")
 		)
@@ -16631,7 +16640,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/B320AE/B340AE.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2307101649_MDD-Microdiode-Electronics-B340A_C64982.pdf"
 			(at 147.32 48.26 0)
 			(effects
 				(font
@@ -16649,7 +16658,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "B340AE"
+		(property "MPN" "C64982"
 			(at 147.32 48.26 0)
 			(effects
 				(font
@@ -17608,6 +17617,15 @@
 			)
 		)
 		(property "JLC?" "N"
+			(at 347.98 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "C2891841"
 			(at 347.98 48.26 0)
 			(effects
 				(font
@@ -18677,6 +18695,15 @@
 					(size 1.524 1.524)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+		(property "JLC PN" "C3816891"
+			(at 127 316.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -20965,6 +20992,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLC PN" "C3816891"
+			(at 153.67 339.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "d8ad7008-4d23-45e8-a33b-4719ccf645ab")
 		)
@@ -21334,6 +21370,24 @@
 			)
 		)
 		(property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/jauch-quartz/J49SMH-A-G-G-K-12M0/10416135"
+			(at 119.38 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLC PN" "C2975357"
+			(at 119.38 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "C2975357"
 			(at 119.38 238.76 0)
 			(effects
 				(font
@@ -22170,6 +22224,15 @@
 				(hide yes)
 			)
 		)
+		(property "JLC PN" "C3819953"
+			(at 95.885 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "5ca8c72b-114a-4137-a250-f579e42d468d")
 		)
@@ -22373,6 +22436,24 @@
 			)
 		)
 		(property "JLC?" "Y"
+			(at 192.405 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "C919448"
+			(at 192.405 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLC PN" "C919448"
 			(at 192.405 45.72 0)
 			(effects
 				(font
@@ -23451,7 +23532,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "LPC11C24FBD48"
+		(property "MPN" "C1020252"
 			(at 165.1 240.03 0)
 			(effects
 				(font
@@ -25155,7 +25236,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "PTS810SJS250SMTRLFS"
+		(property "MPN" "C221897"
 			(at 240.03 119.38 0)
 			(effects
 				(font
@@ -25601,6 +25682,15 @@
 					(size 1.524 1.524)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+		(property "JLC PN" "C3819953"
+			(at 120.015 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
