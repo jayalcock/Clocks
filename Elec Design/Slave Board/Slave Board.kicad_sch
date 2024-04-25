@@ -17625,7 +17625,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C2891841"
+		(property "MPN" "C603785"
 			(at 347.98 48.26 0)
 			(effects
 				(font
@@ -18580,7 +18580,7 @@
 				)
 			)
 		)
-		(property "Value" "~"
+		(property "Value" "1935174"
 			(at 127.635 312.42 90)
 			(effects
 				(font
@@ -20354,7 +20354,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "~"
+		(property "Value" "61300411121"
 			(at 402.59 40.6399 90)
 			(effects
 				(font
@@ -22106,7 +22106,7 @@
 				)
 			)
 		)
-		(property "Value" "~"
+		(property "Value" "1935161"
 			(at 96.52 44.45 90)
 			(effects
 				(font
@@ -25566,7 +25566,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "~"
+		(property "Value" "1935161"
 			(at 117.475 36.1949 0)
 			(effects
 				(font
