@@ -16607,7 +16607,7 @@
 	)
 	(symbol
 		(lib_id "Diode:B340")
-		(at 147.32 48.26 0)
+		(at 147.32 48.26 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -16616,7 +16616,7 @@
 		(fields_autoplaced yes)
 		(uuid "3743bd9e-0f9b-4997-8a33-7f6c2120c370")
 		(property "Reference" "D5"
-			(at 147.0025 42.545 0)
+			(at 147.6375 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16624,7 +16624,7 @@
 			)
 		)
 		(property "Value" "B340"
-			(at 147.0025 45.085 0)
+			(at 147.6375 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -16632,7 +16632,7 @@
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SMA"
-			(at 147.32 52.705 0)
+			(at 147.32 43.815 0)
 			(effects
 				(font
 					(size 1.27 1.27)

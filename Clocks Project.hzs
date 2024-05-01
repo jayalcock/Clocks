@@ -2,7 +2,7 @@
 <session>
  <Bookmarks/>
  <Breakpoints groups="Breakpoints" active_group="Breakpoints">
-  <Exceptions set="HardFault"/>
+  <BreakpointListItem trigger="" line="819" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="11c24 Clock Slave RTOS/src/clockDriverRT.c" useHWbreakpoint="false"/>
  </Breakpoints>
  <ExecutionProfileWindow/>
  <FrameBuffer>
@@ -240,7 +240,7 @@
  </Watch4>
  <Files>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="17" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="51" y="903" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" selected="1" top="20" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="51" y="903" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" selected="1" top="818" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="4" y="40" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/clockDriverRT.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="24" y="33" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" top="6" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="23" y="19" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" left="0" top="1" codecName="Default"/>
@@ -252,5 +252,5 @@
   <SessionOpenFile windowGroup="DockEditRight" x="41" y="26" useTextEdit="1" path="1768 Clock Master/inc/can.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="43" y="473" useTextEdit="1" path="1768 Clock Master/src/can.c" left="18" top="412" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="11C24 Clock Slave RTOS" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="SEGGER J-Link" buildConfiguration="THUMB Flash Release" sessionSettings="" debugSearchFileMap="/Applications/CrossWorks for ARM 4.8/source/thumb_crt0.s&#xa;" fileDialogInitialDirectory="/Users/jayalcock/Projects/Clocks/11C24 Clock Slave RTOS/Device/inc" debugSearchPath="" autoConnectCapabilities="3199"/>
+ <ARMCrossStudioWindow activeProject="11C24 Clock Slave RTOS" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="CMSIS-DAP" buildConfiguration="THUMB Flash Release" sessionSettings="" debugSearchFileMap="/Applications/CrossWorks for ARM 4.8/source/thumb_crt0.s&#xa;" fileDialogInitialDirectory="/Users/jayalcock/Projects/Clocks/11C24 Clock Slave RTOS/Device/inc" debugSearchPath="" autoConnectCapabilities="388479"/>
 </session>
