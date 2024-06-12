@@ -15,7 +15,7 @@
 #include "debugio.h"
 
 // Clock control constants
-#define RESET_WIFI      0
+#define RESET_WIFI      1
 #define UNUSED_ANGLE    45
 #define ONE_SECOND      1000U
 #define GMT             -7
@@ -76,7 +76,7 @@ static const char* SEND = "AT+CIPSEND=48\r\n";
 static const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n"; 
 static const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 static const char* MODE = "AT+CWMODE=1\r\n";
-static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
+static const char* SSIDPWD = "AT+CWJAP=\"SloppyD\",\"phobicjungle712\"\r\n";
 
 // Struct for storing clock data
 typedef struct 
@@ -847,7 +847,7 @@ void clock_main_thread(void *msgQueuePtr)
     #endif
     
     // Update time from NTP server
-    //uart_ntp_rx();
+    uart_ntp_rx();
     
     ctl_timeout_wait(ctl_get_current_time() + 10000);
     
