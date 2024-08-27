@@ -9,7 +9,7 @@
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
-#define BOARDNUMBER 0
+#define BOARDNUMBER 1
  
  
 #define TEST_CCAN_BAUD_RATE 500000

@@ -15,7 +15,7 @@
 #include "debugio.h"
 
 // Clock control constants
-#define RESET_WIFI      1
+#define RESET_WIFI      0
 #define UNUSED_ANGLE    45
 #define ONE_SECOND      1000U
 #define GMT             -7
@@ -832,6 +832,7 @@ void clock_main_thread(void *msgQueuePtr)
     // Initialise matrix to zeors
     matrix_initialise(&clockMatrix);  
     
+    // Home clocks
     slave_function_trigger_tx(ALLCLOCKS, HOME_CLOCKS); 
  
     // Initialise and start the RTC
@@ -846,12 +847,11 @@ void clock_main_thread(void *msgQueuePtr)
         ctl_timeout_wait(ctl_current_time + 5000);
     #endif
     
+    //TODO get time sync working
     // Update time from NTP server
-    uart_ntp_rx();
+    //uart_ntp_rx();
     
-    ctl_timeout_wait(ctl_get_current_time() + 10000);
-    
-    
+    //ctl_timeout_wait(ctl_get_current_time() + 10000);
     
     position_reset(&clockMatrix);
     
