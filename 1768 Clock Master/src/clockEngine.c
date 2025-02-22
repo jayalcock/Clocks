@@ -40,7 +40,7 @@
 #define FUNC_ID     0x204
 //#define ALL_CLOCKS  200
 
-#define NUMBER_OF_SLAVES 120
+#define NUMBER_OF_SLAVES 10
 
 
 #define CONTINUOUS_ROTATE 400
