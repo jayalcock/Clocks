@@ -36,7 +36,6 @@
 #include "can.h"
 #include "can_17xx_40xx.h"
 
-
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
@@ -76,12 +75,11 @@ CAN_MSG_T *testPtr;
 static RINGBUFF_T txring1, rxring1;
 
 ///* Transmit and receive ring buffer sizes */
-#define UART_SRB_SIZE 128	/* Send */
-#define UART_RRB_SIZE 32	/* Receive */
+#define UART_SRB_SIZE 64	/* Send */
+#define UART_RRB_SIZE 64	/* Receive */
 
-///* Transmit and receive buffers */
-//static uint8_t rxbuff1[UART_RRB_SIZE], txbuff1[UART_SRB_SIZE];                                           
-static CAN_MSG_T txbuff1[30];
+///* Transmit buffer */                                           
+static CAN_MSG_T txbuff1[UART_SRB_SIZE];
   
 #if AF_LUT_USED
 #if FULL_CAN_AF_USED
@@ -364,54 +362,53 @@ static void ChangeAFLUT(void)
  ****************************************************************************/
 void CAN_IRQHandler(void)
 {
-#if FULL_CAN_AF_USED
+  #if FULL_CAN_AF_USED
 	uint16_t i = 0, FullCANEntryNum = 0;
-#endif
+  #endif
 	uint32_t IntStatus;
 	CAN_MSG_T RcvMsgBuf;
-	IntStatus = Chip_CAN_GetIntStatus(LPC_CAN);
-
-	//PrintCANErrorInfo(IntStatus);
-
-	/* New Message came */
-	if (IntStatus & CAN_ICR_RI) {
-		Chip_CAN_Receive(LPC_CAN, &RcvMsgBuf);
-		//DEBUGOUT("Message Received!!!\r\n");
-                //DEBUGSTR("RX Success\r\n");
-                Board_LED_Toggle(0);
-               
-		//PrintCANMsg(&RcvMsgBuf);
-
-		//if (RcvMsgBuf.Type & CAN_REMOTE_MSG) {
-		//	ReplyRemoteMessage(&RcvMsgBuf);
-		//}
-		//else {
-		//	ReplyNormalMessage(&RcvMsgBuf);
-		//}
-
-	}
-#if FULL_CAN_AF_USED
-	FullCANEntryNum = Chip_CAN_GetEntriesNum(LPC_CANAF, LPC_CANAF_RAM, CANAF_RAM_FULLCAN_SEC);
-	if (FullCANEntryNum > 64) {
-		FullCANEntryNum = 64;
-	}
-	for (i = 0; i < FullCANEntryNum; i++)
-		if (Chip_CAN_GetFullCANIntStatus(LPC_CANAF, i)) {
-			uint8_t SCC;
-			Chip_CAN_FullCANReceive(LPC_CANAF, LPC_CANAF_RAM, i, &RcvMsgBuf, &SCC);
-			if (SCC == CAN_CTRL_NO) {
-				DEBUGOUT("FullCAN Message Received!!!\r\n");
-				PrintCANMsg(&RcvMsgBuf);
-				if (RcvMsgBuf.Type & CAN_REMOTE_MSG) {
-					ReplyRemoteMessage(&RcvMsgBuf);
-				}
-				else {
-					ReplyNormalMessage(&RcvMsgBuf);
-				}
+	
+	// Process all pending interrupts at once to reduce overhead
+	while ((IntStatus = Chip_CAN_GetIntStatus(LPC_CAN)) != 0) {
+		// Process receive interrupts first
+		if (IntStatus & CAN_ICR_RI) {
+			if (Chip_CAN_Receive(LPC_CAN, &RcvMsgBuf) == SUCCESS) {
+				Board_LED_Toggle(0);
+				
+				// Handle message processing here
+				// Consider adding to a receive ring buffer for processing outside interrupt
+			}
+		}
+		
+		// Handle error conditions
+		if (IntStatus & (CAN_ICR_EI | CAN_ICR_DOI | CAN_ICR_EPI | CAN_ICR_ALI | CAN_ICR_BEI)) {
+			// Only log severe errors to reduce overhead
+			if (IntStatus & (CAN_ICR_DOI | CAN_ICR_BEI)) {
+				// Handle critical errors - data overrun or bus error
+				// Consider setting an error flag for main thread to handle
+				//PrintCANErrorInfo(IntStatus);
 			}
 		}
 
-#endif /*FULL_CAN_AF_USED*/
+  #if FULL_CAN_AF_USED
+		// Process FullCAN messages more efficiently
+		FullCANEntryNum = Chip_CAN_GetEntriesNum(LPC_CANAF, LPC_CANAF_RAM, CANAF_RAM_FULLCAN_SEC);
+		if (FullCANEntryNum > 64) {
+			FullCANEntryNum = 64;
+		}
+		
+		for (i = 0; i < FullCANEntryNum; i++) {
+			if (Chip_CAN_GetFullCANIntStatus(LPC_CANAF, i)) {
+				uint8_t SCC;
+				if (Chip_CAN_FullCANReceive(LPC_CANAF, LPC_CANAF_RAM, i, &RcvMsgBuf, &SCC) == SUCCESS) {
+					if (SCC == CAN_CTRL_NO) {
+						// Consider adding to a receive ring buffer for processing outside interrupt
+					}
+				}
+			}
+		}
+#endif
+	}
 }
 
 // Start CAN Tx public function
@@ -426,71 +423,90 @@ void startCanTx(CAN_MSG_T *sendMsgBuffPtr)
 // CAN Thread
 void CAN_Thread(void *msgQueuePtr)
 {
-	CAN_BUFFER_ID_T TxBuf;
-	CAN_MSG_T SendMsgBuf;
-        //void* msgPtr;
-        testPtr = &SendMsgBuf;
-               
-        RingBuffer_Init(&txring1, &txbuff1, sizeof(CAN_MSG_T), 30);
+    CAN_BUFFER_ID_T TxBuf;
+    CAN_MSG_T SendMsgBuf;
+    CAN_MSG_T batchMsgs[4]; // For batch processing
+    int batchCount = 0;
+    int i;
+    
+    testPtr = &SendMsgBuf;
+           
+    // Initialize the ring buffer with increased size for better performance
+    RingBuffer_Init(&txring1, &txbuff1, sizeof(CAN_MSG_T), UART_SRB_SIZE);
 
-        ctl_events_init(&can_event, 0);
-        ctl_mutex_init(&bufferMutex);
-        
-	Chip_CAN_Init(LPC_CAN, LPC_CANAF, LPC_CANAF_RAM);
+    ctl_events_init(&can_event, 0);
+    ctl_mutex_init(&bufferMutex);
+    
+    Chip_CAN_Init(LPC_CAN, LPC_CANAF, LPC_CANAF_RAM);
 
-	Chip_CAN_SetBitRate(LPC_CAN, 500000);
-	Chip_CAN_EnableInt(LPC_CAN, CAN_IER_BITMASK);
+    // Use higher baud rate if hardware supports it - 500kbit is standard
+    Chip_CAN_SetBitRate(LPC_CAN, 500000);
+    
+    // Enable only necessary interrupts to reduce overhead
+    Chip_CAN_EnableInt(LPC_CAN, CAN_ICR_RI | CAN_ICR_DOI | CAN_ICR_BEI);
 
 #if AF_LUT_USED
-	SetupAFLUT();
-	ChangeAFLUT();
-	PrintAFLUT();
+    SetupAFLUT();
+    ChangeAFLUT();
 #if FULL_CAN_AF_USED
-	Chip_CAN_ConfigFullCANInt(LPC_CANAF, ENABLE);
-	Chip_CAN_SetAFMode(LPC_CANAF, CAN_AF_FULL_MODE);
+    Chip_CAN_ConfigFullCANInt(LPC_CANAF, ENABLE);
+    Chip_CAN_SetAFMode(LPC_CANAF, CAN_AF_FULL_MODE);
 #else
-	Chip_CAN_SetAFMode(LPC_CANAF, CAN_AF_NORMAL_MODE);
+    Chip_CAN_SetAFMode(LPC_CANAF, CAN_AF_NORMAL_MODE);
 #endif /*FULL_CAN_AF_USED*/
 #else
-	Chip_CAN_SetAFMode(LPC_CANAF, CAN_AF_BYBASS_MODE);
+    Chip_CAN_SetAFMode(LPC_CANAF, CAN_AF_BYBASS_MODE);
 #endif /*AF_LUT_USED*/
-	NVIC_EnableIRQ(CAN_IRQn);       
 
-	while (1)
-        {
-            // Wait for can event to be triggered
-            ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &can_event, 1<<0, CTL_TIMEOUT_NONE, 0);
-            
-            // Receive message from message queue
-            //ctl_message_queue_receive((CTL_MESSAGE_QUEUE_t*) msgQueuePtr, &msgPtr, CTL_TIMEOUT_NONE, 0);
-            //RingBuffer_Pop(&txring1, msgPtr);
-            
-           
-            
-            //wait = 1;
-            ctl_mutex_lock(&bufferMutex, CTL_TIMEOUT_NONE, 0);
-            RingBuffer_Pop(&txring1, &SendMsgBuf);
-            //wait = 0;
-            ctl_mutex_unlock(&bufferMutex);
-            
-            // Copy message to local buffer
-            //SendMsgBuf = *(CAN_MSG_T*) msgPtr;
-            
-            // Get free tx buffer 
+    NVIC_EnableIRQ(CAN_IRQn);       
+
+    while (1)
+    {
+        // Wait for CAN event with timeout to allow checking buffer periodically
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &can_event, (1 << 0), 10, 0);
+    
+        // Process messages in batches when possible
+        batchCount = 0;
+        
+        // Lock buffer access once for multiple operations
+        ctl_mutex_lock(&bufferMutex, CTL_TIMEOUT_NONE, 0);
+        
+        // Get up to 4 messages at once if available
+        while (!RingBuffer_IsEmpty(&txring1) && batchCount < 4) {
+            RingBuffer_Pop(&txring1, &batchMsgs[batchCount]);
+            batchCount++;
+        }
+        
+        ctl_mutex_unlock(&bufferMutex);
+        
+        // If no messages, clear event and continue
+        if (batchCount == 0) {
+            ctl_events_set_clear(&can_event, 0, (1 << 0));
+            continue;
+        }
+        
+        // Process the batch of messages
+        for (i = 0; i < batchCount; i++) {
+            // Get a free TX buffer - wait if none available
             TxBuf = Chip_CAN_GetFreeTxBuf(LPC_CAN);
             
-            // Send message and wait for ACK 
-            Chip_CAN_Send(LPC_CAN, TxBuf, &SendMsgBuf);
-            while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
-            //DEBUGSTR("TX Success\r\n");
-            Board_LED_Toggle(1);
+            // Send the message
+            Chip_CAN_Send(LPC_CAN, TxBuf, &batchMsgs[i]);
             
-            // Clear can event
-            if(RingBuffer_IsEmpty(&txring1))
-            {
-                ctl_events_set_clear(&can_event, 0, 1<<0);
+            // For high-priority messages, wait for completion
+            // For lower priority, could continue without waiting
+            if (i == (batchCount - 1) || batchMsgs[i].ID == CAN_TX_MSG_STD_ID) {
+                while ((Chip_CAN_GetStatus(LPC_CAN) & CAN_SR_TCS(TxBuf)) == 0) {}
             }
-
         }
+        
+        // Toggle LED to indicate transmission success
+        Board_LED_Toggle(1);
+        
+        // If the buffer still has messages, trigger processing again
+        if (!RingBuffer_IsEmpty(&txring1)) {
+            ctl_events_set_clear(&can_event, (1 << 0), 0);
+        }
+    }
 }
 

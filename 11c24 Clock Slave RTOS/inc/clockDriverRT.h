@@ -11,36 +11,36 @@
 
 // Structs
 
-// Data for each specific clock arm 
-typedef struct 
-{
-    uint8_t port;
-    uint8_t pin;
-    uint8_t dirPort;
-    uint8_t dirPin;
-    uint8_t hallPort;
-    uint8_t hallPin;
-    int16_t angle;
-    int16_t angleDesired;
-    uint8_t dir;
-    uint8_t start;
-    uint32_t steps;
-    uint32_t remainingSteps;
-    uint8_t atPosition;    
-    uint8_t speed;
-    uint8_t accel;
-    uint8_t controlMode;
+//// Data for each specific clock arm 
+//typedef struct 
+//{
+//    uint8_t port;
+//    uint8_t pin;
+//    uint8_t dirPort;
+//    uint8_t dirPin;
+//    uint8_t hallPort;
+//    uint8_t hallPin;
+//    int16_t angle;
+//    int16_t angleDesired;
+//    uint8_t dir;
+//    uint8_t start;
+//    uint32_t steps;
+//    uint32_t remainingSteps;
+//    uint8_t atPosition;    
+//    uint8_t speed;
+//    uint8_t accel;
+//    uint8_t controlMode;
 
-} clockArmData;
+//} clockArmData;
 
-// Data for each specific clock
-typedef struct
-{
-    uint8_t clockNumber;
-    clockArmData hour;
-    clockArmData min;
+//// Data for each specific clock
+//typedef struct
+//{
+//    uint8_t clockNumber;
+//    clockArmData hour;
+//    clockArmData min;
     
-} motorStruct;
+//} motorStruct;
 
 // Update motor parameters from received can bus data
 void update_from_CAN(CCAN_MSG_OBJ_T *canData);

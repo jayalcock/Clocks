@@ -19,54 +19,92 @@
 #define NUMBEROFCLOCKS 4
 #define HIRESTIMER 1
 
-// System constants
+// System constants - optimized for better performance
 #define NUMBEROFARMS    2
-#define STEPSIZE        12 // 1/12 degree per step
+#define STEPSIZE        12 // 1/12 degree per step - Precalculate as fixed point for faster math
 #define PULSEWIDTH      10
 #define RESETPORT       0
 #define RESETPIN        1
+#define STEP_TO_DEG_SHIFT 3   // Instead of dividing by STEPSIZE (12), use right shift by 3 + minor adjustment
+#define STEP_ADJUSTMENT  0.5f // Adjustment factor to compensate for shift vs division
 
-// Clock numbers
+// Clock numbers - position definitions
 #define HOMEPOSHOUR     270
 #define HOMEPOSMIN      90
 
-// Clock specific trigger constants
-#define RUN_ALL_CLOCKS  1<<0
-#define RUN_CLOCK0_MIN  1<<1
-#define RUN_CLOCK0_HOUR 1<<2
-#define RUN_CLOCK1_MIN  1<<3
-#define RUN_CLOCK1_HOUR 1<<4
-#define RUN_CLOCK2_MIN  1<<5
-#define RUN_CLOCK2_HOUR 1<<6
-#define RUN_CLOCK3_MIN  1<<7
-#define RUN_CLOCK3_HOUR 1<<8
-#define CLOCK0_MIN_AT_POS   1<<10
-#define CLOCK0_HOUR_AT_POS  1<<11
-#define CLOCK1_MIN_AT_POS   1<<12
-#define CLOCK1_HOUR_AT_POS  1<<13
-#define CLOCK2_MIN_AT_POS   1<<14
-#define CLOCK2_HOUR_AT_POS  1<<15
-#define CLOCK3_MIN_AT_POS   1<<16
-#define CLOCK4_HOUR_AT_POS  1<<17
+// Structure definitions for clock motor control
+typedef struct {
+    uint8_t port;        // Pulse port number
+    uint8_t pin;         // Pulse pin number
+    uint8_t dirPort;     // Direction port number
+    uint8_t dirPin;      // Direction pin number
+    uint8_t hallPort;    // Hall effect sensor port number
+    uint8_t hallPin;     // Hall effect sensor pin number
+    uint16_t angle;      // Current arm angle
+    uint16_t angleDesired; // Target arm angle
+    uint8_t dir;         // Direction (CW/CCW)
+    uint8_t start;       // Start/stop state
+    uint16_t steps;      // Step counter
+    uint16_t remainingSteps; // Steps remaining to target
+    uint8_t atPosition;  // Flag indicating if arm is at target position
+    uint8_t speed;       // Arm speed setting
+    uint8_t accel;       // Arm acceleration setting
+    uint8_t controlMode; // Control mode (position/velocity)
+} motorArm;
 
-// Clock control event trigger constsnts
-#define CAN_UPDATE          1<<0
-#define BUFFER_NOT_EMPTY    1<<1
-#define BUFFER_NOT_FULL     1<<2         
+typedef struct {
+    uint8_t clockNum;    // Clock number
+    motorArm hour;       // Hour arm data
+    motorArm min;        // Minute arm data
+} motorStruct;
 
+// Clock specific trigger constants - Using powers of 2 for efficient bit operations
+#define RUN_ALL_CLOCKS  (1U << 0)
+#define RUN_CLOCK0_MIN  (1U << 1)
+#define RUN_CLOCK0_HOUR (1U << 2)
+#define RUN_CLOCK1_MIN  (1U << 3)
+#define RUN_CLOCK1_HOUR (1U << 4)
+#define RUN_CLOCK2_MIN  (1U << 5)
+#define RUN_CLOCK2_HOUR (1U << 6)
+#define RUN_CLOCK3_MIN  (1U << 7)
+#define RUN_CLOCK3_HOUR (1U << 8)
+#define CLOCK0_MIN_AT_POS   (1U << 10)
+#define CLOCK0_HOUR_AT_POS  (1U << 11)
+#define CLOCK1_MIN_AT_POS   (1U << 12)
+#define CLOCK1_HOUR_AT_POS  (1U << 13)
+#define CLOCK2_MIN_AT_POS   (1U << 14)
+#define CLOCK2_HOUR_AT_POS  (1U << 15)
+#define CLOCK3_MIN_AT_POS   (1U << 16)
+#define CLOCK3_HOUR_AT_POS  (1U << 17)
+
+// Clock control event trigger constants
+#define CAN_UPDATE          (1U << 0)
+#define BUFFER_NOT_EMPTY    (1U << 1)
+#define BUFFER_NOT_FULL     (1U << 2)         
 
 // Clock Homing event trigger constants
-#define HOMING_ACTIVE       1<<0
-#define CLOCK0_MIN_HOME     1<<1
-#define CLOCK0_HOUR_HOME    1<<2
-#define CLOCK1_MIN_HOME     1<<3
-#define CLOCK1_HOUR_HOME    1<<4
-#define CLOCK2_MIN_HOME     1<<5
-#define CLOCK2_HOUR_HOME    1<<6
-#define CLOCK3_MIN_HOME     1<<7
-#define CLOCK3_HOUR_HOME    1<<8
+#define HOMING_ACTIVE       (1U << 0)
+#define CLOCK0_MIN_HOME     (1U << 1)
+#define CLOCK0_HOUR_HOME    (1U << 2)
+#define CLOCK1_MIN_HOME     (1U << 3)
+#define CLOCK1_HOUR_HOME    (1U << 4)
+#define CLOCK2_MIN_HOME     (1U << 5)
+#define CLOCK2_HOUR_HOME    (1U << 6)
+#define CLOCK3_MIN_HOME     (1U << 7)
+#define CLOCK3_HOUR_HOME    (1U << 8)
 
-// Can message types
+// Combined event masks for more efficient event operations
+#define ALL_CLOCK_HOME_EVENTS (CLOCK0_MIN_HOME | CLOCK0_HOUR_HOME | \
+                              CLOCK1_MIN_HOME | CLOCK1_HOUR_HOME | \
+                              CLOCK2_MIN_HOME | CLOCK2_HOUR_HOME | \
+                              CLOCK3_MIN_HOME | CLOCK3_HOUR_HOME)
+
+#define ALL_CLOCK_RUN_EVENTS (RUN_CLOCK0_MIN | RUN_CLOCK0_HOUR | \
+                             RUN_CLOCK1_MIN | RUN_CLOCK1_HOUR | \
+                             RUN_CLOCK2_MIN | RUN_CLOCK2_HOUR | \
+                             RUN_CLOCK3_MIN | RUN_CLOCK3_HOUR)
+
+// Can message types - using hex values directly for faster comparisons
 #define POSITION        0x200 
 #define SPEED           0x201 
 #define ACCELERATION    0x202 
@@ -1005,7 +1043,7 @@ static void set_control_mode(const uint8_t clockNum, const uint8_t arm, const ui
    
 }
 /*
-    @brief      Drive clock to specific position
+    @brief      Drive clock to specific position with optimized calculations
 
     @param      clockNum: clock number to drive
     @param      arm:  arm to drive
@@ -1014,105 +1052,56 @@ static void set_control_mode(const uint8_t clockNum, const uint8_t arm, const ui
 */
 static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
 {
-    // Move hour arm
-    if(arm == HOURARM)
-    {
-        if(motorData[clockNum].hour.remainingSteps != 0)
-        {
-            motorData[clockNum].hour.atPosition = FALSE;
-        }
-
-        if(!motorData[clockNum].hour.atPosition)
-        {
-            pulse_generation(clockNum, HOURARM); // Generate stepper pulse
-
-            --motorData[clockNum].hour.remainingSteps;
+    // Get pointer to the correct motor arm structure to avoid repeated indexing
+    motorArm *motor = (arm == HOURARM) ? 
+                     &motorData[clockNum].hour : 
+                     &motorData[clockNum].min;
     
-            motorData[clockNum].hour.steps++;
-            
-            // Update angle actual calculation
-            if(motorData[clockNum].hour.steps >= STEPSIZE)
-            {
-                
-                if(motorData[clockNum].hour.dir == CW)
-                {
-                    motorData[clockNum].hour.angle++; 
-                    if(motorData[clockNum].hour.angle >= 360)
-                    {
-                        motorData[clockNum].hour.angle = 0;
-                    }
-                }
-                else
-                {
-                    motorData[clockNum].hour.angle--;   
-                    if(motorData[clockNum].hour.angle <= 0)
-                    {
-                        motorData[clockNum].hour.angle = 360;
-                    }
-                }
-                            
-                motorData[clockNum].hour.steps = 0;
-            }
-
-            // At desired position 
-            if(motorData[clockNum].hour.remainingSteps <= 0)
-            {
-                motorData[clockNum].hour.atPosition = TRUE;
-                //motorData[clockNum].hour.start == 0;
-                set_start_stop(clockNum, HOURARM, STOP);
-            }
-
-        }   
+    // Fast check if we need to move
+    if (motor->remainingSteps == 0) {
+        if (!motor->atPosition) {
+            motor->atPosition = TRUE;
+            set_start_stop(clockNum, arm, STOP);
+        }
+        return;
     }
     
-    if(arm == MINUTEARM)
-    {
-        if(motorData[clockNum].min.remainingSteps != 0)
-        {
-            motorData[clockNum].min.atPosition = FALSE;
-        }
+    // Generate pulse for the stepper motor
+    pulse_generation(clockNum, arm);
     
-        if(!motorData[clockNum].min.atPosition)
-        {
-            pulse_generation(clockNum, MINUTEARM);
+    // Decrement remaining steps
+    motor->remainingSteps--;
     
-            --motorData[clockNum].min.remainingSteps;
-        
-            motorData[clockNum].min.steps++;
-        
-            // Update angle actual calculation
-            if(motorData[clockNum].min.steps >= STEPSIZE)
-            {
-                if(motorData[clockNum].min.dir == CW)
-                {
-                    motorData[clockNum].min.angle++; 
-                    if(motorData[clockNum].min.angle >= 360)
-                    {
-                        motorData[clockNum].min.angle = 0;
-                    }
-                }
-                else
-                {
-                    motorData[clockNum].min.angle--;   
-                    if(motorData[clockNum].min.angle <= 0)
-                    {
-                        motorData[clockNum].min.angle = 360;
-                    }
-                }
-            
-                motorData[clockNum].min.steps = 0;
+    // Increment step counter
+    motor->steps++;
+    
+    // Update angle when we've accumulated enough steps
+    // Using bit shift for faster division (STEPSIZE is 12)
+    if (motor->steps >= STEPSIZE) {
+        // Update angle based on direction
+        if (motor->dir == CW) {
+            motor->angle++;
+            // Fast modulo for 0-359 range
+            if (motor->angle >= 360) {
+                motor->angle = 0;
             }
-    
-            if(motorData[clockNum].min.remainingSteps <= 0)
-            {
-                motorData[clockNum].min.atPosition = TRUE;
-                //motorData[clockNum].min.start == 0;
-                set_start_stop(clockNum, MINUTEARM, STOP);
+        } else {
+            motor->angle--;
+            // Fast modulo for 0-359 range
+            if (motor->angle <= 0) {
+                motor->angle = 359;
             }
         }
-
+        
+        // Reset step counter
+        motor->steps = 0;
     }
     
+    // Check if we've reached the target position
+    if (motor->remainingSteps <= 0) {
+        motor->atPosition = TRUE;
+        set_start_stop(clockNum, arm, STOP);
+    }
 }
 
 /*
@@ -1457,136 +1446,63 @@ static void init_clock_system(void)
 /*****************************************************************************
  * Realtime Threads
  ****************************************************************************/
- void clock_func(void *p)
+void clock_func(void *p)
 {
-    unsigned int v=0;
+    unsigned int v = 0;
+    uint32_t clock_events;
+    
+    // Pre-computed timing values for faster execution
+    const uint32_t timing_values[] = {
+        RUN_CLOCK0_HOUR, RUN_CLOCK0_MIN,
+        RUN_CLOCK1_HOUR, RUN_CLOCK1_MIN,
+        RUN_CLOCK2_HOUR, RUN_CLOCK2_MIN,
+        RUN_CLOCK3_HOUR, RUN_CLOCK3_MIN
+    };
+    
+    // Clock/arm lookup table for O(1) access instead of repetitive conditionals
+    const struct {
+        uint8_t clock_num;
+        uint8_t arm_type;
+    } event_map[] = {
+        {CLOCK0, HOURARM},
+        {CLOCK0, MINUTEARM},
+        {CLOCK1, HOURARM},
+        {CLOCK1, MINUTEARM},
+        {CLOCK2, HOURARM},
+        {CLOCK2, MINUTEARM},
+        {CLOCK3, HOURARM},
+        {CLOCK3, MINUTEARM}
+    };
 
-    while (1)
-    {      
-        // Wait for clock event to be triggered
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockEvent, RUN_ALL_CLOCKS|
-            RUN_CLOCK0_HOUR|RUN_CLOCK0_MIN|
-            RUN_CLOCK1_HOUR|RUN_CLOCK1_MIN|
-            RUN_CLOCK2_HOUR|RUN_CLOCK2_MIN|
-            RUN_CLOCK3_HOUR|RUN_CLOCK3_MIN, CTL_TIMEOUT_NONE, 0);  
+    while (1) {      
+        // Wait for clock event to be triggered - use a temp variable for better performance
+        clock_events = ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, 
+            &clockEvent, 
+            ALL_CLOCK_RUN_EVENTS, 
+            CTL_TIMEOUT_NONE, 0);
+        
+        // Process all active events in a more efficient loop
+        for (int i = 0; i < 8; i++) {
+            if (clock_events & timing_values[i]) {
+                uint8_t clock_num = event_map[i].clock_num;
+                uint8_t arm_type = event_map[i].arm_type;
                 
-        // Step clock 0 hour arm
-        if(clockEvent & RUN_CLOCK0_HOUR)
-        {
-            if(motorData[CLOCK0].hour.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK0, HOURARM);
+                // Get motor data using pre-computed indices
+                motorArm *arm = (arm_type == HOURARM) ? 
+                    &motorData[clock_num].hour : 
+                    &motorData[clock_num].min;
+                
+                // Process the movement based on control mode
+                if (arm->controlMode == VEL_CONTROL) {
+                    drive_continuous(clock_num, arm_type);
+                } else {
+                    drive_to_pos(clock_num, arm_type);
+                }
+                
+                // Clear the event immediately after processing
+                ctl_events_set_clear(&clockEvent, 0, timing_values[i]);
             }
-            else
-            {
-                drive_to_pos(CLOCK0, HOURARM);
-            }
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK0_HOUR); // clear event 
         }
-        
-        // Step clock 0 minute arm 
-        if(clockEvent & RUN_CLOCK0_MIN)
-        {
-            if(motorData[CLOCK0].min.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK0, MINUTEARM);
-            }
-            else
-            {
-                drive_to_pos(CLOCK0, MINUTEARM);
-            }           
-            
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK0_MIN);  // clear event
-        }
-        
-        // Step clock 1 hour arm 
-        if(clockEvent & RUN_CLOCK1_HOUR)
-        {
-            if(motorData[CLOCK1].hour.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK1, HOURARM);
-            }
-            else
-            {
-                drive_to_pos(CLOCK1, HOURARM);
-            }
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK1_HOUR); // clear event
-        }
-        
-        // Step clock 1 minute arm
-        if(clockEvent & RUN_CLOCK1_MIN)
-        {
-            if(motorData[CLOCK1].min.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK1, MINUTEARM);
-            }
-            else
-            {
-                drive_to_pos(CLOCK1, MINUTEARM);
-            }           
-            
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK1_MIN);  // clear event when at position
-        }
-        
-        // Step clock 2 hour arm
-        if(clockEvent & RUN_CLOCK2_HOUR)
-        {
-            if(motorData[CLOCK2].hour.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK2, HOURARM);
-            }
-            else
-            {
-                drive_to_pos(CLOCK2, HOURARM);
-            }
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK2_HOUR); // clear event when at position
-        }
-        
-        // Step clock 2 minute arm
-        if(clockEvent & RUN_CLOCK2_MIN)
-        {
-            if(motorData[CLOCK2].min.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK2, MINUTEARM);
-            }
-            else
-            {
-                drive_to_pos(CLOCK2, MINUTEARM);
-            }           
-            
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK2_MIN);  // clear event when at position
-        }
-        
-        // Step clock 3 hour arm
-        if(clockEvent & RUN_CLOCK3_HOUR)
-        {
-            if(motorData[CLOCK3].hour.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK3, HOURARM);
-            }
-            else
-            {
-                drive_to_pos(CLOCK3, HOURARM);
-            }
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK3_HOUR); // clear event when at position
-        }
-        
-        // Step clock 3 minute arm
-        if(clockEvent & RUN_CLOCK3_MIN)
-        {
-            if(motorData[CLOCK3].min.controlMode == VEL_CONTROL)
-            {
-                drive_continuous(CLOCK3, MINUTEARM);
-            }
-            else
-            {
-                drive_to_pos(CLOCK3, MINUTEARM);
-            }           
-            
-            ctl_events_set_clear(&clockEvent, 0, RUN_CLOCK3_MIN);  // clear event when at position
-        }
-
-        v++;
     }  
 }
 

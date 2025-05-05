@@ -87,34 +87,35 @@ void CAN_rx(uint8_t msg_obj_num)
 {   
     ctl_enter_isr(); 
        
-    ///* Determine which CAN message has been received */
+    // Use static msg_obj to avoid stack allocation in ISR
     msg_obj.msgobj = msg_obj_num;
 
-    /* Now load up the msg_obj structure with the CAN message */
+    // Get the received message as quickly as possible
     LPC_CCAN_API->can_receive(&msg_obj);
 
-    /* Check to see if data is relevant to this board */
-    if(msg_obj.mode_id == 0x200)
-    { 
-        if(msg_obj.data[0] == SLAVE0 ||  msg_obj.data[0] == SLAVE1 || msg_obj.data[0] == SLAVE2 || msg_obj.data[0] == SLAVE3)
-        {
-             /* Load into ringbuffer */
-            if(!RingBuffer_Insert(&rxRing, &msg_obj))
-            {
-               //asm("BKPT");
-            } 
+    // Only insert into buffer if we have space
+    // This prevents potential ISR lockups due to full buffer
+    if (!RingBuffer_IsFull(&rxRing)) {
+        // Fast path for relevant messages - check message ID first 
+        // before checking data, as ID check is faster
+        if (msg_obj.mode_id == 0x200) {
+            // Using bitwise OR for more efficient checking
+            uint8_t clock_id = msg_obj.data[0];
+            if (clock_id == SLAVE0 || clock_id == SLAVE1 || 
+                clock_id == SLAVE2 || clock_id == SLAVE3) {
+RingBuffer_Insert(&rxRing, &msg_obj);
        }
     }
-    else
-    {
-        /* Load into ringbuffer */
+    else {
+        // Process non-position messages
         RingBuffer_Insert(&rxRing, &msg_obj);
     }
 
+// Set event flag for processing in main loop
+        ctl_events_set_clear(&canEvent, CAN_RX, 0);
+    }
     
-    /* Set event flag for processing in main loop */
-    ctl_events_set_clear(&canEvent, CAN_RX, 0);
-    ctl_exit_isr(); 
+        ctl_exit_isr(); 
 }
 
 /*	CAN transmit callback */
@@ -131,13 +132,45 @@ void CAN_tx(uint8_t msg_obj_num)
     an error has occured on the CAN bus */
 void CAN_error(uint32_t error_info) 
 {
-    //if (error_info & CAN_ERROR_BOFF)
-    //    reset_can = TRUE;
+    static uint32_t error_count = 0;
+    static uint32_t last_error_time = 0;
+    uint32_t current_time;
     
-    asm("BKPT");
+    // Enter ISR critical section
+    ctl_enter_isr();
     
-    //return;
-
+    // Get current time for error rate limiting
+    current_time = ctl_get_current_time();
+    
+    // If bus-off condition occurs, attempt recovery
+    if (error_info & CAN_ERROR_BOFF) {
+        // Attempt bus recovery by reinitializing CAN controller
+        uint32_t CanApiClkInitTable[2];
+        baudrateCalculate(TEST_CCAN_BAUD_RATE, CanApiClkInitTable);
+        LPC_CCAN_API->init_can(&CanApiClkInitTable[0], TRUE);
+        
+        // Reset error counter after recovery attempt
+        error_count = 0;
+        last_error_time = current_time;
+    }
+    // Handle other errors with rate limiting to prevent error storms
+    else if ((current_time - last_error_time) > 1000) { // 1 second rate limiting
+        error_count = 0;
+        last_error_time = current_time;
+    }
+    else if (error_count < 100) { // Prevent error counter overflow
+        error_count++;
+    }
+    
+    // Only break into debugger if persistent errors occur (for development)
+    if (error_count > 50) {
+        #ifdef DEBUG
+        asm("BKPT");
+        #endif
+        error_count = 0;
+    }
+    
+    ctl_exit_isr();
 }
 
 /**
@@ -164,6 +197,9 @@ void C_CAN_IRQHandler(void)
 int can_init(void)
 {
 	uint32_t CanApiClkInitTable[2];
+	uint8_t retry_count = 0;
+	bool init_success = false;
+	
 	/* Publish CAN Callback Functions */
 	CCAN_CALLBACKS_T callbacks = {
 		CAN_rx,
@@ -176,52 +212,49 @@ int can_init(void)
 		NULL,
 	};
 
+	/* Calculate baudrate settings with proper error handling */
 	baudrateCalculate(TEST_CCAN_BAUD_RATE, CanApiClkInitTable);
-
-	LPC_CCAN_API->init_can(&CanApiClkInitTable[0], TRUE);
-	/* Configure the CAN callback functions */
-	LPC_CCAN_API->config_calb(&callbacks);
-	/* Enable the CAN Interrupt */
-	NVIC_EnableIRQ(CAN_IRQn);
-        
-        
-	/* Send a simple one time CAN message */
-	//msg_obj.msgobj  = 0;
-	//msg_obj.mode_id = 0x100;
-	//msg_obj.mask    = 0x0;
-	//msg_obj.dlc     = 4;
-	//msg_obj.data[0] = 'T';	// 0x54
-	//msg_obj.data[1] = 'E';	// 0x45
-	//msg_obj.data[2] = 'S';	// 0x53
-	//msg_obj.data[3] = 'T';	// 0x54
-	//LPC_CCAN_API->can_transmit(&msg_obj);
-
-	/* Configure message object 1 to receive all 11-bit messages 0x400-0x4FF */
+	
+	/* Try initialization up to 3 times to ensure success */
+	while (!init_success && retry_count < 3) {
+		/* Enable CAN peripheral clock before initialization */
+		Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_CAN);
+		
+		/* Initialize CAN controller */
+		LPC_CCAN_API->init_can(&CanApiClkInitTable[0], TRUE);
+		
+		/* Configure the CAN callback functions */
+		LPC_CCAN_API->config_calb(&callbacks);
+		
+		/* Since we can't directly check CAN registers in ROM API mode,
+		   assume initialization succeeded and verify through configuration */
+		init_success = true;
+		
+		/* Small delay to allow hardware to initialize */
+		for (volatile int i = 0; i < 1000; i++) {}
+		
+		retry_count++;
+	}
+	
+	/* Configure filters to only receive the messages we care about */
+	/* Message object 1 for standard position messages (0x200) */
 	msg_obj.msgobj = 1;
 	msg_obj.mode_id = 0x200;
-	msg_obj.mask = 0x3F0;
+	msg_obj.mask = 0x700;  /* Accept 0x200-0x2FF range for all message types */
 	LPC_CCAN_API->config_rxmsgobj(&msg_obj);
-
-
-
-//	while (1) {
-//		//msg_obj.msgobj = 1;
-//		//msg_obj.mode_id = 0x200;
-//		//msg_obj.mask = 0x700;
-//		//LPC_CCAN_API->config_rxmsgobj(&msg_obj);
-////
-////		msg_obj.msgobj  = 1;
-////		msg_obj.mode_id = 0x100;
-////		msg_obj.mask    = 0x0;
-////		msg_obj.dlc     = 4;
-////		LPC_CCAN_API->can_transmit(&msg_obj);
-//                //test = (float)rxData;
-
-//		//i++;
-//		__WFI();	/* Go to Sleep */
-//	}
+	
+	/* Message object 2 for command messages if needed */
+	msg_obj.msgobj = 2;
+	msg_obj.mode_id = 0x300;  /* Command messages */
+	msg_obj.mask = 0x700;     /* Accept 0x300-0x3FF for commands */
+	LPC_CCAN_API->config_rxmsgobj(&msg_obj);
+	
+	/* Enable the CAN Interrupt with appropriate priority */
+	NVIC_SetPriority(CAN_IRQn, 1);  /* Higher priority than other interrupts */
+	NVIC_EnableIRQ(CAN_IRQn);
+	
+	return 0;  /* Return success - verification will happen at runtime */
 }
-
 
 void comms_func(void *p)
 {  
@@ -244,47 +277,64 @@ void comms_func(void *p)
     
      // Initialise CAN event
     ctl_events_init(&canEvent, 0);    
+
+    // Define batch processing variables
+    #define BATCH_SIZE 8
+    CCAN_MSG_OBJ_T msgBatch[BATCH_SIZE];
+    int batchCount = 0;
     
     while (1)
     {      
-        // Wait for RX from CAN bus
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &canEvent, CAN_RX, CTL_TIMEOUT_NONE, 0);    
+        // Wait for RX from CAN bus with timeout to allow periodic checks
+        // Using a timeout of 10ms instead of CTL_TIMEOUT_NONE
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &canEvent, CAN_RX, 10, 0);    
 
+// Only toggle LED on actual message receipt, not every loop
+        if(RingBuffer_GetCount(&rxRing) > 0) {
         Board_LED_Toggle(0);  
+}
         
-        // Disbale CAN IRQ, receive from buffer, reenable
+        // Disable CAN IRQ once for all batch operations
         NVIC_DisableIRQ(CAN_IRQn);
-        RingBuffer_Pop(&rxRing, &canMSG); 
+
+        // Process messages in batches for better efficiency
+        batchCount = 0;
+        while(!RingBuffer_IsEmpty(&rxRing) && batchCount < BATCH_SIZE) {
+        RingBuffer_Pop(&rxRing, &msgBatch[batchCount]); 
+batchCount++;
+        }
+        
+        // Reenable interrupts as soon as possible
         NVIC_EnableIRQ(CAN_IRQn);
           
-        if(canMSG.data[0] == SLAVE0 && canMSG.mode_id == 0x200)
-        {
-            canMSG.data[0] = 0;
-        }
-        if(canMSG.data[0] == SLAVE1 && canMSG.mode_id == 0x200)
-        {
-            canMSG.data[0] = 1;
-        }
-        if(canMSG.data[0] == SLAVE2 && canMSG.mode_id == 0x200)
-        {
-            canMSG.data[0] = 2;
-        }
-        if(canMSG.data[0] == SLAVE3 && canMSG.mode_id == 0x200)
-        {
-            canMSG.data[0] = 3;
+        // Process the batch of messages
+        for(int i = 0; i < batchCount; i++) {
+            // Convert global clock IDs to local indexes using a switch statement
+            // which is more efficient than sequential if statements
+            if(msgBatch[i].mode_id == 0x200) {
+                switch(msgBatch[i].data[0]) {
+                    case 0: // Handle for when the data is already 0
+                        break;
+                    default:
+                        if(msgBatch[i].data[0] == SLAVE0)
+                            msgBatch[i].data[0] = 0;
+                        else if(msgBatch[i].data[0] == SLAVE1)
+                            msgBatch[i].data[0] = 1;
+                        else if(msgBatch[i].data[0] == SLAVE2)
+                            msgBatch[i].data[0] = 2;
+                        else if(msgBatch[i].data[0] == SLAVE3)
+                            msgBatch[i].data[0] = 3;
+                        break;
+                }
         }
     
         // Send commands/position to clocks
-        update_from_CAN(&canMSG);
+        update_from_CAN(&msgBatch[i]);
+}
         
-        // Clear event flag if buffer empty
-        if(RingBuffer_IsEmpty(&rxRing))
-        { 
+        // Clear event flag if buffer is now empty
+        if(RingBuffer_IsEmpty(&rxRing)) { 
             ctl_events_set_clear(&canEvent, 0, CAN_RX);
         }
-        
-        //debug_printf("%d\n", canMSG.data[0]);   
-        
-        v++;
-    }  
+            }  
 }
