@@ -304,30 +304,14 @@ const uint8_t get_clock_numbers(const uint8_t boardNo, const uint8_t clockNo)
     return slave_numbering[boardNo][clockNo];
 }
 
+const digitData* DIGIT_ARRAY[10] = {&ZERO, &ONE, &TWO, &THREE, &FOUR, &FIVE, &SIX, &SEVEN, &EIGHT, &NINE};
+
 digitData * get_digit_data(const uint8_t digit)
 {   
-    switch(digit)
-    {
-        case 0:
-            return &ZERO;
-        case 1:
-            return &ONE;
-        case 2:
-            return &TWO;
-        case 3:
-            return &THREE;
-        case 4:
-            return &FOUR;
-        case 5:
-            return &FIVE;
-        case 6:
-            return &SIX;
-        case 7:
-            return &SEVEN;
-        case 8:
-            return &EIGHT;
-        case 9:
-            return &NINE;
+    // Bounds check to prevent array out-of-bounds access
+    if (digit > 9) {
+        return &ZERO; // Default to zero for invalid inputs
     }
-            
+    
+    return (digitData*)DIGIT_ARRAY[digit];
 }

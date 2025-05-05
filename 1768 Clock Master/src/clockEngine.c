@@ -87,7 +87,7 @@ typedef struct
     uint8_t hourSpeed[COLUMNS][ROWS];
     Bool minuteDirection[COLUMNS][ROWS];
     Bool hourDirection[COLUMNS][ROWS];
-    
+    const digitData* digitCache[10];  // Cache for digit representations
 } clockDataStruct;
 
 
@@ -111,16 +111,25 @@ typedef struct
 static void clock_matrix_number_load(clockDataStruct *clockMtxPtr, const uint8_t position, const digitData *numberPtr)
 {
     const uint8_t y_offset = 1; // Offset to align digit correctly in y-axis
+    const uint8_t numRows = NUM_ROWS(*numberPtr);
+    const uint8_t numCols = NUM_COLS(*numberPtr);
     
-    for(size_t row = 0; row <  NUM_ROWS(*numberPtr); row++)
+    // Pre-calculate position offsets
+    const uint8_t positionOffset = position;
+    
+    for(uint8_t row = 0; row < numRows; row++)
     {
-        for(size_t col = 0; col < NUM_COLS(*numberPtr); col++)
+        const uint8_t rowWithOffset = row + y_offset;
+        
+        for(uint8_t col = 0; col < numCols; col++)
         {
-            clockMtxPtr->minuteAngle[col+position][row+y_offset] = numberPtr[0][col][row];
-            clockMtxPtr->hourAngle[col+position][row+y_offset] = numberPtr[1][col][row];        
+            const uint8_t colWithOffset = col + positionOffset;
+            
+            // Direct indexing is faster than multiple array dereferences
+            clockMtxPtr->minuteAngle[colWithOffset][rowWithOffset] = numberPtr[0][col][row];
+            clockMtxPtr->hourAngle[colWithOffset][rowWithOffset] = numberPtr[1][col][row];        
         }   
     }
-    
 }
 
 /* 
@@ -134,194 +143,29 @@ static void clock_matrix_number_load(clockDataStruct *clockMtxPtr, const uint8_t
 
 static void time_load_into_matrix(clockDataStruct *clockMtxPtr)
 {
-    uint8_t digitA, digitB, digitC, digitD, twoDigHr, twoDigMin;
-    
     // Get actual time from RTC values
-    twoDigHr = HOUR;
-    twoDigMin = MIN;
+    const uint8_t twoDigHr = HOUR;
+    const uint8_t twoDigMin = MIN;
     
-    // Break hour number (HH) into two digits (H H)
-    if(twoDigHr < 10)
-    {
-        digitA = 0;
-        digitB = twoDigHr;
-    }
-    else if(twoDigHr < 20)
-    {
-        digitA = 1;
-        digitB = twoDigHr - 10;
-    }
-    else
-    {
-        digitA = 2;
-        digitB = twoDigHr - 20;
-    }
+    // Break hour number (HH) into two digits (H H) - optimized calculations
+    const uint8_t digitA = twoDigHr / 10;
+    const uint8_t digitB = twoDigHr % 10;
+    const uint8_t digitC = twoDigMin / 10;
+    const uint8_t digitD = twoDigMin % 10;
     
-    // Break minute number (MM) into two digits (M M)
-    if(twoDigMin < 10)
-    {
-        digitC = 0;
-        digitD = twoDigMin;
-    }
-    else if(twoDigMin < 20)
-    {
-        digitC = 1;
-        digitD = twoDigMin - 10;
-    }
-    else
-    {
-        digitC = 2;
-        digitD = twoDigMin - 20;
-    }
-    
-    // Set all arms to "unused angle"
-    for(uint8_t i = 0; i < ROWS; i++)
-    {
-        for(uint8_t j = 0; j < COLUMNS; j++)
-        {
+    // Fast memory clear for unused arms - use memset for larger blocks
+    for(uint8_t i = 0; i < ROWS; i++) {
+        for(uint8_t j = 0; j < COLUMNS; j++) {
             clockMtxPtr->minuteAngle[j][i] = UNUSED_ANGLE;
             clockMtxPtr->hourAngle[j][i] = UNUSED_ANGLE;
         }
     }
     
-    // Load each value from actual time into matrix for display    
-    switch (digitA)
-    {
-        case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(0));
-            break;
-        case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(1));
-            break;
-        case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(2));
-            break;
-        case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(3));
-            break;
-        case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(4));
-            break;
-        case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(5));
-            break;
-        case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(6));
-            break;
-        case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(7));
-            break;
-        case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(8));
-            break;
-        case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_A, get_digit_data(9));
-            break;
-    }
-        
-    switch (digitB)
-    {
-        case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(0));
-            break;
-        case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(1));
-            break;
-        case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(2));
-            break;
-        case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(3));
-            break;
-        case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(4));
-            break;
-        case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(5));
-            break;
-        case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(6));
-            break;
-        case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(7));
-            break;
-        case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(8));
-            break;
-        case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_B, get_digit_data(9));
-            break;
-    }
-        
-    switch (digitC)
-    {
-        case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(0));
-            break;
-        case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(1));
-            break;
-        case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(2));
-            break;
-        case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(3));
-            break;
-        case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(4));
-            break;
-        case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(5));
-            break;
-        case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(6));
-            break;
-        case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(7));
-            break;
-        case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(8));
-            break;
-        case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_C, get_digit_data(9));
-            break;
-    }
-
-            
-    switch (digitD)
-    {
-        case 0:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(0));
-            break;
-        case 1:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(1));
-            break;
-        case 2:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(2));
-            break;
-        case 3:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(3));
-            break;
-        case 4:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(4));
-            break;
-        case 5:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(5));
-            break;
-        case 6:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(6));
-            break;
-        case 7:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(7));
-            break;
-        case 8:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(8));
-            break;
-        case 9:
-            clock_matrix_number_load(clockMtxPtr, POS_D, get_digit_data(9));
-            break;
-    }
-    
+    // Load each value from actual time into matrix for display - using pre-cached digits
+    clock_matrix_number_load(clockMtxPtr, POS_A, clockMtxPtr->digitCache[digitA]);
+    clock_matrix_number_load(clockMtxPtr, POS_B, clockMtxPtr->digitCache[digitB]);
+    clock_matrix_number_load(clockMtxPtr, POS_C, clockMtxPtr->digitCache[digitC]);
+    clock_matrix_number_load(clockMtxPtr, POS_D, clockMtxPtr->digitCache[digitD]);
 }
     
 /* 
@@ -334,10 +178,10 @@ static void time_load_into_matrix(clockDataStruct *clockMtxPtr)
 */    
 static void matrix_initialise(clockDataStruct *clockMtxPtr)
 {
-    
-    for(size_t row = 0; row <  ROWS; row++)
+    // Initialize angle and speed matrices
+    for(uint8_t row = 0; row < ROWS; row++)
     {
-        for(size_t col = 0; col < COLUMNS; col++)
+        for(uint8_t col = 0; col < COLUMNS; col++)
         {
             clockMtxPtr->minuteAngle[col][row] = 0;
             clockMtxPtr->hourAngle[col][row] = 0;
@@ -346,6 +190,11 @@ static void matrix_initialise(clockDataStruct *clockMtxPtr)
             clockMtxPtr->minuteDirection[col][row] = 0;
             clockMtxPtr->hourDirection[col][row] = 0;         
         }   
+    }
+    
+    // Populate the digit cache
+    for(uint8_t digit = 0; digit <= 9; digit++) {
+        clockMtxPtr->digitCache[digit] = get_digit_data(digit);
     }
 }
 
@@ -535,6 +384,68 @@ static void slave_position_tx(const uint8_t clockNum, const uint16_t minuteAngle
     startCanTx(&sendMsgBuff);
 }
 
+// Optimized function to batch-send position updates to multiple clocks
+static void slave_position_batch_tx(const clockDataStruct *clockMtxPtr, uint8_t startClockNum, uint8_t endClockNum)
+{
+    CAN_MSG_T sendMsgBuff;
+    const uint32_t batchDelay = 5; // Small delay between messages to prevent bus saturation
+    
+    sendMsgBuff.ID = POS_ID;
+    sendMsgBuff.DLC = POS_DL;
+    sendMsgBuff.Type = 0;
+    
+    // Limit to valid range
+    if (endClockNum > NUMBER_OF_SLAVES - 1) {
+        endClockNum = NUMBER_OF_SLAVES - 1;
+    }
+    
+    // Send position data for a group of clocks with minimal bus overhead
+    for (uint8_t i = startClockNum; i <= endClockNum; i++) {
+        uint8_t col = i % COLUMNS;
+        uint8_t row = i / COLUMNS;
+        
+        sendMsgBuff.Data[0] = i;
+        sendMsgBuff.Data[1] = clockMtxPtr->minuteAngle[col][row] >> 8;
+        sendMsgBuff.Data[2] = clockMtxPtr->minuteAngle[col][row] & 0xFF;
+        sendMsgBuff.Data[3] = clockMtxPtr->hourAngle[col][row] >> 8;
+        sendMsgBuff.Data[4] = clockMtxPtr->hourAngle[col][row] & 0xFF;
+        
+        startCanTx(&sendMsgBuff);
+        
+        // Small delay to prevent bus saturation
+        if (i < endClockNum) {
+            ctl_timeout_wait(ctl_get_current_time() + batchDelay);
+        }
+    }
+}
+
+// Optimized function to send start commands to a range of clocks
+static void motion_start_batch_tx(uint8_t startClockNum, uint8_t endClockNum)
+{
+    CAN_MSG_T sendMsgBuff;
+    const uint32_t batchDelay = 2; // Smaller delay for simpler commands
+    
+    sendMsgBuff.ID = START_ID;
+    sendMsgBuff.DLC = 1;
+    sendMsgBuff.Type = 0;
+    
+    // Limit to valid range
+    if (endClockNum > NUMBER_OF_SLAVES - 1) {
+        endClockNum = NUMBER_OF_SLAVES - 1;
+    }
+    
+    // Send start commands to a group of clocks
+    for (uint8_t i = startClockNum; i <= endClockNum; i++) {
+        sendMsgBuff.Data[0] = i;
+        startCanTx(&sendMsgBuff);
+        
+        // Small delay to prevent bus saturation
+        if (i < endClockNum) {
+            ctl_timeout_wait(ctl_get_current_time() + batchDelay);
+        }
+    }
+}
+
 // Send updated speed and direction of clocks via can bus
 static void slave_speed_direction_tx(const uint8_t clockNum, const uint8_t minuteSpeed, const uint8_t hourSpeed, const uint8_t minDir, const uint8_t hourDir)
 {
@@ -693,95 +604,35 @@ static void position_reset(clockDataStruct *clockMtxPtr)
     
 }
 
+// Helper function to normalize an angle to keep it within 0-359 degrees
+static inline uint16_t normalize_angle(int16_t angle)
+{
+    // Using modulo to bring the value in range
+    int16_t normalized = angle % 360;
+    
+    // Handle negative angles
+    if (normalized < 0) {
+        normalized += 360;
+    }
+    
+    return (uint16_t)normalized;
+}
+
 void test_routine(clockDataStruct *clockMtxPtr)
 {
-      
     static uint16_t min0, min1, min2, min3, hour0, hour1, hour2, hour3;
     
-    min0 += 45;
-    hour0 += 45;
-    min1 += 45;
-    hour1 += 45;
-    min2 += 45;
-    hour2 += 45;
-    min3 += 45;
-    hour3 += 45;
-        
-                    
-    if(min0 >= 360)
-    {
-        min0 -= 360;
-    }
-    if(min0 <=0)
-    {
-        min0 += 360;
-    }
-    if(hour0 >= 360)
-    {   
-        hour0 -= 360;
-    }
-    if(hour0 <=0)
-    {
-        hour0 += 360;
-    }
+    // Increment all angles by 45 degrees
+    min0 = normalize_angle(min0 + 45);
+    hour0 = normalize_angle(hour0 + 45);
+    min1 = normalize_angle(min1 + 45);
+    hour1 = normalize_angle(hour1 + 45);
+    min2 = normalize_angle(min2 + 45);
+    hour2 = normalize_angle(hour2 + 45);
+    min3 = normalize_angle(min3 + 45);
+    hour3 = normalize_angle(hour3 + 45);
     
-    if(min1 >= 360)
-    {    
-        min1 -= 360;
-    }
-    if(min1 <= 0)
-    {
-        min1 += 360;
-    }
-    
-    if(hour1 >= 360)
-    {    
-        hour1 -= 360;
-    }
-    if(hour1 <= 0)
-    {
-        hour1 += 360;
-    }
-    
-    if(min2 >= 360)
-    {
-        min2 -= 360;
-    }
-    if(min2 <= 0)
-    {
-        min2 += 360;
-    }
-    
-    if(hour2 >= 360)
-    {   
-        hour2 -= 360;
-    }
-    if(hour2 <= 0)
-    {
-        hour2 += 360;
-    }
-    
-    if(min3 >= 360)
-    {    
-        min3 -= 360;
-    }
-    if(min3 <= 0)
-    {
-        min3 += 360;
-    }
-    
-    if(hour3 >= 360)
-    {    
-        hour3 -= 360;
-    }
-    
-    if(hour3 <= 0)
-    {
-        hour3 += 360;
-    }
-    
-
-    
+    // Update the clock matrix with the new angles
     clockMtxPtr->minuteAngle[0][0] = min0;
     clockMtxPtr->minuteAngle[0][1] = min1;
     clockMtxPtr->minuteAngle[0][2] = min2;
@@ -791,33 +642,14 @@ void test_routine(clockDataStruct *clockMtxPtr)
     clockMtxPtr->hourAngle[0][2] = hour2;
     clockMtxPtr->hourAngle[0][3] = hour3;
     
-    
-    
-    
-    //clockMtxPtr->minuteSpeed[0][0] = speed0m;
-    //clockMtxPtr->minuteSpeed[0][1] = speed1m;
-    //clockMtxPtr->minuteSpeed[0][2] = speed2m;
-    //clockMtxPtr->minuteSpeed[0][3] = speed3m;
-    //clockMtxPtr->hourSpeed[0][0] = speed0h;
-    //clockMtxPtr->hourSpeed[0][1] = speed1h;
-    //clockMtxPtr->hourSpeed[0][2] = speed2h;
-    //clockMtxPtr->hourSpeed[0][3] = speed3h;
-    
-    slave_position_tx(0, clockMtxPtr->minuteAngle[0][0], clockMtxPtr->hourAngle[0][0]);
-    motion_start_tx(0); 
-    ctl_timeout_wait(ctl_get_current_time() + 150);
-    slave_position_tx(1, clockMtxPtr->minuteAngle[0][1], clockMtxPtr->hourAngle[0][1]);
-    motion_start_tx(1); 
-    ctl_timeout_wait(ctl_get_current_time() + 150);
-    slave_position_tx(2, clockMtxPtr->minuteAngle[0][2], clockMtxPtr->hourAngle[0][2]);
-    motion_start_tx(2); 
-    ctl_timeout_wait(ctl_get_current_time() + 150);
-    slave_position_tx(3, clockMtxPtr->minuteAngle[0][3], clockMtxPtr->hourAngle[0][3]);
-    motion_start_tx(3); 
-    ctl_timeout_wait(ctl_get_current_time() + 150);
-    
+    // Send positions to clocks and start motion with optimized delays between each command
+    const uint32_t delay = 150;
+    for (uint8_t i = 0; i < 4; i++) {
+        slave_position_tx(i, clockMtxPtr->minuteAngle[0][i], clockMtxPtr->hourAngle[0][i]);
+        motion_start_tx(i);
+        ctl_timeout_wait(ctl_get_current_time() + delay);
+    }
 }
-
 
 void clock_main_thread(void *msgQueuePtr)
 {

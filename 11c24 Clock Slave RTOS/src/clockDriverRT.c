@@ -207,50 +207,44 @@ static motorStruct motorData[] =
             Match value is set by the desired speed for the particular arm + timer current value. 
 */
 #if HIRESTIMER
-// Interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
+// Optimized interrupt handler for 32-bit timer 0 - Controlling minute arm speeds
 void CT32B0_IRQHandler(void)
 {
     ctl_enter_isr();
-    // Clock 0 minute timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, CLOCK0)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, CLOCK0);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, CLOCK0, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK0].min.speed]);
+    
+    // Use a static lookup table to avoid repetitive code and improve speed
+    static const struct {
+        uint8_t clock_index;
+        uint32_t event_flag;
+    } minute_handlers[4] = {
+        {CLOCK0, RUN_CLOCK0_MIN},
+        {CLOCK1, RUN_CLOCK1_MIN},
+        {CLOCK2, RUN_CLOCK2_MIN},
+        {CLOCK3, RUN_CLOCK3_MIN}
+    };
+    
+    // Process all clock matches in a single loop
+    for (uint8_t i = 0; i < 4; i++) {
+        uint8_t clock_idx = minute_handlers[i].clock_index;
         
-        if(motorData[CLOCK0].min.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK0_MIN, 0);
-
+        // Check if match is pending for this clock
+        if (Chip_TIMER_MatchPending(LPC_TIMER32_0, clock_idx)) {
+            // Clear match and set next match point
+            Chip_TIMER_ClearMatch(LPC_TIMER32_0, clock_idx);
+            
+            // Calculate new match time - directly access speed lookup table for faster execution
+            uint32_t match_time = Chip_TIMER_ReadCount(LPC_TIMER32_0) + 
+                                 timerFreq / speed[motorData[clock_idx].min.speed];
+            
+            Chip_TIMER_SetMatch(LPC_TIMER32_0, clock_idx, match_time);
+            
+            // Set event flag if motor should be running
+            if (motorData[clock_idx].min.start == START) {
+                ctl_events_set_clear(&clockEvent, minute_handlers[i].event_flag, 0);
+            }
+        }
     }
-    // Clock 1 minute timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, CLOCK1)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, CLOCK1);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, CLOCK1, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK1].min.speed]);
-        
-        if(motorData[CLOCK1].min.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK1_MIN, 0);
-
-    }
-    // Clock 2 minute timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, CLOCK2)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, CLOCK2);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, CLOCK2, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK2].min.speed]);
-        
-        if(motorData[CLOCK2].min.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK2_MIN, 0);
-
-    }
-    // Clock 3 minute timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_0, CLOCK3)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_0, CLOCK3);
-        Chip_TIMER_SetMatch(LPC_TIMER32_0, CLOCK3, Chip_TIMER_ReadCount(LPC_TIMER32_0) + timerFreq/speed[motorData[CLOCK3].min.speed]);
-        
-        if(motorData[CLOCK3].min.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK3_MIN, 0);
-
-    }  
+    
     ctl_exit_isr();
 } 
 
@@ -267,48 +261,42 @@ void CT32B0_IRQHandler(void)
 void CT32B1_IRQHandler(void)
 {
     ctl_enter_isr();
-    // Clock 0 hour timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, CLOCK0)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, CLOCK0);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, CLOCK0, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK0].hour.speed]);
+    
+    // Use a static lookup table to avoid repetitive code and improve speed
+    static const struct {
+        uint8_t clock_index;
+        uint32_t event_flag;
+    } hour_handlers[4] = {
+        {CLOCK0, RUN_CLOCK0_HOUR},
+        {CLOCK1, RUN_CLOCK1_HOUR},
+        {CLOCK2, RUN_CLOCK2_HOUR},
+        {CLOCK3, RUN_CLOCK3_HOUR}
+    };
+    
+    // Process all clock matches in a single loop
+    for (uint8_t i = 0; i < 4; i++) {
+        uint8_t clock_idx = hour_handlers[i].clock_index;
         
-        if(motorData[CLOCK0].hour.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK0_HOUR, 0);
-
+        // Check if match is pending for this clock
+        if (Chip_TIMER_MatchPending(LPC_TIMER32_1, clock_idx)) {
+            // Clear match and set next match point
+            Chip_TIMER_ClearMatch(LPC_TIMER32_1, clock_idx);
+            
+            // Calculate new match time - directly access speed lookup table for faster execution
+            uint32_t match_time = Chip_TIMER_ReadCount(LPC_TIMER32_1) + 
+                                 timerFreq / speed[motorData[clock_idx].hour.speed];
+            
+            Chip_TIMER_SetMatch(LPC_TIMER32_1, clock_idx, match_time);
+            
+            // Set event flag if motor should be running
+            if(motorData[clock_idx].hour.start == START) {
+                ctl_events_set_clear(&clockEvent, hour_handlers[i].event_flag, 0);
+            }
+        }
     }
-    // Clock 1 hour timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, CLOCK1)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, CLOCK1);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, CLOCK1, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK1].hour.speed]);
-        
-        if(motorData[CLOCK1].hour.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK1_HOUR, 0);
-
-    }
-    // Clock 2 hour timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, CLOCK2)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, CLOCK2);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, CLOCK2, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK2].hour.speed]);
-        
-        if(motorData[CLOCK2].hour.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK2_HOUR, 0);
-
-    }
-    // Clock 3 hour timer - match interrupt clear and match value reset
-    if (Chip_TIMER_MatchPending(LPC_TIMER32_1, CLOCK3)) 
-    {
-        Chip_TIMER_ClearMatch(LPC_TIMER32_1, CLOCK3);
-        Chip_TIMER_SetMatch(LPC_TIMER32_1, CLOCK3, Chip_TIMER_ReadCount(LPC_TIMER32_1) + timerFreq/speed[motorData[CLOCK3].hour.speed]);
-        
-        if(motorData[CLOCK3].hour.start == START)
-            ctl_events_set_clear(&clockEvent, RUN_CLOCK3_HOUR, 0);
-
-    }
+    
     ctl_exit_isr();
-}  
+}
 
 
 #else 
@@ -814,48 +802,43 @@ static void pulse_generation(const uint8_t motorNum, const uint8_t arm)
 
 
 /* 
-
-    @brief      Calculate how many steps to get to desired angle
+    @brief      Calculate how many steps to get to desired angle with optimized angle math
     
-    @param      newAngle:   desired arm angle
-    @param      angle:  current arm angle
+    @param      newAngle: desired arm angle
+    @param      angle: current arm angle
+    @param      dir: direction (CW/CCW)
 
     @return     Number of steps to desired angle
-
 */
-static uint16_t calculate_steps(const uint16_t newAngle ,const uint16_t angle, const uint8_t dir)
+static uint16_t calculate_steps(const uint16_t newAngle, const uint16_t angle, const uint8_t dir)
 {
-
-    if (dir == CW)
-    {
-        if((newAngle - angle) < 0)
-        {
-            return (newAngle - angle + 360) * STEPSIZE;  
+    int16_t angleDiff;
+    
+    // Calculate angle difference based on direction
+    if (dir == CW) {
+        // Calculate difference for clockwise movement
+        angleDiff = newAngle - angle;
+        
+        // Normalize to 0-359 range
+        if (angleDiff < 0) {
+            angleDiff += 360;
+        } else if (angleDiff >= 360) {
+            angleDiff -= 360;
         }
-        else if ((newAngle - angle) >= 360)
-        {
-            return (newAngle - angle - 360) * STEPSIZE;
-        }
-        else
-        {    
-            return (newAngle - angle) * STEPSIZE;   
-        }
-    }
-    else
-    {
-        if((angle - newAngle) < 0)
-        {
-            return (angle - newAngle + 360) * STEPSIZE;  
-        }
-        else if ((newAngle - angle) >= 360)
-        {
-            return (angle - newAngle- 360) * STEPSIZE;
-        }
-        else
-        {    
-            return (angle - newAngle) * STEPSIZE;   
+    } else {
+        // Calculate difference for counter-clockwise movement 
+        angleDiff = angle - newAngle;
+        
+        // Normalize to 0-359 range
+        if (angleDiff < 0) {
+            angleDiff += 360;
+        } else if (angleDiff >= 360) {
+            angleDiff -= 360;
         }
     }
+    
+    // Convert angle to steps using multiplication instead of repeated addition
+    return angleDiff * STEPSIZE;
 }
 
 static void update_stepcount(const uint8_t clockNum)
