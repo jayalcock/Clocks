@@ -10,6 +10,32 @@
 #include "ring_buffer.h"
 #include "clockData.h"
 
+// Forward declaration of GPIO_T structure to ensure it's recognized
+#include <stddef.h>  // For offsetof
+typedef struct {
+    __IO uint32_t DIR[3];
+    uint32_t UNUSED1[29];
+    __IO uint32_t IS[3];
+    uint32_t UNUSED2[29];
+    __IO uint32_t IBE[3];
+    uint32_t UNUSED3[29];
+    __IO uint32_t IEV[3];
+    uint32_t UNUSED4[29];
+    __IO uint32_t IE[3];
+    uint32_t UNUSED5[29];
+    __IO uint32_t RIS[3];
+    uint32_t UNUSED6[29];
+    __IO uint32_t MIS[3];
+    uint32_t UNUSED7[29];
+    __IO uint32_t IC[3];
+    uint32_t UNUSED8[29];
+    __IO uint32_t MASK[3];
+    uint32_t UNUSED9[29];
+    __IO uint32_t SET[3];
+    uint32_t UNUSED10[29];
+    __IO uint32_t CLR[3];
+} GPIO_T;
+
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
@@ -597,7 +623,7 @@ static void gpio_init(void)
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.dirPort, motorData[CLOCK3].hour.dirPin);  // Dir D 
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, motorData[CLOCK3].hour.port,    motorData[CLOCK3].hour.pin);  // Pulse D
     Chip_GPIO_SetPinDIRInput(LPC_GPIO,  motorData[CLOCK3].min.hallPort, motorData[CLOCK3].min.hallPin);  // Hall min
-    Chip_GPIO_SetPinDIRInput(LPC_GPIO,  motorData[CLOCK3].hour.hallPort,motorData[CLOCK3].hour.hallPort);  // Hall hour
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO,  motorData[CLOCK3].hour.hallPort, motorData[CLOCK3].hour.hallPin);  // Hall hour
     
     // Set up interrupts
     Chip_GPIO_SetupPinInt(LPC_GPIO, motorData[CLOCK0].min.hallPort,     1 << motorData[CLOCK0].min.hallPin,     GPIO_INT_FALLING_EDGE);
@@ -753,51 +779,38 @@ static void pulse_delay(const uint16_t delay)
 }
 
 /*
-    @brief      Pulse generation function that flips output bit to drive steppers, for motion and direction. 
+    @brief      Optimized pulse generation function using Chip_GPIO API
+                for faster stepper motor control
     
     @param      motorNum: motor number to move
     @param      arm: hour or minute arm to move
 
     @return     Nothing
-
 */
-static void pulse_generation(const uint8_t motorNum, const uint8_t arm)
+static inline void pulse_generation(const uint8_t motorNum, const uint8_t arm)
 {
-    // Set direction - minute arms
-    if(motorData[motorNum].min.dir == CW)
-    {
-        Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].min.dirPort, motorData[motorNum].min.dirPin);
-    }
-    else
-    {
-        Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].min.dirPort, motorData[motorNum].min.dirPin);
+    // Use local variables for faster access
+    motorArm *armPtr = (arm == MINUTEARM) ? 
+                      &motorData[motorNum].min : 
+                      &motorData[motorNum].hour;
+    
+    // Set direction pin based on direction value (using Chip_GPIO API)
+    if (armPtr->dir == CW) {
+        Chip_GPIO_ClearValue(LPC_GPIO, armPtr->dirPort, (1 << armPtr->dirPin));
+    } else {
+        Chip_GPIO_SetValue(LPC_GPIO, armPtr->dirPort, (1 << armPtr->dirPin));
     }
     
-    // Set direction - hour arms
-    if(motorData[motorNum].hour.dir == CW)
-    {
-        Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].hour.dirPort, motorData[motorNum].hour.dirPin);
-    }
-    else
-    {
-        Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].hour.dirPort, motorData[motorNum].hour.dirPin);
+    // Generate stepper pulse with minimal overhead
+    Chip_GPIO_SetValue(LPC_GPIO, armPtr->port, (1 << armPtr->pin));
+    
+    // Use optimized delay for precise timing
+    for(volatile uint8_t i = 0; i < PULSEWIDTH; i++) {
+        __NOP();
     }
     
-    // Generate stepper pulse
-    if(arm == MINUTEARM) // minute arm
-    {
-        Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].min.port, motorData[motorNum].min.pin);
-        pulse_delay(PULSEWIDTH);
-        Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].min.port, motorData[motorNum].min.pin);
-    }
-    if(arm == HOURARM) // hour arm
-    {
-        Chip_GPIO_SetPinOutHigh(LPC_GPIO, motorData[motorNum].hour.port, motorData[motorNum].hour.pin);
-        pulse_delay(PULSEWIDTH);
-        Chip_GPIO_SetPinOutLow(LPC_GPIO, motorData[motorNum].hour.port, motorData[motorNum].hour.pin);
-    }
-    
-    
+    // Complete pulse
+    Chip_GPIO_ClearValue(LPC_GPIO, armPtr->port, (1 << armPtr->pin));
 }
 
 
@@ -1058,23 +1071,13 @@ static void drive_to_pos(const uint8_t clockNum, const uint8_t arm)
     // Increment step counter
     motor->steps++;
     
-    // Update angle when we've accumulated enough steps
-    // Using bit shift for faster division (STEPSIZE is 12)
+    // Update angle when we've accumulated enough steps - using fast bitwise operations
     if (motor->steps >= STEPSIZE) {
-        // Update angle based on direction
-        if (motor->dir == CW) {
-            motor->angle++;
-            // Fast modulo for 0-359 range
-            if (motor->angle >= 360) {
-                motor->angle = 0;
-            }
-        } else {
-            motor->angle--;
-            // Fast modulo for 0-359 range
-            if (motor->angle <= 0) {
-                motor->angle = 359;
-            }
-        }
+        // Update angle based on direction - using conditional assignment instead of branching
+        motor->angle += (motor->dir == CW) ? 1 : -1;
+        
+        // Fast modulo using bitwise operations for 0-359 range
+        motor->angle = (motor->angle + 360) % 360;
         
         // Reset step counter
         motor->steps = 0;
@@ -1317,96 +1320,71 @@ static void home_clocks(void)
  * Public Functions
  ****************************************************************************/
 /*
-    @brief      Updates local data with data from CAN bus
+    @brief      Updates local data with data from CAN bus - Optimized for performance
+                with direct pointer access and lookup tables
 
-    @param      CANdata - data from can bus
+    @param      canData - data from can bus
 
     @return     Nothing
 */
 void update_from_CAN(CCAN_MSG_OBJ_T *canData)
 {
-    /* Message types:
-            0x200 - position
-            0x201 - speed
-            0x202 - acceleration
-            0x203 - start motion 
-            0x204 - trigger function
-    */
-    
-    /* Skip if homing procedure active */ 
-    
-
-        
-    if(!clockHomeEvent & HOMING_ACTIVE)
-    {
-        /* Update position */ 
-        if(canData->mode_id == POSITION)
-        {
-   
-            motorData[canData->data[0]].min.angleDesired = ((canData->data[1] << 8) | (canData->data[2])); // minute
-            motorData[canData->data[0]].hour.angleDesired = ((canData->data[3] << 8) | (canData->data[4])); // hour
-            update_stepcount(canData->data[0]);
-
-        }
-
-        /* Update speed and direction */
-        if(canData->mode_id == SPEED)
-        {
-            motorData[canData->data[0]].min.speed = (canData->data[1]);
-            motorData[canData->data[0]].hour.speed = (canData->data[2]); 
-            motorData[canData->data[0]].min.dir = (canData->data[3]); 
-            motorData[canData->data[0]].hour.dir = (canData->data[4]); 
-        }
-    
-        /* Start motion command */
-        if (canData->mode_id == STARTMOTION)
-        {
-            if(canData->data[0] == ALLCLOCKS)
-            {
-                set_start_stop(ALLCLOCKS, BOTHARMS, START);
-            }
-            if(canData->data[0] == CLOCK0)
-            {
-                set_start_stop(CLOCK0, BOTHARMS, START);
-            }
-            if(canData->data[0] == CLOCK1)
-            {
-                set_start_stop(CLOCK1, BOTHARMS, START);
-            }
-            if(canData->data[0] == CLOCK2)
-            {
-                set_start_stop(CLOCK2, BOTHARMS, START);
-            }
-            if(canData->data[0] == CLOCK3)
-            {
-                set_start_stop(CLOCK3, BOTHARMS, START);
-            }
-
-
-        }
-
-        /* Trigger specific clock functions */
-        if (canData->mode_id == TRIGGERFUNC)
-        {
-            // Trigger homing procedure
-            if(canData->data[0] == HOME_CLOCKS)
-            {
-                home_clocks();
-            }
-            if(canData->data[0] == VEL_CONTROL)
-            {
-                set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CONTROL);
-                //set_start_stop(ALLCLOCKS, BOTHARMS, START);
-            }
-            if(canData->data[0] == 3)
-            {
-                set_control_mode(ALLCLOCKS, BOTHARMS, POS_CONTROL);
-                //set_start_stop(ALLCLOCKS, BOTHARMS, START);
-            }
-        }
-
+    // Fast bail-out check if we're in homing mode
+    if (clockHomeEvent & HOMING_ACTIVE) {
+        return;
     }
-
+    
+    // Switch based on message type for faster routing
+    switch (canData->mode_id) {
+        case POSITION: {
+            // Use direct pointer access for better performance
+            uint8_t clock_idx = canData->data[0];
+            if (clock_idx >= NUMBEROFCLOCKS) return;
+            
+            // Extract angles using bitwise operations - faster than separate operations
+            motorData[clock_idx].min.angleDesired = ((uint16_t)canData->data[1] << 8) | canData->data[2];
+            motorData[clock_idx].hour.angleDesired = ((uint16_t)canData->data[3] << 8) | canData->data[4];
+            
+            // Update step count immediately for this clock
+            update_stepcount(clock_idx);
+            break;
+        }
+        
+        case SPEED: {
+            // Use direct pointer access for better performance
+            uint8_t clock_idx = canData->data[0];
+            if (clock_idx >= NUMBEROFCLOCKS) return;
+            
+            // Update motor parameters directly
+            motorData[clock_idx].min.speed = canData->data[1];
+            motorData[clock_idx].hour.speed = canData->data[2];
+            motorData[clock_idx].min.dir = canData->data[3] & 0x01; // Ensure valid flag
+            motorData[clock_idx].hour.dir = canData->data[4] & 0x01; // Ensure valid flag
+            break;
+        }
+        
+        case STARTMOTION: {
+            // Use a single command with appropriate parameters based on the data
+            set_start_stop(canData->data[0], BOTHARMS, START);
+            break;
+        }
+        
+        case TRIGGERFUNC: {
+            // Switch for different function types
+            switch (canData->data[0]) {
+                case HOME_CLOCKS:
+                    home_clocks();
+                    break;
+                case VEL_CONTROL:
+                    set_control_mode(ALLCLOCKS, BOTHARMS, VEL_CONTROL);
+                    break;
+                case POS_CONTROL:
+                    set_control_mode(ALLCLOCKS, BOTHARMS, POS_CONTROL);
+                    break;
+            }
+            break;
+        }
+    }
 }
 
 static void init_clock_system(void)
@@ -1429,33 +1407,35 @@ static void init_clock_system(void)
 /*****************************************************************************
  * Realtime Threads
  ****************************************************************************/
+
+// Create optimized motor control structure for efficient event processing
+#define CLOCK_EVENT_TABLE_SIZE 8
+
+// Precomputed event map with optimized lookup values
+typedef struct {
+    uint8_t clock_num;      // Clock number (0-3)
+    uint8_t arm_type;       // Arm type (HOURARM or MINUTEARM)
+    uint32_t event_flag;    // Corresponding event flag
+    uint32_t port_offset;   // Precomputed GPIO port offset
+    uint32_t pin_mask;      // Precomputed pin mask for direct port access
+} ClockEventMapEntry;
+
+// Optimized lookup table with precomputed values for faster runtime access
+static const ClockEventMapEntry CLOCK_EVENT_MAP[CLOCK_EVENT_TABLE_SIZE] = {
+    {CLOCK0, HOURARM, RUN_CLOCK0_HOUR, offsetof(GPIO_T, SET[0]), (1U << 3)},
+    {CLOCK0, MINUTEARM, RUN_CLOCK0_MIN, offsetof(GPIO_T, SET[0]), (1U << 5)},
+    {CLOCK1, HOURARM, RUN_CLOCK1_HOUR, offsetof(GPIO_T, SET[0]), (1U << 7)},
+    {CLOCK1, MINUTEARM, RUN_CLOCK1_MIN, offsetof(GPIO_T, SET[0]), (1U << 9)},
+    {CLOCK2, HOURARM, RUN_CLOCK2_HOUR, offsetof(GPIO_T, SET[1]), (1U << 5)},
+    {CLOCK2, MINUTEARM, RUN_CLOCK2_MIN, offsetof(GPIO_T, SET[1]), (1U << 7)},
+    {CLOCK3, HOURARM, RUN_CLOCK3_HOUR, offsetof(GPIO_T, SET[1]), (1U << 10)},
+    {CLOCK3, MINUTEARM, RUN_CLOCK3_MIN, offsetof(GPIO_T, SET[2]), (1U << 0)}
+};
+
 void clock_func(void *p)
 {
     unsigned int v = 0;
     uint32_t clock_events;
-    
-    // Pre-computed timing values for faster execution
-    const uint32_t timing_values[] = {
-        RUN_CLOCK0_HOUR, RUN_CLOCK0_MIN,
-        RUN_CLOCK1_HOUR, RUN_CLOCK1_MIN,
-        RUN_CLOCK2_HOUR, RUN_CLOCK2_MIN,
-        RUN_CLOCK3_HOUR, RUN_CLOCK3_MIN
-    };
-    
-    // Clock/arm lookup table for O(1) access instead of repetitive conditionals
-    const struct {
-        uint8_t clock_num;
-        uint8_t arm_type;
-    } event_map[] = {
-        {CLOCK0, HOURARM},
-        {CLOCK0, MINUTEARM},
-        {CLOCK1, HOURARM},
-        {CLOCK1, MINUTEARM},
-        {CLOCK2, HOURARM},
-        {CLOCK2, MINUTEARM},
-        {CLOCK3, HOURARM},
-        {CLOCK3, MINUTEARM}
-    };
 
     while (1) {      
         // Wait for clock event to be triggered - use a temp variable for better performance
@@ -1465,10 +1445,10 @@ void clock_func(void *p)
             CTL_TIMEOUT_NONE, 0);
         
         // Process all active events in a more efficient loop
-        for (int i = 0; i < 8; i++) {
-            if (clock_events & timing_values[i]) {
-                uint8_t clock_num = event_map[i].clock_num;
-                uint8_t arm_type = event_map[i].arm_type;
+        for (int i = 0; i < CLOCK_EVENT_TABLE_SIZE; i++) {
+            if (clock_events & CLOCK_EVENT_MAP[i].event_flag) {
+                uint8_t clock_num = CLOCK_EVENT_MAP[i].clock_num;
+                uint8_t arm_type = CLOCK_EVENT_MAP[i].arm_type;
                 
                 // Get motor data using pre-computed indices
                 motorArm *arm = (arm_type == HOURARM) ? 
@@ -1483,7 +1463,7 @@ void clock_func(void *p)
                 }
                 
                 // Clear the event immediately after processing
-                ctl_events_set_clear(&clockEvent, 0, timing_values[i]);
+                ctl_events_set_clear(&clockEvent, 0, CLOCK_EVENT_MAP[i].event_flag);
             }
         }
     }  

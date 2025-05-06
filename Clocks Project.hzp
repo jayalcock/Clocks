@@ -316,6 +316,7 @@
   </project>
   <project Name="1768 Clock Master">
     <configuration
+      CMSIS_CORE="Yes"
       Name="Common"
       Target="LPC1768"
       arm_architecture="v7M"
