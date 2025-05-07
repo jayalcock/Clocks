@@ -12,29 +12,29 @@
 
 // Forward declaration of GPIO_T structure to ensure it's recognized
 #include <stddef.h>  // For offsetof
-typedef struct {
-    __IO uint32_t DIR[3];
-    uint32_t UNUSED1[29];
-    __IO uint32_t IS[3];
-    uint32_t UNUSED2[29];
-    __IO uint32_t IBE[3];
-    uint32_t UNUSED3[29];
-    __IO uint32_t IEV[3];
-    uint32_t UNUSED4[29];
-    __IO uint32_t IE[3];
-    uint32_t UNUSED5[29];
-    __IO uint32_t RIS[3];
-    uint32_t UNUSED6[29];
-    __IO uint32_t MIS[3];
-    uint32_t UNUSED7[29];
-    __IO uint32_t IC[3];
-    uint32_t UNUSED8[29];
-    __IO uint32_t MASK[3];
-    uint32_t UNUSED9[29];
-    __IO uint32_t SET[3];
-    uint32_t UNUSED10[29];
-    __IO uint32_t CLR[3];
-} GPIO_T;
+// typedef struct {
+//     __IO uint32_t DIR[3];
+//     uint32_t UNUSED1[29];
+//     __IO uint32_t IS[3];
+//     uint32_t UNUSED2[29];
+//     __IO uint32_t IBE[3];
+//     uint32_t UNUSED3[29];
+//     __IO uint32_t IEV[3];
+//     uint32_t UNUSED4[29];
+//     __IO uint32_t IE[3];
+//     uint32_t UNUSED5[29];
+//     __IO uint32_t RIS[3];
+//     uint32_t UNUSED6[29];
+//     __IO uint32_t MIS[3];
+//     uint32_t UNUSED7[29];
+//     __IO uint32_t IC[3];
+//     uint32_t UNUSED8[29];
+//     __IO uint32_t MASK[3];
+//     uint32_t UNUSED9[29];
+//     __IO uint32_t SET[3];
+//     uint32_t UNUSED10[29];
+//     __IO uint32_t CLR[3];
+// } GPIO_T;
 
 /*****************************************************************************
  * Private types/enumerations/variables
@@ -208,8 +208,8 @@ static motorStruct motorData[] =
         {1, 7, 1, 6, 2, 7, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0}}, //minute
                      
     {3, //clock num
-        {1, 10, 1, 8, 2, 11, 0, 0, 0, 0, 0, 1, 2, 2, 0}, //hour
-        {2, 0, 1, 11, 2, 10, 0, 0, 0, 0, 0, 1, 2, 2, 0}}, //minute   
+        {1, 10, 1, 8, 2, 11, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0}, //hour - added the missing field
+        {2, 0, 1, 11, 2, 10, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0}}, //minute - added the missing field
           
 };
 
@@ -474,11 +474,11 @@ static void set_start_stop(const uint8_t clockNum, const uint8_t arm, const uint
     
     else 
     {
-        if(arm == MINUTEARM | arm == BOTHARMS)
+        if(arm == MINUTEARM || arm == BOTHARMS)
         {
             motorData[clockNum].min.start = runCmd;
         }
-        if(arm == HOURARM | arm == BOTHARMS)
+        if(arm == HOURARM || arm == BOTHARMS)
         {
             motorData[clockNum].hour.start = runCmd;
         }
@@ -645,6 +645,11 @@ static void gpio_init(void)
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_1, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN)); // Pulldown per VID6606 datasheet 
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, RESETPORT, RESETPIN);  // Reset
     
+  // Set driver reset pin low 
+    Chip_GPIO_SetPinOutLow(LPC_GPIO, RESETPORT, RESETPIN); 
+
+    pulse_delay(100);
+
     // Set driver reset pin high 
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, RESETPORT, RESETPIN); 
 
@@ -1178,19 +1183,22 @@ static void drive_continuous(const uint8_t clockNum, const uint8_t arm)
 static void home_clocks(void)
 {
   
-    ctl_events_set_clear(&clockHomeEvent, HOMING_ACTIVE, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
+    ctl_events_set_clear(&clockHomeEvent, HOMING_ACTIVE, 
+    CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
     CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
     CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
     CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME);
     
     // Clear interrupts 
-    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 
+        motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
         motorData[CLOCK1].hour.hallPin | motorData[CLOCK1].min.hallPin |
         motorData[CLOCK2].hour.hallPin | motorData[CLOCK2].min.hallPin |
         motorData[CLOCK3].hour.hallPin | motorData[CLOCK3].min.hallPin); 
     
     // Enable GPIO interrupts
-    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
+    Chip_GPIO_EnableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 
+        1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
         1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
         1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
         1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);  
@@ -1243,7 +1251,8 @@ static void home_clocks(void)
     ctl_timeout_wait(ctl_get_current_time() + 1000);
     
     // Clear interrupts 
-    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
+    Chip_GPIO_ClearInts(LPC_GPIO, motorData[CLOCK0].min.hallPort, 
+        motorData[CLOCK0].hour.hallPin | motorData[CLOCK0].min.hallPin |
         motorData[CLOCK1].hour.hallPin | motorData[CLOCK1].min.hallPin |
         motorData[CLOCK2].hour.hallPin | motorData[CLOCK2].min.hallPin |
         motorData[CLOCK3].hour.hallPin | motorData[CLOCK3].min.hallPin); 
@@ -1254,7 +1263,8 @@ static void home_clocks(void)
     set_start_stop(ALLCLOCKS, BOTHARMS, START);
     
     // Drive CCW until hall is hit
-    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS, &clockHomeEvent, CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
+    ctl_events_wait(CTL_EVENT_WAIT_ALL_EVENTS, &clockHomeEvent, 
+        CLOCK0_MIN_HOME|CLOCK0_HOUR_HOME|
         CLOCK1_MIN_HOME|CLOCK1_HOUR_HOME|
         CLOCK2_MIN_HOME|CLOCK2_HOUR_HOME|
         CLOCK3_MIN_HOME|CLOCK3_HOUR_HOME, CTL_TIMEOUT_NONE, 0);
@@ -1297,7 +1307,8 @@ static void home_clocks(void)
     update_stepcount(ALLCLOCKS);
     
     // Disable GPIO interrupts
-    Chip_GPIO_DisableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
+    Chip_GPIO_DisableInt(LPC_GPIO, motorData[CLOCK0].min.hallPort, 
+        1 << motorData[CLOCK0].hour.hallPin | 1 << motorData[CLOCK0].min.hallPin |
         1 << motorData[CLOCK1].hour.hallPin | 1 << motorData[CLOCK1].min.hallPin |
         1 << motorData[CLOCK2].hour.hallPin | 1 << motorData[CLOCK2].min.hallPin |
         1 << motorData[CLOCK3].hour.hallPin | 1 << motorData[CLOCK3].min.hallPin);    
@@ -1422,15 +1433,15 @@ typedef struct {
 
 // Optimized lookup table with precomputed values for faster runtime access
 static const ClockEventMapEntry CLOCK_EVENT_MAP[CLOCK_EVENT_TABLE_SIZE] = {
-    {CLOCK0, HOURARM, RUN_CLOCK0_HOUR, offsetof(GPIO_T, SET[0]), (1U << 3)},
-    {CLOCK0, MINUTEARM, RUN_CLOCK0_MIN, offsetof(GPIO_T, SET[0]), (1U << 5)},
-    {CLOCK1, HOURARM, RUN_CLOCK1_HOUR, offsetof(GPIO_T, SET[0]), (1U << 7)},
-    {CLOCK1, MINUTEARM, RUN_CLOCK1_MIN, offsetof(GPIO_T, SET[0]), (1U << 9)},
-    {CLOCK2, HOURARM, RUN_CLOCK2_HOUR, offsetof(GPIO_T, SET[1]), (1U << 5)},
-    {CLOCK2, MINUTEARM, RUN_CLOCK2_MIN, offsetof(GPIO_T, SET[1]), (1U << 7)},
-    {CLOCK3, HOURARM, RUN_CLOCK3_HOUR, offsetof(GPIO_T, SET[1]), (1U << 10)},
-    {CLOCK3, MINUTEARM, RUN_CLOCK3_MIN, offsetof(GPIO_T, SET[2]), (1U << 0)}
-};
+    {CLOCK0, HOURARM, RUN_CLOCK0_HOUR, offsetof(LPC_GPIO_T, DATA[0]), (1U << 3)},
+    {CLOCK0, MINUTEARM, RUN_CLOCK0_MIN, offsetof(LPC_GPIO_T, DATA[0]), (1U << 5)},
+    {CLOCK1, HOURARM, RUN_CLOCK1_HOUR, offsetof(LPC_GPIO_T, DATA[0]), (1U << 7)},
+    {CLOCK1, MINUTEARM, RUN_CLOCK1_MIN, offsetof(LPC_GPIO_T, DATA[0]), (1U << 9)},
+    {CLOCK2, HOURARM, RUN_CLOCK2_HOUR, offsetof(LPC_GPIO_T, DATA[1]), (1U << 5)},
+    {CLOCK2, MINUTEARM, RUN_CLOCK2_MIN, offsetof(LPC_GPIO_T, DATA[1]), (1U << 7)},
+    {CLOCK3, HOURARM, RUN_CLOCK3_HOUR, offsetof(LPC_GPIO_T, DATA[1]), (1U << 10)},
+    {CLOCK3, MINUTEARM, RUN_CLOCK3_MIN, offsetof(LPC_GPIO_T, DATA[2]), (1U << 0)}
+};  
 
 void clock_func(void *p)
 {
@@ -1481,7 +1492,7 @@ void clock_control(void *p)
     {
              
         // Wait for any clock event to be triggered
-        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, CAN_UPDATE | BUFFER_NOT_EMPTY, CTL_TIMEOUT_NONE, 0);
+         ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS, &clockControlEvent, CAN_UPDATE | BUFFER_NOT_EMPTY, CTL_TIMEOUT_NONE, 0);
 
             
             

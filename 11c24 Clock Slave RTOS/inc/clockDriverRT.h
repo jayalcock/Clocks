@@ -48,6 +48,8 @@ void update_from_CAN(CCAN_MSG_OBJ_T *canData);
 
 // Clock n control threads
 void clock_func(void *p);
+
+static void pulse_delay(const uint16_t delay);
 //void clock0_func(void *p);
 //void clock1_func(void *p);
 //void clock2_func(void *p);

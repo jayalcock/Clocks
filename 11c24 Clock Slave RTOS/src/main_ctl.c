@@ -34,7 +34,7 @@ int main(void)
     ctl_task_init(&main_task, 255, "main"); // create subsequent tasks whilst running at the highest priority.
     ctl_start_timer(ctl_increment_tick_from_isr); // start the timer 
     
-    Chip_GPIO_Init(LPC_GPIO); // TODO is this needed?
+    //Chip_GPIO_Init(LPC_GPIO); // TODO is this needed?
     
     // Main clock control thread initialization
     memset(clock_control_stack, 0xcd, sizeof(clock_control_stack));  // write known values into the stack
@@ -55,6 +55,11 @@ int main(void)
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO3_0, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, 3, 0);
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, 3, 0);
+
+    //// Set driver reset pin low 
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_1, (IOCON_FUNC0 | IOCON_MODE_PULLDOWN));
+    //Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 1); 
+
     
     /* Reset 32bit timer 1 -
         Timer has an issue that sets the reset bit on startup 
