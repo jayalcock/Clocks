@@ -40,7 +40,7 @@
 #define FUNC_ID     0x204
 //#define ALL_CLOCKS  200
 
-#define NUMBER_OF_SLAVES 120
+#define NUMBER_OF_SLAVES 10
 
 
 #define CONTINUOUS_ROTATE 400
@@ -76,7 +76,7 @@ static const char* SEND = "AT+CIPSEND=48\r\n";
 static const char* DISCONNECT_FROM_IP = "AT+CIPCLOSE\r\n"; 
 static const uint8_t NTP_PACKET[48]={010,0,0,0,0,0,0,0,0};
 static const char* MODE = "AT+CWMODE=1\r\n";
-static const char* SSIDPWD = "AT+CWJAP=\"NETGEAR47\",\"phobicjungle712\"\r\n";
+static const char* SSIDPWD = "AT+CWJAP=\"SloppyD\",\"phobicjungle712\"\r\n";
 
 // Struct for storing clock data
 typedef struct 
@@ -832,6 +832,7 @@ void clock_main_thread(void *msgQueuePtr)
     // Initialise matrix to zeors
     matrix_initialise(&clockMatrix);  
     
+    // Home clocks
     slave_function_trigger_tx(ALLCLOCKS, HOME_CLOCKS); 
  
     // Initialise and start the RTC
@@ -846,12 +847,11 @@ void clock_main_thread(void *msgQueuePtr)
         ctl_timeout_wait(ctl_current_time + 5000);
     #endif
     
+    //TODO get time sync working
     // Update time from NTP server
     //uart_ntp_rx();
     
-    ctl_timeout_wait(ctl_get_current_time() + 10000);
-    
-    
+    //ctl_timeout_wait(ctl_get_current_time() + 10000);
     
     position_reset(&clockMatrix);
     
