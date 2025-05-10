@@ -12,29 +12,6 @@
 
 // Forward declaration of GPIO_T structure to ensure it's recognized
 #include <stddef.h>  // For offsetof
-// typedef struct {
-//     __IO uint32_t DIR[3];
-//     uint32_t UNUSED1[29];
-//     __IO uint32_t IS[3];
-//     uint32_t UNUSED2[29];
-//     __IO uint32_t IBE[3];
-//     uint32_t UNUSED3[29];
-//     __IO uint32_t IEV[3];
-//     uint32_t UNUSED4[29];
-//     __IO uint32_t IE[3];
-//     uint32_t UNUSED5[29];
-//     __IO uint32_t RIS[3];
-//     uint32_t UNUSED6[29];
-//     __IO uint32_t MIS[3];
-//     uint32_t UNUSED7[29];
-//     __IO uint32_t IC[3];
-//     uint32_t UNUSED8[29];
-//     __IO uint32_t MASK[3];
-//     uint32_t UNUSED9[29];
-//     __IO uint32_t SET[3];
-//     uint32_t UNUSED10[29];
-//     __IO uint32_t CLR[3];
-// } GPIO_T;
 
 /*****************************************************************************
  * Private types/enumerations/variables
