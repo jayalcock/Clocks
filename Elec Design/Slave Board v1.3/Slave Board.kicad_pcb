@@ -27915,14 +27915,6 @@
 		(uuid "dc02af47-e5be-4f95-bb5c-8d218a972f92")
 	)
 	(segment
-		(start 214.554 179.832)
-		(end 217.869 176.517)
-		(width 0.25)
-		(layer "F.Cu")
-		(net 9)
-		(uuid "f3511e44-5e77-4b6f-9e7d-ccbab51e4282")
-	)
-	(segment
 		(start 219.202 182.372)
 		(end 219.202 180.086)
 		(width 0.25)
