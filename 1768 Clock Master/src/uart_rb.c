@@ -108,7 +108,6 @@ void ESP_command(const void* command, const uint16_t delay, const uint8_t size)
 }
  
  
- 
 /**
  * @brief	UART 0 interrupt handler using ring buffers
  * @return	Nothing
