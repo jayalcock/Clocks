@@ -5651,6 +5651,16 @@
 		)
 		(uuid "6ad6edcd-de85-4565-beaa-d80eb195bd22")
 	)
+	(text "Do these need to be pulldown?"
+		(exclude_from_sim no)
+		(at 252.095 167.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "72d3b305-6afa-41bf-8d83-53fc0b05ee16")
+	)
 	(text "12-24VDC"
 		(exclude_from_sim no)
 		(at 83.185 50.8 0)
@@ -5778,6 +5788,12 @@
 		(uuid "25c8eb19-f0a1-4efd-8ec4-8821f5f973dc")
 	)
 	(junction
+		(at 283.21 45.72)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "25da70a3-e377-48ea-a126-c63f842548a1")
+	)
+	(junction
 		(at 481.33 307.34)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5886,12 +5902,6 @@
 		(uuid "5d2a5cbe-ef9b-42c1-9357-21dce27c0cc2")
 	)
 	(junction
-		(at 267.97 62.865)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "602f7b8d-1283-4b78-a1b3-bb189fe7e2a2")
-	)
-	(junction
 		(at 119.38 242.57)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5902,6 +5912,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6566715f-0ab6-41ee-ac49-6678f7fabb2b")
+	)
+	(junction
+		(at 295.91 72.39)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "65a0ddde-e697-4b49-961e-99b21888fd27")
 	)
 	(junction
 		(at 221.615 194.31)
@@ -5952,16 +5968,16 @@
 		(uuid "7485b3cf-ed82-45f8-b0aa-3bc7fccec9ba")
 	)
 	(junction
-		(at 267.97 45.72)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7663ab97-7cf6-45d3-8b58-4baee9ff9a5b")
-	)
-	(junction
 		(at 250.19 322.58)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "777dcc66-0145-4d09-b25f-3d8a2fe27589")
+	)
+	(junction
+		(at 270.51 45.72)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "77f82584-1dbd-45c5-98b7-2bee225e4db7")
 	)
 	(junction
 		(at 499.11 318.77)
@@ -6156,12 +6172,6 @@
 		(uuid "caf71861-4cc1-49d2-b811-0b2558805065")
 	)
 	(junction
-		(at 277.495 45.72)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "cc67a6bb-4917-4288-88b0-05664cd26a72")
-	)
-	(junction
 		(at 203.2 318.77)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6216,10 +6226,10 @@
 		(uuid "ed399616-f15f-4154-9930-ef13049b204e")
 	)
 	(junction
-		(at 290.195 45.72)
+		(at 295.91 45.72)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "f9dd88ea-8439-4b58-b039-002a99ff422b")
+		(uuid "ef66a811-ffef-4824-b038-ced654cacd97")
 	)
 	(junction
 		(at 250.825 45.72)
@@ -7447,6 +7457,16 @@
 		)
 		(uuid "09522dd1-c692-4182-bb58-dc4be266bc0e")
 	)
+	(wire
+		(pts
+			(xy 295.91 45.72) (xy 306.07 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "096d759a-9608-4807-a479-e1263d5b26c4")
+	)
 	(bus
 		(pts
 			(xy 231.14 242.57) (xy 231.14 245.11)
@@ -7639,16 +7659,6 @@
 	)
 	(wire
 		(pts
-			(xy 267.97 45.72) (xy 277.495 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1247c058-5e29-4d31-bbf3-329381e6c3e2")
-	)
-	(wire
-		(pts
 			(xy 132.08 321.31) (xy 134.62 321.31)
 		)
 		(stroke
@@ -7779,7 +7789,7 @@
 	)
 	(wire
 		(pts
-			(xy 290.195 45.72) (xy 290.195 49.53)
+			(xy 283.21 45.72) (xy 283.21 49.53)
 		)
 		(stroke
 			(width 0)
@@ -8019,7 +8029,7 @@
 	)
 	(wire
 		(pts
-			(xy 267.97 68.58) (xy 267.97 62.865)
+			(xy 295.91 75.565) (xy 295.91 72.39)
 		)
 		(stroke
 			(width 0)
@@ -8069,7 +8079,7 @@
 	)
 	(wire
 		(pts
-			(xy 290.195 57.15) (xy 290.195 62.865)
+			(xy 283.21 57.15) (xy 283.21 62.865)
 		)
 		(stroke
 			(width 0)
@@ -8399,7 +8409,7 @@
 	)
 	(wire
 		(pts
-			(xy 277.495 45.72) (xy 290.195 45.72)
+			(xy 270.51 45.72) (xy 283.21 45.72)
 		)
 		(stroke
 			(width 0)
@@ -8946,6 +8956,16 @@
 			(type default)
 		)
 		(uuid "4e306c8d-3559-4487-a41d-f041811dba0f")
+	)
+	(wire
+		(pts
+			(xy 283.21 45.72) (xy 295.91 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e41aba7-9f36-475a-8c4e-24576bf51071")
 	)
 	(wire
 		(pts
@@ -9679,7 +9699,7 @@
 	)
 	(wire
 		(pts
-			(xy 267.97 45.72) (xy 267.97 49.53)
+			(xy 295.91 45.72) (xy 295.91 49.53)
 		)
 		(stroke
 			(width 0)
@@ -9829,7 +9849,7 @@
 	)
 	(wire
 		(pts
-			(xy 259.08 62.865) (xy 267.97 62.865)
+			(xy 257.81 72.39) (xy 295.91 72.39)
 		)
 		(stroke
 			(width 0)
@@ -10229,7 +10249,7 @@
 	)
 	(wire
 		(pts
-			(xy 259.08 50.8) (xy 259.08 62.865)
+			(xy 257.81 50.8) (xy 257.81 72.39)
 		)
 		(stroke
 			(width 0)
@@ -10819,6 +10839,16 @@
 	)
 	(wire
 		(pts
+			(xy 262.89 45.72) (xy 270.51 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9f9bd931-8b3f-44fd-90f5-086de4a86c31")
+	)
+	(wire
+		(pts
 			(xy 325.12 322.58) (xy 328.93 322.58)
 		)
 		(stroke
@@ -11039,7 +11069,7 @@
 	)
 	(wire
 		(pts
-			(xy 267.97 76.2) (xy 267.97 81.28)
+			(xy 295.91 83.185) (xy 295.91 86.36)
 		)
 		(stroke
 			(width 0)
@@ -11719,6 +11749,16 @@
 	)
 	(wire
 		(pts
+			(xy 295.91 57.15) (xy 295.91 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c92f74f3-3f7d-4176-a02b-254ce47216e5")
+	)
+	(wire
+		(pts
 			(xy 421.64 318.77) (xy 421.64 317.5)
 		)
 		(stroke
@@ -11799,16 +11839,6 @@
 	)
 	(wire
 		(pts
-			(xy 290.195 45.72) (xy 306.07 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ce44707e-5d3c-4fed-9edf-2b37c33de6d3")
-	)
-	(wire
-		(pts
 			(xy 198.755 338.455) (xy 198.755 337.185)
 		)
 		(stroke
@@ -11819,7 +11849,7 @@
 	)
 	(wire
 		(pts
-			(xy 277.495 57.15) (xy 277.495 62.23)
+			(xy 270.51 57.15) (xy 270.51 62.23)
 		)
 		(stroke
 			(width 0)
@@ -12099,16 +12129,6 @@
 	)
 	(wire
 		(pts
-			(xy 267.97 57.15) (xy 267.97 62.865)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "dbcb7bed-2cdb-4eff-bdac-984b71739d15")
-	)
-	(wire
-		(pts
 			(xy 113.665 278.765) (xy 113.665 279.4)
 		)
 		(stroke
@@ -12256,16 +12276,6 @@
 			(type default)
 		)
 		(uuid "e15e89a2-876a-4345-afde-367328c3ec6a")
-	)
-	(wire
-		(pts
-			(xy 262.89 45.72) (xy 267.97 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e2c18474-613d-4d73-9316-26bf53f316ee")
 	)
 	(wire
 		(pts
@@ -12449,7 +12459,7 @@
 	)
 	(wire
 		(pts
-			(xy 259.08 50.8) (xy 233.045 50.8)
+			(xy 257.81 50.8) (xy 233.045 50.8)
 		)
 		(stroke
 			(width 0)
@@ -12609,7 +12619,7 @@
 	)
 	(wire
 		(pts
-			(xy 277.495 45.72) (xy 277.495 49.53)
+			(xy 270.51 45.72) (xy 270.51 49.53)
 		)
 		(stroke
 			(width 0)
@@ -17175,7 +17185,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 290.195 53.34 0)
+		(at 283.21 53.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -17183,7 +17193,7 @@
 		(dnp no)
 		(uuid "41aecaa6-a0e5-4d25-9c61-ff998d778d62")
 		(property "Reference" "C31"
-			(at 294.005 52.0699 0)
+			(at 287.02 52.0699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17192,7 +17202,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 294.005 54.6099 0)
+			(at 287.02 54.6099 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17201,7 +17211,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 291.1602 57.15 0)
+			(at 284.1752 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17210,7 +17220,7 @@
 			)
 		)
 		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10A226MP8NUNC_Spec.pdf"
-			(at 290.195 53.34 0)
+			(at 283.21 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17219,7 +17229,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 290.195 53.34 0)
+			(at 283.21 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17228,7 +17238,7 @@
 			)
 		)
 		(property "Rated V" "10V"
-			(at 295.783 56.896 0)
+			(at 288.798 56.896 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17236,7 +17246,7 @@
 			)
 		)
 		(property "MPN" "CL10A226MP8NUNE"
-			(at 290.195 53.34 0)
+			(at 283.21 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17245,7 +17255,7 @@
 			)
 		)
 		(property "JLC?" "N"
-			(at 290.195 53.34 0)
+			(at 283.21 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17254,7 +17264,7 @@
 			)
 		)
 		(property "JLC PN" "C2992620"
-			(at 290.195 53.34 0)
+			(at 283.21 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17386,7 +17396,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 277.495 53.34 0)
+		(at 270.51 53.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -17394,7 +17404,7 @@
 		(dnp no)
 		(uuid "4a7135bf-68b5-4b37-8330-2146282649d9")
 		(property "Reference" "C30"
-			(at 281.305 52.0699 0)
+			(at 274.32 52.0699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17403,7 +17413,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 281.305 54.6099 0)
+			(at 274.32 54.6099 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17412,7 +17422,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 278.4602 57.15 0)
+			(at 271.4752 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17421,7 +17431,7 @@
 			)
 		)
 		(property "Datasheet" "https://media.digikey.com/pdf/Data%20Sheets/Samsung%20PDFs/CL10A226MP8NUNC_Spec.pdf"
-			(at 277.495 53.34 0)
+			(at 270.51 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17430,7 +17440,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 277.495 53.34 0)
+			(at 270.51 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17439,7 +17449,7 @@
 			)
 		)
 		(property "Rated V" "10V"
-			(at 283.083 56.896 0)
+			(at 276.098 56.896 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17447,7 +17457,7 @@
 			)
 		)
 		(property "MPN" "CL10A226MP8NUNE"
-			(at 277.495 53.34 0)
+			(at 270.51 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17456,7 +17466,7 @@
 			)
 		)
 		(property "JLC?" "N"
-			(at 277.495 53.34 0)
+			(at 270.51 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17465,7 +17475,7 @@
 			)
 		)
 		(property "JLC PN" "C2992620"
-			(at 277.495 53.34 0)
+			(at 270.51 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18013,7 +18023,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 277.495 62.23 0)
+		(at 270.51 62.23 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18021,7 +18031,7 @@
 		(dnp no)
 		(uuid "5f405145-525b-4d22-95ae-ec650205da5a")
 		(property "Reference" "#PWR028"
-			(at 277.495 68.58 0)
+			(at 270.51 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18030,7 +18040,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 277.495 67.31 0)
+			(at 270.51 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18038,7 +18048,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 277.495 62.23 0)
+			(at 270.51 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18047,7 +18057,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 277.495 62.23 0)
+			(at 270.51 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18056,7 +18066,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 277.495 62.23 0)
+			(at 270.51 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19034,7 +19044,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 267.97 72.39 0)
+		(at 295.91 79.375 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -19043,7 +19053,7 @@
 		(fields_autoplaced yes)
 		(uuid "71718e9c-c0ca-4b3e-9d61-719ee604b41a")
 		(property "Reference" "R26"
-			(at 269.875 71.12 0)
+			(at 297.815 78.105 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19052,7 +19062,7 @@
 			)
 		)
 		(property "Value" "82k"
-			(at 269.875 73.66 0)
+			(at 297.815 80.645 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19061,7 +19071,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 266.192 72.39 90)
+			(at 294.132 79.375 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19070,7 +19080,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageo.com/upload/media/product/productsearch/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf"
-			(at 267.97 72.39 0)
+			(at 295.91 79.375 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19079,7 +19089,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 267.97 72.39 0)
+			(at 295.91 79.375 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19088,7 +19098,7 @@
 			)
 		)
 		(property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/yageo/RC0603FR-0782KL/727400"
-			(at 267.97 72.39 0)
+			(at 295.91 79.375 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19097,7 +19107,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-0782KL"
-			(at 267.97 72.39 0)
+			(at 295.91 79.375 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19106,7 +19116,7 @@
 			)
 		)
 		(property "JLC?" "Y"
-			(at 267.97 72.39 0)
+			(at 295.91 79.375 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20126,7 +20136,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 290.195 62.865 0)
+		(at 283.21 62.865 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -20134,7 +20144,7 @@
 		(dnp no)
 		(uuid "8d0f3773-8909-45f7-9a90-fd6201411ac1")
 		(property "Reference" "#PWR029"
-			(at 290.195 69.215 0)
+			(at 283.21 69.215 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20143,7 +20153,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 290.195 67.945 0)
+			(at 283.21 67.945 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20151,7 +20161,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 290.195 62.865 0)
+			(at 283.21 62.865 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20160,7 +20170,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 290.195 62.865 0)
+			(at 283.21 62.865 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20169,7 +20179,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 290.195 62.865 0)
+			(at 283.21 62.865 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24185,7 +24195,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 267.97 53.34 0)
+		(at 295.91 53.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -24194,7 +24204,7 @@
 		(fields_autoplaced yes)
 		(uuid "d840c585-090b-484f-84d4-e3aa2ada6ab0")
 		(property "Reference" "R25"
-			(at 269.875 52.07 0)
+			(at 297.815 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24203,7 +24213,7 @@
 			)
 		)
 		(property "Value" "430k"
-			(at 269.875 54.61 0)
+			(at 297.815 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24212,7 +24222,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 266.192 53.34 90)
+			(at 294.132 53.34 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24221,7 +24231,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageo.com/upload/media/product/productsearch/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf"
-			(at 267.97 53.34 0)
+			(at 295.91 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24230,7 +24240,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 267.97 53.34 0)
+			(at 295.91 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24239,7 +24249,7 @@
 			)
 		)
 		(property "DK_Detail_Page" "https://www.digikey.ca/en/products/detail/yageo/RC0603FR-07430KL/727237"
-			(at 267.97 53.34 0)
+			(at 295.91 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24248,7 +24258,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-07430KL"
-			(at 267.97 53.34 0)
+			(at 295.91 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24257,7 +24267,7 @@
 			)
 		)
 		(property "JLC?" "Y"
-			(at 267.97 53.34 0)
+			(at 295.91 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26047,7 +26057,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 267.97 81.28 0)
+		(at 295.91 86.36 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -26055,7 +26065,7 @@
 		(dnp no)
 		(uuid "f524c65d-51dc-4400-b59a-5705668b39f8")
 		(property "Reference" "#PWR026"
-			(at 267.97 87.63 0)
+			(at 295.91 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26064,7 +26074,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 267.97 86.36 0)
+			(at 295.91 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26072,7 +26082,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 267.97 81.28 0)
+			(at 295.91 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26081,7 +26091,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 267.97 81.28 0)
+			(at 295.91 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26090,7 +26100,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 267.97 81.28 0)
+			(at 295.91 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
