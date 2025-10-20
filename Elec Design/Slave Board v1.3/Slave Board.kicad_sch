@@ -31384,7 +31384,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "d840c585-090b-484f-84d4-e3aa2ada6ab0")
 		(property "Reference" "R25"
 			(at 297.815 52.07 0)
