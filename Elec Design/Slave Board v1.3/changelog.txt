@@ -1,0 +1,8 @@
+V1.1 -
+
+V1.2 - 
+
+
+V1.3 	- Added level shifter to interface between MCU and stepper driver
+     	- Cleaned up buck converter layout
+	- Cleaned up various track layouts
