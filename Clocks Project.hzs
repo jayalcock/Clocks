@@ -4,7 +4,6 @@
  <Breakpoints groups="Breakpoints" active_group="Breakpoints">
   <BreakpointListItem trigger="" line="219" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" stopAll="false" group="Breakpoints" type="Breakpoint" state="4" filename="1768 Clock Master/src/uart_rb.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="231" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" stopAll="false" group="Breakpoints" type="Breakpoint" state="4" filename="1768 Clock Master/src/uart_rb.c" useHWbreakpoint="false"/>
-  <Exceptions set="HardFault"/>
  </Breakpoints>
  <ExecutionProfileWindow/>
  <FrameBuffer>
@@ -114,6 +113,8 @@
   <ProjectSessionItem path="Clocks"/>
   <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS"/>
   <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;Common"/>
+  <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;Device"/>
+  <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;Device;src"/>
   <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;inc"/>
   <ProjectSessionItem path="Clocks;11C24 Clock Slave RTOS;Source"/>
   <ProjectSessionItem path="Clocks;1768 Clock Master"/>
@@ -241,20 +242,19 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="84" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="51" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="13" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" selected="1" top="6" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="84" useTextEdit="1" path="11c24 Clock Slave RTOS/src/main_ctl.c" left="0" top="27" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="13" useTextEdit="1" path="11c24 Clock Slave RTOS/src/clockDriverRT.c" left="0" top="6" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="43" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/clockDriverRT.h" left="0" top="12" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="7" y="210" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" top="185" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="22" y="11" useTextEdit="1" path="11c24 Clock Slave RTOS/src/ccan_rom.c" left="0" selected="1" top="3" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="23" y="19" useTextEdit="1" path="11c24 Clock Slave RTOS/inc/ccan_rom.h" left="0" top="1" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="56" useTextEdit="1" path="11c24 Clock Slave RTOS/Device/src/board.c" left="0" top="51" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="22" y="39" useTextEdit="1" path="Common/clockData.h" left="0" top="6" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditRight" x="23" y="32" useTextEdit="1" path="Common/clockData.c" left="0" top="23" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditRight" x="33" y="96" useTextEdit="1" path="1768 Clock Master/src/Clocks-1768.c" left="0" top="65" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditRight" x="1" y="723" useTextEdit="1" path="1768 Clock Master/src/clockEngine.c" left="0" top="692" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditRight" x="23" y="32" useTextEdit="1" path="Common/clockData.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditRight" x="33" y="96" useTextEdit="1" path="1768 Clock Master/src/Clocks-1768.c" left="0" top="140" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditRight" x="1" y="723" useTextEdit="1" path="1768 Clock Master/src/clockEngine.c" left="0" top="723" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="42" y="28" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" path="1768 Clock Master/inc/clockEngine.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="38" y="26" useTextEdit="1" path="1768 Clock Master/inc/can.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditRight" x="0" y="409" useTextEdit="1" path="1768 Clock Master/src/can.c" left="0" top="378" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditRight" x="38" y="67" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" path="1768 Clock Master/src/uart_rb.c" left="0" top="40" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditRight" x="38" y="67" useTextEdit="1" openedFrom="/Users/jayalcock/Nextcloud/Projects/Clocks/1768 Clock Master/src/clockEngine.c" path="1768 Clock Master/src/uart_rb.c" left="0" top="70" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="11C24 Clock Slave RTOS" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="SEGGER J-Link" buildConfiguration="THUMB Flash Release" sessionSettings="" debugSearchFileMap="/Applications/CrossWorks for ARM 4.8/source/thumb_crt0.s&#xa;" fileDialogInitialDirectory="/Users/jayalcock/Projects/Clocks/11C24 Clock Slave RTOS/Device/inc" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>
