@@ -30802,7 +30802,7 @@
 	(segment
 		(start 216.662 181.188)
 		(end 216.662 182.372)
-		(width 0.4064)
+		(width 0.5)
 		(layer "F.Cu")
 		(net 9)
 		(uuid "2e5c201e-0756-4970-8837-16e6fa203fa6")
@@ -30826,7 +30826,7 @@
 	(segment
 		(start 217.25 177.55)
 		(end 217.25 180.6)
-		(width 0.4064)
+		(width 0.5)
 		(layer "F.Cu")
 		(net 9)
 		(uuid "5f876f4e-59e8-425d-8d07-884e68cb4066")
@@ -30842,7 +30842,7 @@
 	(segment
 		(start 217.25 180.6)
 		(end 216.662 181.188)
-		(width 0.4064)
+		(width 0.5)
 		(layer "F.Cu")
 		(net 9)
 		(uuid "b3b9271e-5124-4066-9ad7-2521e52fccf7")
