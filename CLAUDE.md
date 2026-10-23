@@ -8,44 +8,44 @@ A kinetic clock display system: 120 analog clocks arranged in an 8×15 grid, eac
 
 ## Architecture
 
-**Master (LPC1768)** — `1768 Clock Master/`
+**Master (LPC1768)** — `firmware/master-lpc1768/`
 - `clockEngine.c` — time management, display logic, coordinates all slaves
 - `can.c` — CAN bus protocol for sending commands to slave boards
 - `uart_rb.c` — serial debug interface with ring buffer
 
 **Slave (LPC11C24)** — two implementations:
-- `11c24 Clock Slave/` — basic bare-metal firmware, single clock driver
-- `11C24 Clock Slave RTOS/` — RTOS-based, drives multiple clocks per board
+- `firmware/slave-lpc11c24-baremetal/` — basic bare-metal firmware, single clock driver
+- `firmware/slave-lpc11c24/` — RTOS-based, drives multiple clocks per board
   - `clockDriverRT.c` — real-time motor control with hall-sensor homing
   - `ccan_rom.c` — CAN ROM API driver
 
-**Common/** — shared clock data definitions (`clockData.c/h`): digit representations for the 8×15 grid
+**firmware/common/** — shared clock data definitions (`clockData.c/h`): digit representations for the 8×15 grid
 
-**Simulator/** — `clockSim.py`: Pygame visualization of the full display (Python 3.10+, requires pygame and numpy)
+**tools/simulator/** — `clockSim.py`: Pygame visualization of the full display (Python 3.10+, requires pygame and numpy)
 
-**ESP32/** — ESP32-C3 PlatformIO project (Arduino framework) for WiFi connectivity
+**firmware/esp32/** — ESP32-C3 PlatformIO project (Arduino framework) for WiFi connectivity
 
-**Elec Design/** — KiCad schematics and PCB layouts (Main Board v1.4, Slave Board v1.3)
+**hardware/** — KiCad schematics and PCB layouts (`main-board/` v1.4, `slave-board/` v1.3)
 
 ## Build & Tools
 
-- **Firmware**: Segger Embedded Studio — open `Clocks Project.hzp`. Build configurations include ARM/THUMB × Flash/RAM × Debug/Release
-- **ESP32**: PlatformIO — `cd "ESP32/Clocks ESP32" && pio run`
-- **Simulator**: `python3 Simulator/clockSim.py`
-- **PCB**: KiCad 10 — project files in `Elec Design/`. Tag `pre-kicad10` is the last KiCad 9 state
+- **Firmware**: Segger Embedded Studio — open `firmware/Clocks Project.hzp`. Build configurations include ARM/THUMB × Flash/RAM × Debug/Release
+- **ESP32**: PlatformIO — `cd firmware/esp32 && pio run`
+- **Simulator**: `python3 tools/simulator/clockSim.py`
+- **PCB**: KiCad 10 — project files in `hardware/`. Tag `pre-kicad10` is the last KiCad 9 state
 
 ## KiCad Conventions
 
-- Current boards are `Elec Design/Main Board v1.4/` and `Elec Design/Slave Board v1.3/`; `Elec Design/Archive/` is history, don't edit it
-- Shared project libraries live in `Elec Design/Libraries/`; reference them from project lib tables as `${KIPRJMOD}/../Libraries/...`, never absolute paths
+- Current boards are `hardware/main-board/` (v1.4) and `hardware/slave-board/` (v1.3); `hardware/archive/` is history, don't edit it
+- Shared project libraries live in `hardware/libraries/`; reference them from project lib tables as `${KIPRJMOD}/../libraries/...`, never absolute paths
 - Global user libraries are referenced via `${MY_LIBS}` (set in KiCad Preferences → Configure Paths)
 - 3D models should live in each board's `3D Models/` folder and be referenced via `${KIPRJMOD}`
 - `.kicad_prl`, `fp-info-cache`, `*-bak` and `*-backups/` are per-user/generated and gitignored
 
 ## Key Technical Details
 
-- CAN bus addressing scheme documented in `Documents/CAN Data structure.numbers`
-- Clock numbering/layout in `Documents/Clock numbering.numbers`
+- CAN bus addressing scheme documented in `docs/CAN Data structure.numbers`
+- Clock numbering/layout in `docs/Clock numbering.numbers`
 - Each slave board controls multiple clocks; each clock has hour and minute arms driven by steppers with hall-effect home sensors
 - Device drivers use CMSIS and LPC ROM APIs (not vendor HALs)
 - Memory maps: `LPC11C24FBD48_301_MemoryMap.xml`, `LPC1768_MemoryMap.xml`

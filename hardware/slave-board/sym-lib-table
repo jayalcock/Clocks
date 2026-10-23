@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "LPC11xxx")(type "KiCad")(uri "${KIPRJMOD}/../libraries/lpc1100v1.1.kicad_sym")(options "")(descr ""))
+  (lib (name "VID28-05")(type "KiCad")(uri "${KIPRJMOD}/../libraries/Vid_Stepper_Lib_v2.kicad_sym")(options "")(descr ""))
+)
