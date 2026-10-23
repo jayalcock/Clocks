@@ -9,7 +9,7 @@
 #define _CAN_H_
 
 /* Print CAN error */
-static void PrintCANErrorInfo(uint32_t Status);
+static void PrintCANErrorInfo(uint32_t status);
 
 /* Print CAN Message */
 static void PrintCANMsg(CAN_MSG_T *pMsg);
