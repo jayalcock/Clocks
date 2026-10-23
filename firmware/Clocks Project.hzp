@@ -88,7 +88,7 @@
       linker_memory_map_file="$(ProjectDir)/memmap.xml"
       macros="DeviceIncludePath=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx;DeviceHeaderFile=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx/LPC11xx.h;DeviceLoaderFile=$(TargetsDir)/LPC1100/Loader/LPC11C00_Loader.elf;DeviceMemoryMapFile=$(TargetsDir)/LPC1100/XML/LPC11C24FBD48_301_MemoryMap.xml;DeviceRegisterDefinitionFile=$(TargetsDir)/LPC1100/XML/LPC11Cxx_Registers.xml;DeviceSystemFile=$(TargetsDir)/LPC1100/CMSIS/Device/Source/system_LPC11xx.c;DeviceVectorsFile=$(TargetsDir)/LPC1100/Source/LPC11Cxx_Vectors.s;DeviceFamily=LPC1100;DeviceSubFamily=LPC11C00"
       package_dependencies="LPC1100"
-      project_directory="../../../Projects/Clocks/11c24 Clock Slave"
+      project_directory="./slave-lpc11c24-baremetal"
       project_type="Executable"
       property_groups_file_path="$(TargetsDir)/LPC1100/XML/property_groups.xml"
       target_get_partname_script="GetPartName()"
@@ -238,7 +238,7 @@
       arm_target_loader_applicable_loaders="Flash"
       arm_target_loader_default_loader="Flash"
       c_preprocessor_definitions="CORE_M0"
-      c_user_include_directories="$(DeviceIncludePath);$(TargetsDir)/LPC1100/CMSIS/Device/Include;$(PackagesDir)/libraries/libctl/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc;$(ProjectDir)/../Common"
+      c_user_include_directories="$(DeviceIncludePath);$(TargetsDir)/LPC1100/CMSIS/Device/Include;$(PackagesDir)/libraries/libctl/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc;$(ProjectDir)/../common"
       debug_register_definition_file="$(DeviceRegisterDefinitionFile)"
       debug_threads_script="$(PackagesDir)/libraries/libctl/source/threads.js"
       gcc_entry_point="Reset_Handler"
@@ -248,7 +248,7 @@
       linker_section_placement_file="$(StudioDir)/targets/Cortex_M/flash_placement.xml"
       macros="DeviceIncludePath=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx;DeviceHeaderFile=$(TargetsDir)/LPC1100/CMSIS/Device/Include/LPC11xx/LPC11xx.h;DeviceLoaderFile=$(TargetsDir)/LPC1100/Loader/LPC11C00_Loader.elf;DeviceMemoryMapFile=$(TargetsDir)/LPC1100/XML/LPC11C24FBD48_301_MemoryMap.xml;DeviceRegisterDefinitionFile=$(TargetsDir)/LPC1100/XML/LPC11Cxx_Registers.xml;DeviceSystemFile=$(TargetsDir)/LPC1100/CMSIS/Device/Source/system_LPC11xx.c;DeviceVectorsFile=$(TargetsDir)/LPC1100/Source/LPC11Cxx_Vectors.s;DeviceFamily=LPC1100;DeviceSubFamily=LPC11C00"
       package_dependencies="LPC1100;libctl"
-      project_directory="./11c24 Clock Slave RTOS/"
+      project_directory="./slave-lpc11c24/"
       project_type="Executable"
       property_groups_file_path="$(TargetsDir)/LPC1100/XML/property_groups.xml"
       target_get_partname_script="GetPartName()"
@@ -267,11 +267,11 @@
           default_code_section=".init"
           default_const_section=".init_rodata" />
       </file>
-      <file file_name="../11C24 Clock Slave RTOS/inc/system_LPC11xx.h" />
+      <file file_name="inc/system_LPC11xx.h" />
     </folder>
     <folder Name="Common">
-      <file file_name="../Common/clockData.c" />
-      <file file_name="../Common/clockData.h" />
+      <file file_name="../common/clockData.c" />
+      <file file_name="../common/clockData.h" />
     </folder>
     <folder Name="CTL Files">
       <file file_name="$(PackagesDir)/libraries/libctl/source/ctl_board.c" />
@@ -280,20 +280,20 @@
     <folder Name="Device">
       <folder Name="inc">
         <file file_name="Device/inc/board.h" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/inc/board_api.h" />
+        <file file_name="Device/inc/board_api.h" />
         <file file_name="Device/inc/clock_11xx.h" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/inc/gpio_11xx_2.h" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/inc/ring_buffer.h" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/inc/sysctl_11xx.h" />
+        <file file_name="Device/inc/gpio_11xx_2.h" />
+        <file file_name="Device/inc/ring_buffer.h" />
+        <file file_name="Device/inc/sysctl_11xx.h" />
         <file file_name="Device/inc/timer_11xx.h" />
       </folder>
       <folder Name="src">
         <file file_name="Device/src/board.c" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/src/board_sysinit.c" />
+        <file file_name="Device/src/board_sysinit.c" />
         <file file_name="Device/src/clock_11xx.c" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/src/gpio_11xx_2.c" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/src/ring_buffer.c" />
-        <file file_name="../11C24 Clock Slave RTOS/Device/src/sysctl_11xx.c" />
+        <file file_name="Device/src/gpio_11xx_2.c" />
+        <file file_name="Device/src/ring_buffer.c" />
+        <file file_name="Device/src/sysctl_11xx.c" />
         <file file_name="Device/src/timer_11xx.c" />
       </folder>
     </folder>
@@ -331,7 +331,7 @@
       arm_target_loader_parameter="12000000"
       c_only_additional_options="-fms-extensions"
       c_preprocessor_definitions="USE_PROCESS_STACK;__$(LPC1000_Series)_SERIES;__USE_LPCOPEN;CORE_M3;NESTED_INTERRUPTS;CTL_TASKING"
-      c_user_include_directories="$(TargetsDir)/LPC1000/include/CMSIS;$(TargetsDir)/CMSIS_3/CMSIS/Include;$(TargetsDir)/LPC1000/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc;$(ProjectDir)/../Common"
+      c_user_include_directories="$(TargetsDir)/LPC1000/include/CMSIS;$(TargetsDir)/CMSIS_3/CMSIS/Include;$(TargetsDir)/LPC1000/include;$(ProjectDir)/Device/inc;$(ProjectDir)/inc;$(ProjectDir)/../common"
       debug_threads_script="$(PackagesDir)/libraries/libctl/source/threads.js"
       libctl="Yes"
       link_include_startup_code="No"
@@ -340,7 +340,7 @@
       macros="LPC1000_Series=LPC17xx"
       oscillator_frequency="12MHz"
       package_dependencies="mbed_NXP_LPC1768"
-      project_directory="./1768 Clock Master/"
+      project_directory="./master-lpc1768/"
       project_type="Executable"
       property_groups_file_path="$(TargetsDir)/LPC1000/propertyGroups.xml" />
     <configuration
@@ -362,8 +362,8 @@
       debug_initial_breakpoint=""
       debug_initial_breakpoint_set_option="Never" />
     <folder Name="Common">
-      <file file_name="../Common/clockData.c" />
-      <file file_name="../Common/clockData.h" />
+      <file file_name="../common/clockData.c" />
+      <file file_name="../common/clockData.h" />
     </folder>
     <folder Name="Device" exclude="" filter="" path="Device" recurse="Yes" />
     <folder Name="inc" exclude="" filter="" path="inc" recurse="No" />
